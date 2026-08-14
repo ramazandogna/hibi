@@ -6,10 +6,20 @@
     // Extra safety for array and object lookups, but may have false positives.
     "noUncheckedIndexedAccess": true,
 
+    // Enables a wide range of aggressive type checking behavior to ensure code correctness.
+    "strict": true,
+
+    // Ensures optional object properties strictly disallow explicit 'undefined' assignments.
+    "exactOptionalPropertyTypes": true,
+
+    // Enforces the use of 'import type' and 'export type' for type-only declarations.
+    "verbatimModuleSyntax": true,
+
+    // Reports errors on local variables that are declared but never used anywhere.
+    "noUnusedLocals": true,
+
     // Path mapping for cleaner imports.
-    "paths": {
-      "@/*": ["./src/*"]
-    },
+    "paths": { "@/*": ["./src/*"] },
 
     // `vue-tsc --build` produces a .tsbuildinfo file for incremental type-checking.
     // Specified here to keep it out of the root directory.
