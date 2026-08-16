@@ -1,0 +1,7 @@
+<template>
+  <div>404 - Sayfa Bulunamadı</div>
+</template>
+
+<script lang="ts" setup></script>
+
+<style></style>
