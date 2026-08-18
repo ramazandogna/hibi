@@ -24,6 +24,7 @@
   --radius-card: 16px;
   --radius-shell: 30px;
   --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  --mobile-height: 100dvh;
 }
 
 /* ---- Gece modu: class tabanlı, sistem tabanlı değil ----

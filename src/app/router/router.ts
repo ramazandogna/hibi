@@ -10,6 +10,17 @@ const router = createRouter({
 
     {
       path: '/',
+      name: 'TodayView',
+      component: () => import('@/views/TodayView.vue'),
+      meta: {
+        layout: 'app',
+        requiresAuth: true,
+        title: 'Today',
+        tab: 'today',
+      },
+    },
+    {
+      path: '/week',
       name: 'WeekView',
       component: () => import('@/views/WeekView.vue'),
       meta: {
@@ -19,6 +30,7 @@ const router = createRouter({
         tab: 'week',
       },
     },
+
     {
       path: '/year',
       name: 'YearView',
@@ -28,17 +40,6 @@ const router = createRouter({
         requiresAuth: true,
         title: 'Year',
         tab: 'year',
-      },
-    },
-    {
-      path: '/today',
-      name: 'TodayView',
-      component: () => import('@/views/TodayView.vue'),
-      meta: {
-        layout: 'app',
-        requiresAuth: true,
-        title: 'Today',
-        tab: 'today',
       },
     },
 
