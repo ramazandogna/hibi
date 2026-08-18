@@ -10,12 +10,14 @@
     "test:unit": "vitest",
     "build-only": "vite build",
     "type-check": "vue-tsc --build",
+    "types:db": "supabase gen types typescript --project-id ogeuvetzjdyxukufnayj > src/shared/types/database.types.ts",
     "lint": "run-s \"lint:*\"",
     "lint:oxlint": "oxlint . --fix",
     "lint:eslint": "eslint . --fix --cache",
     "format": "prettier --write --experimental-cli src/"
   },
   "dependencies": {
+    "@supabase/supabase-js": "^2.112.3",
     "@tailwindcss/vite": "^4.3.3",
     "lucide-vue-next": "^1.0.0",
     "pinia": "^4.0.2",
@@ -43,6 +45,7 @@
     "oxlint": "~1.74.0",
     "prettier": "3.9.5",
     "prettier-plugin-tailwindcss": "^0.8.1",
+    "supabase": "^2.115.0",
     "typescript": "~6.0.0",
     "vite": "^8.1.5",
     "vite-plugin-vue-devtools": "^8.1.5",
