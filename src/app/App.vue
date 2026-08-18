@@ -33,6 +33,7 @@ const layoutComponent = computed(() => {
 }
 
 .mobile-screen-view {
-  @apply bg-surface border-hair md:rounded-shell h-mobile-height relative m-auto flex w-full max-w-[430px] flex-col overflow-hidden md:h-[880px] md:max-h-[92vh] md:border md:shadow-xl;
+  height: 100dvh;
+  @apply bg-surface border-hair md:rounded-shell relative m-auto flex w-full max-w-[430px] flex-col overflow-hidden md:h-[880px] md:max-h-[92vh] md:border md:shadow-xl;
 }
 </style>
