@@ -16,9 +16,23 @@ const layoutComponent = computed(() => {
 </script>
 
 <template>
-  <component :is="layoutComponent">
-    <RouterView />
-  </component>
+  <div class="screen-view">
+    <div class="mobile-screen-view">
+      <component :is="layoutComponent">
+        <RouterView />
+      </component>
+    </div>
+  </div>
 </template>
 
-<style></style>
+<style>
+@reference "@/assets/main.css";
+
+.screen-view {
+  @apply bg-canvas fixed inset-0 flex items-center justify-center;
+}
+
+.mobile-screen-view {
+  @apply bg-surface border-hair md:rounded-shell h-mobile-height relative m-auto flex w-full max-w-[430px] flex-col overflow-hidden md:h-[880px] md:max-h-[92vh] md:border md:shadow-xl;
+}
+</style>
