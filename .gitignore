@@ -37,3 +37,9 @@ __screenshots__/
 
 # Vite
 *.timestamp-*-*.mjs
+
+# Environment
+.env.local
+
+# Supabase CLI
+supabase/.temp/
