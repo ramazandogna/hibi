@@ -1,5 +1,5 @@
 <template>
-  <header class="app-header">
+  <header class="app-navbar">
     <div class="global-wrapper">
       <nav class="app-nav">
         <RouterLink
@@ -35,34 +35,34 @@ const mainNavItems = [
 <style scoped>
 @reference "@/assets/main.css";
 
-.app-header {
-  @apply absolute bottom-8 left-1/2 z-50 -translate-x-1/2;
+.app-navbar {
+  @apply fixed bottom-24 left-1/2 z-50 -translate-x-1/2;
 }
 
-/* Wrapper */
 .global-wrapper {
   @apply flex w-full justify-center;
 }
 
 .app-nav {
-  @apply border-hair bg-surface flex items-center justify-center gap-2 rounded-(--radius-shell) border px-4 py-3 shadow-lg;
+  @apply border-hair bg-surface flex h-[48px] items-center justify-center gap-1 border px-3 shadow-lg;
+  border-radius: var(--radius-shell);
 }
 
 .nav-link {
-  @apply rounded-card text-ink-, relative flex cursor-pointer items-center justify-center p-3 transition-all duration-300;
+  @apply text-ink-soft relative flex cursor-pointer items-center justify-center p-2 transition-all duration-300;
+  border-radius: var(--radius-card);
 }
 
 .nav-link:hover {
   @apply bg-canvas text-ink;
 }
 
-/* Aktif Sekme Stili */
 .is-active-tab {
   @apply bg-mist text-sea;
 }
 
 .nav-icon {
-  @apply h-6 w-6 stroke-2;
+  @apply h-5 w-5 stroke-2;
 }
 
 .is-active-tab .nav-icon {
@@ -70,11 +70,11 @@ const mainNavItems = [
 }
 
 .nav-tooltip {
-  @apply rounded-cell bg--ink text-can, pointer-events-none invisible absolute -top-10 left-1/2 -translate-x-1/2 px-3 py-1.5 text-xs font-semibold whitespace-nowrap opacity-0 shadow-md transition-all duration-300;
+  @apply bg-ink text-canvas pointer-events-none invisible absolute -top-8 left-1/2 -translate-x-1/2 px-3 py-1.5 text-xs font-semibold whitespace-nowrap opacity-0 shadow-md transition-all duration-300;
+  border-radius: var(--radius-cell);
 }
 
-/* Linkin üzerine gelindiğinde Tooltip'in görünür olması (CSS Hover State) */
 .nav-link:hover .nav-tooltip {
-  @apply visible -top-12 opacity-100;
+  @apply visible -top-10 opacity-100;
 }
 </style>
