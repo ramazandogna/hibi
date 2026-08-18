@@ -1,22 +1,18 @@
 <template>
-  <header>
+  <header class="app-header">
     <div class="global-wrapper">
-      <img alt="Vue logo" class="logo" src="@/assets/logo.svg" width="125" height="125" />
-      <HelloWorld msg="You did it!" />
-      <nav>
+      <nav class="app-nav">
         <RouterLink
           v-for="item in mainNavItems"
           :key="item.to"
           :to="item.to"
+          class="nav-link"
           :class="{ 'is-active-tab': item.tab && route.meta.tab === item.tab }"
         >
-          {{ item.label }}</RouterLink
-        >
-        <div class="nav-right">
-          <RouterLink v-for="item in secondaryNavItems" :key="item.to" :to="item.to">
-            {{ item.label }}
-          </RouterLink>
-        </div>
+          <component :is="item.icon" class="nav-icon" />
+
+          <span class="nav-tooltip">{{ item.label }}</span>
+        </RouterLink>
       </nav>
     </div>
   </header>
@@ -24,62 +20,61 @@
 
 <script lang="ts" setup>
 import { RouterLink, useRoute } from 'vue-router'
-import type { NavItem } from '@/shared/types/navigation.types'
+import { CheckCheck, Brackets, Calendar1, UserStar } from 'lucide-vue-next'
 
 const route = useRoute()
-const mainNavItems: NavItem[] = [
-  { label: 'Week', to: '/', tab: 'week' },
-  { label: 'Year', to: '/year', tab: 'year' },
-  { label: 'Today', to: '/today', tab: 'today' },
-  { label: 'Profile', to: '/profile', tab: 'profile' },
-]
 
-const secondaryNavItems = [
-  { label: '404', to: '/asdesc' },
-  { label: 'Login', to: '/login' },
-  { label: 'SignUp', to: '/signup' },
+const mainNavItems = [
+  { label: 'Today', to: '/', tab: 'today', icon: CheckCheck },
+  { label: 'Week', to: '/week', tab: 'week', icon: Brackets },
+  { label: 'Year', to: '/year', tab: 'year', icon: Calendar1 },
+  { label: 'Profile', to: '/profile', tab: 'profile', icon: UserStar },
 ]
 </script>
 
-<style>
-header {
-  margin-top: 2rem;
-  line-height: 1.5;
-  max-height: 100vh;
+<style scoped>
+@reference "@/assets/main.css";
+
+.app-header {
+  @apply absolute bottom-8 left-1/2 z-50 -translate-x-1/2;
 }
 
-.logo {
-  display: block;
-  margin: 0 auto 2rem;
+/* Wrapper */
+.global-wrapper {
+  @apply flex w-full justify-center;
 }
 
-nav {
-  width: 100%;
-  text-align: center;
-  margin: 2rem auto 0px auto;
-  display: flex;
+.app-nav {
+  @apply border-hair bg-surface flex items-center justify-center gap-2 rounded-(--radius-shell) border px-4 py-3 shadow-lg;
 }
 
+.nav-link {
+  @apply rounded-card text-ink-, relative flex cursor-pointer items-center justify-center p-3 transition-all duration-300;
+}
+
+.nav-link:hover {
+  @apply bg-canvas text-ink;
+}
+
+/* Aktif Sekme Stili */
 .is-active-tab {
-  color: var(--color-text);
-  font-weight: bold;
+  @apply bg-mist text-sea;
 }
 
-.is-active-tab:hover {
-  background-color: transparent;
+.nav-icon {
+  @apply h-6 w-6 stroke-2;
 }
 
-nav a {
-  display: inline-block;
-  padding: 0 1rem;
-  border-left: 1px solid var(--color-border);
+.is-active-tab .nav-icon {
+  @apply stroke-[2.5px];
 }
 
-nav a:first-of-type {
-  border: 0;
+.nav-tooltip {
+  @apply rounded-cell bg--ink text-can, pointer-events-none invisible absolute -top-10 left-1/2 -translate-x-1/2 px-3 py-1.5 text-xs font-semibold whitespace-nowrap opacity-0 shadow-md transition-all duration-300;
 }
 
-.nav-right {
-  margin-left: auto;
+/* Linkin üzerine gelindiğinde Tooltip'in görünür olması (CSS Hover State) */
+.nav-link:hover .nav-tooltip {
+  @apply visible -top-12 opacity-100;
 }
 </style>
