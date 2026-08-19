@@ -5,6 +5,7 @@ import { ref } from 'vue'
 import { useForm } from 'vee-validate'
 import { useRouter } from 'vue-router'
 import { toTypedSchema } from '@vee-validate/zod'
+import { toAuthMessage } from '@/features/auth/auth.errors'
 
 const auth = useAuthStore()
 const router = useRouter()
@@ -24,7 +25,7 @@ const onSubmit = handleSubmit(async (values) => {
     await auth.signIn(values.email, values.password)
     await router.push('/')
   } catch (e) {
-    serverError.value = (e as Error).message
+    serverError.value = toAuthMessage(e)
   }
 })
 </script>
