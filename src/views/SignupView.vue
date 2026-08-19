@@ -44,7 +44,7 @@ const onSubmit = handleSubmit(async (values) => {
 
   <p v-if="awaitingConfirmation">Check your inbox - we sent a confirmation link to {{ email }}!</p>
 
-  <form @submit="onSubmit">
+  <form v-else @submit="onSubmit">
     <h1>Create Account</h1>
 
     <input v-model="email" v-bind="emailAttrs" type="email" placeholder="Email" />
