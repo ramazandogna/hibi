@@ -29,9 +29,16 @@ export const useAuthStore = defineStore('auth', () => {
     }
   }
 
-  async function signUp(email: string, password: string) {
-    const { error } = await supabase.auth.signUp({ email, password })
+  async function signUp(
+    email: string,
+    password: string,
+  ): Promise<{ needsEmailConfirmation: boolean }> {
+    const { data, error } = await supabase.auth.signUp({ email, password })
     if (error) throw error
+
+    if (data.session) user.value = data.session.user
+
+    return { needsEmailConfirmation: data.session === null }
   }
 
   async function signIn(email: string, password: string) {
