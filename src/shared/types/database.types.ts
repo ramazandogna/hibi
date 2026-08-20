@@ -27,7 +27,7 @@ export type Database = {
           entry_date: string
           id?: string
           updated_at?: string
-          user_id: string
+          user_id?: string
         }
         Update: {
           body?: string
@@ -54,7 +54,7 @@ export type Database = {
           habit_id: string
           id?: string
           note?: string | null
-          user_id: string
+          user_id?: string
           value?: number
         }
         Update: {
@@ -97,7 +97,7 @@ export type Database = {
           name: string
           sort_order?: number
           target_per_week?: number
-          user_id: string
+          user_id?: string
         }
         Update: {
           archived_at?: string | null
