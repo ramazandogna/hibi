@@ -3,6 +3,7 @@ import { RouterView, useRoute } from 'vue-router'
 import AppLayout from '@/layouts/AppLayout.vue'
 import AuthLayout from '@/layouts/AuthLayout.vue'
 import { computed } from 'vue'
+import { VueQueryDevtools } from '@tanstack/vue-query-devtools'
 
 const route = useRoute()
 
@@ -23,6 +24,8 @@ const layoutComponent = computed(() => {
       </component>
     </div>
   </div>
+
+  <VueQueryDevtools />
 </template>
 
 <style>
