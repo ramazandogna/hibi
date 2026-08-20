@@ -3,12 +3,14 @@ import { loginSchema } from '@/features/auth/auth.schema'
 import { useAuthStore } from '@/features/auth/auth.store'
 import { ref } from 'vue'
 import { useForm } from 'vee-validate'
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 import { toTypedSchema } from '@vee-validate/zod'
 import { toAuthMessage } from '@/features/auth/auth.errors'
+import { safeRedirect } from '@/shared/lib/redirect'
 
 const auth = useAuthStore()
 const router = useRouter()
+const route = useRoute()
 
 const serverError = ref('')
 
@@ -23,7 +25,7 @@ const onSubmit = handleSubmit(async (values) => {
   serverError.value = ''
   try {
     await auth.signIn(values.email, values.password)
-    await router.push('/')
+    await router.push(safeRedirect(route.query.redirect))
   } catch (e) {
     serverError.value = toAuthMessage(e)
   }

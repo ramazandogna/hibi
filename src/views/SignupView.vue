@@ -4,11 +4,13 @@ import { signupSchema } from '@/features/auth/auth.schema'
 import { useAuthStore } from '@/features/auth/auth.store'
 import { toTypedSchema } from '@vee-validate/zod'
 import { useForm } from 'vee-validate'
+import { safeRedirect } from '@/shared/lib/redirect'
 import { ref } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 
 const auth = useAuthStore()
 const router = useRouter()
+const route = useRoute()
 
 const serverError = ref('')
 const awaitingConfirmation = ref(false)
@@ -31,7 +33,7 @@ const onSubmit = handleSubmit(async (values) => {
     if (needsEmailConfirmation) {
       awaitingConfirmation.value = true
     } else {
-      await router.push('/')
+      await router.push(safeRedirect(route.query.redirect))
     }
   } catch (e) {
     serverError.value = toAuthMessage(e)
