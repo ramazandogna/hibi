@@ -5,6 +5,8 @@ import { supabase } from '@/shared/lib/supabase'
 
 import type { User } from '@supabase/supabase-js'
 
+import { queryClient } from '@/app/providers/query'
+
 export const useAuthStore = defineStore('auth', () => {
   const user = shallowRef<User | null>(null)
   const isReady = ref(false)
@@ -50,7 +52,7 @@ export const useAuthStore = defineStore('auth', () => {
     const { error } = await supabase.auth.signOut()
     if (error) throw error
     user.value = null
-    // TODO (phase 18): queryClient.clear()
+    queryClient.clear()
   }
 
   return { user, isReady, isAuthenticated, init, signUp, signIn, signOut }
