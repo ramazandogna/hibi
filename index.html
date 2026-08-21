@@ -10,6 +10,12 @@
   </head>
   <body>
     <div id="app"></div>
+
+    <!-- Teleport target for sheets. Lives outside the Vue tree because Vue
+         mounts children before inserting the tree into the document, so any
+         target rendered by the app itself is unreachable on first mount. -->
+    <div id="sheet-root"></div>
+
     <script type="module" src="/src/app/main.ts"></script>
   </body>
 </html>

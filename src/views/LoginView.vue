@@ -33,51 +33,53 @@ const onSubmit = handleSubmit(async (values) => {
 </script>
 
 <template>
-  <div>Login View</div>
+  <div class="auth-page">
+    <div>Login View</div>
 
-  <form novalidate @submit="onSubmit">
-    <h1>Sign in</h1>
+    <form novalidate @submit="onSubmit">
+      <h1>Sign in</h1>
 
-    <label for="login-email">Email</label>
-    <input
-      id="login-email"
-      v-model="email"
-      v-bind="emailAttrs"
-      type="email"
-      autocomplete="email"
-      placeholder="Email"
-      :aria-invalid="Boolean(errors.email)"
-      :aria-describedby="errors.email ? 'login-email-error' : undefined"
-    />
-    <p v-if="errors.email" id="login-email-error">{{ errors.email }}</p>
+      <label for="login-email">Email</label>
+      <input
+        id="login-email"
+        v-model="email"
+        v-bind="emailAttrs"
+        type="email"
+        autocomplete="email"
+        placeholder="Email"
+        :aria-invalid="Boolean(errors.email)"
+        :aria-describedby="errors.email ? 'login-email-error' : undefined"
+      />
+      <p v-if="errors.email" id="login-email-error">{{ errors.email }}</p>
 
-    <label for="login-password">Password</label>
-    <input
-      id="login-password"
-      v-model="password"
-      v-bind="passwordAttrs"
-      type="password"
-      autocomplete="current-password"
-      placeholder="Password"
-      :aria-invalid="Boolean(errors.password)"
-      :aria-describedby="errors.password ? 'login-password-error' : undefined"
-    />
-    <p v-if="errors.password" id="login-password-error">{{ errors.password }}</p>
+      <label for="login-password">Password</label>
+      <input
+        id="login-password"
+        v-model="password"
+        v-bind="passwordAttrs"
+        type="password"
+        autocomplete="current-password"
+        placeholder="Password"
+        :aria-invalid="Boolean(errors.password)"
+        :aria-describedby="errors.password ? 'login-password-error' : undefined"
+      />
+      <p v-if="errors.password" id="login-password-error">{{ errors.password }}</p>
 
-    <p v-if="serverError" role="alert">{{ serverError }}</p>
+      <p v-if="serverError" role="alert">{{ serverError }}</p>
 
-    <button type="submit" :disabled="isSubmitting">
-      {{ isSubmitting ? 'Signing in...' : 'Sign in' }}
-    </button>
-  </form>
+      <button type="submit" :disabled="isSubmitting">
+        {{ isSubmitting ? 'Signing in...' : 'Sign in' }}
+      </button>
+    </form>
 
-  <div class="auth-link">
-    <span>
-      <RouterLink to="/"> Anasayfa </RouterLink>
-    </span>
-    <span>
-      <RouterLink to="/signup"> Signup </RouterLink>
-    </span>
+    <div class="auth-link">
+      <span>
+        <RouterLink to="/"> Anasayfa </RouterLink>
+      </span>
+      <span>
+        <RouterLink to="/signup"> Signup </RouterLink>
+      </span>
+    </div>
   </div>
 </template>
 

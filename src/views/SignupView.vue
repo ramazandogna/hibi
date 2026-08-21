@@ -42,70 +42,72 @@ const onSubmit = handleSubmit(async (values) => {
 </script>
 
 <template>
-  <div>SignUp View</div>
+  <div class="auth-page">
+    <div>SignUp View</div>
 
-  <p v-if="awaitingConfirmation" role="status">
-    Check your inbox - we sent a confirmation link to {{ email }}!
-  </p>
-
-  <form v-else novalidate @submit="onSubmit">
-    <h1>Create Account</h1>
-
-    <label for="signup-email">Email</label>
-    <input
-      id="signup-email"
-      v-model="email"
-      v-bind="emailAttrs"
-      type="email"
-      autocomplete="email"
-      placeholder="Email"
-      :aria-invalid="Boolean(errors.email)"
-      :aria-describedby="errors.email ? 'signup-email-error' : undefined"
-    />
-    <p v-if="errors.email" id="signup-email-error">{{ errors.email }}</p>
-
-    <label for="signup-password">Password</label>
-    <input
-      id="signup-password"
-      v-model="password"
-      v-bind="passwordAttrs"
-      type="password"
-      autocomplete="new-password"
-      placeholder="Password"
-      :aria-invalid="Boolean(errors.password)"
-      :aria-describedby="errors.password ? 'signup-password-error' : undefined"
-    />
-    <p v-if="errors.password" id="signup-password-error">{{ errors.password }}</p>
-
-    <label for="signup-confirm-password">Confirm password</label>
-    <input
-      id="signup-confirm-password"
-      v-model="confirmPassword"
-      v-bind="confirmPasswordAttrs"
-      type="password"
-      autocomplete="new-password"
-      placeholder="Confirm password"
-      :aria-invalid="Boolean(errors.confirmPassword)"
-      :aria-describedby="errors.confirmPassword ? 'signup-confirm-password-error' : undefined"
-    />
-    <p v-if="errors.confirmPassword" id="signup-confirm-password-error">
-      {{ errors.confirmPassword }}
+    <p v-if="awaitingConfirmation" role="status">
+      Check your inbox - we sent a confirmation link to {{ email }}!
     </p>
 
-    <p v-if="serverError" role="alert">{{ serverError }}</p>
+    <form v-else novalidate @submit="onSubmit">
+      <h1>Create Account</h1>
 
-    <button type="submit" :disabled="isSubmitting">
-      {{ isSubmitting ? 'Creating account...' : 'Create account' }}
-    </button>
-  </form>
+      <label for="signup-email">Email</label>
+      <input
+        id="signup-email"
+        v-model="email"
+        v-bind="emailAttrs"
+        type="email"
+        autocomplete="email"
+        placeholder="Email"
+        :aria-invalid="Boolean(errors.email)"
+        :aria-describedby="errors.email ? 'signup-email-error' : undefined"
+      />
+      <p v-if="errors.email" id="signup-email-error">{{ errors.email }}</p>
 
-  <div class="auth-link">
-    <span>
-      <RouterLink to="/"> Anasayfa </RouterLink>
-    </span>
-    <span>
-      <RouterLink to="/login"> Login </RouterLink>
-    </span>
+      <label for="signup-password">Password</label>
+      <input
+        id="signup-password"
+        v-model="password"
+        v-bind="passwordAttrs"
+        type="password"
+        autocomplete="new-password"
+        placeholder="Password"
+        :aria-invalid="Boolean(errors.password)"
+        :aria-describedby="errors.password ? 'signup-password-error' : undefined"
+      />
+      <p v-if="errors.password" id="signup-password-error">{{ errors.password }}</p>
+
+      <label for="signup-confirm-password">Confirm password</label>
+      <input
+        id="signup-confirm-password"
+        v-model="confirmPassword"
+        v-bind="confirmPasswordAttrs"
+        type="password"
+        autocomplete="new-password"
+        placeholder="Confirm password"
+        :aria-invalid="Boolean(errors.confirmPassword)"
+        :aria-describedby="errors.confirmPassword ? 'signup-confirm-password-error' : undefined"
+      />
+      <p v-if="errors.confirmPassword" id="signup-confirm-password-error">
+        {{ errors.confirmPassword }}
+      </p>
+
+      <p v-if="serverError" role="alert">{{ serverError }}</p>
+
+      <button type="submit" :disabled="isSubmitting">
+        {{ isSubmitting ? 'Creating account...' : 'Create account' }}
+      </button>
+    </form>
+
+    <div class="auth-link">
+      <span>
+        <RouterLink to="/"> Anasayfa </RouterLink>
+      </span>
+      <span>
+        <RouterLink to="/login"> Login </RouterLink>
+      </span>
+    </div>
   </div>
 </template>
 

@@ -21,22 +21,38 @@
 <script lang="ts" setup>
 import { RouterLink, useRoute } from 'vue-router'
 import { CheckCheck, Brackets, Calendar1, UserStar } from 'lucide-vue-next'
+import type { Component } from 'vue'
+
+import type { AppTab } from '@/shared/types/navigation.types'
+import { TAB_LABEL, TAB_ORDER, TAB_PATH } from '@/shared/lib/tabs'
 
 const route = useRoute()
 
-const mainNavItems = [
-  { label: 'Today', to: '/', tab: 'today', icon: CheckCheck },
-  { label: 'Week', to: '/week', tab: 'week', icon: Brackets },
-  { label: 'Year', to: '/year', tab: 'year', icon: Calendar1 },
-  { label: 'Profile', to: '/profile', tab: 'profile', icon: UserStar },
-]
+const ICONS: Record<AppTab, Component> = {
+  today: CheckCheck,
+  week: Brackets,
+  year: Calendar1,
+  profile: UserStar,
+}
+
+// Order, paths and labels come from TAB_ORDER so the bar and the slide
+// direction can never disagree.
+const mainNavItems = TAB_ORDER.map((tab) => ({
+  tab,
+  to: TAB_PATH[tab],
+  label: TAB_LABEL[tab],
+  icon: ICONS[tab],
+}))
 </script>
 
 <style scoped>
 @reference "@/assets/main.css";
 
+/* absolute, not fixed: the bar must hang inside the phone shell, otherwise on
+   desktop it sticks to the bottom of the browser window instead. */
 .app-navbar {
-  @apply fixed bottom-24 left-1/2 z-50 -translate-x-1/2;
+  @apply absolute left-1/2 z-40 -translate-x-1/2;
+  bottom: calc(1.5rem + env(safe-area-inset-bottom, 0px));
 }
 
 .global-wrapper {

@@ -4,8 +4,13 @@ import AppLayout from '@/layouts/AppLayout.vue'
 import AuthLayout from '@/layouts/AuthLayout.vue'
 import { computed } from 'vue'
 import { VueQueryDevtools } from '@tanstack/vue-query-devtools'
+import { slideDirection } from '@/shared/lib/tab-transition'
 
 const route = useRoute()
+
+const transitionName = computed(() =>
+  slideDirection.value === 'none' ? '' : `slide-${slideDirection.value}`,
+)
 
 const layoutComponent = computed(() => {
   if (route.meta.layout === 'app') {
@@ -18,9 +23,13 @@ const layoutComponent = computed(() => {
 
 <template>
   <div class="screen-view">
-    <div class="mobile-screen-view">
+    <div class="shell-frame mobile-screen-view">
       <component :is="layoutComponent">
-        <RouterView />
+        <RouterView v-slot="{ Component, route: matched }">
+          <Transition :name="transitionName">
+            <component :is="Component" :key="matched.path" class="page-slide" />
+          </Transition>
+        </RouterView>
       </component>
     </div>
   </div>
@@ -36,7 +45,6 @@ const layoutComponent = computed(() => {
 }
 
 .mobile-screen-view {
-  height: 100dvh;
-  @apply bg-surface border-hair md:rounded-shell relative m-auto flex w-full max-w-[430px] flex-col overflow-hidden md:h-[880px] md:max-h-[92vh] md:border md:shadow-xl;
+  @apply bg-surface border-hair md:rounded-shell relative m-auto flex flex-col overflow-hidden md:border md:shadow-xl;
 }
 </style>
