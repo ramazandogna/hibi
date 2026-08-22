@@ -1,8 +1,17 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/vue-query'
 
-import { archiveHabit, createHabit, deleteHabit, listHabits, updateHabit } from './habits.api'
+import {
+  archiveHabit,
+  createHabit,
+  deleteHabit,
+  listArchivedHabits,
+  listHabits,
+  reorderHabits,
+  unarchiveHabit,
+  updateHabit,
+} from './habits.api'
 import { habitKeys } from './habits.keys'
-import type { HabitPatch } from './habit.types'
+import type { Habit, HabitPatch } from './habit.types'
 
 /**
  * Vue bindings for the habits API.
@@ -59,5 +68,60 @@ export function useDeleteHabit() {
   return useMutation({
     mutationFn: deleteHabit,
     onSuccess: () => queryClient.invalidateQueries({ queryKey: habitKeys.all }),
+  })
+}
+
+/** Archived habits, most recently archived first. */
+export function useArchivedHabits() {
+  return useQuery({
+    queryKey: habitKeys.list('archived'),
+    queryFn: listArchivedHabits,
+  })
+}
+
+/** Restores an archived habit. */
+export function useUnarchiveHabit() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: unarchiveHabit,
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: habitKeys.lists() }),
+  })
+}
+
+/**
+ * Reorders habits, moving the row in the cache before the request finishes.
+ *
+ * The one place in this feature that writes optimistically: an arrow tap has to
+ * move the row now, and waiting a round trip would make repeated taps fight
+ * each other. The snapshot in `onMutate` is restored if the call fails.
+ */
+export function useReorderHabits() {
+  const queryClient = useQueryClient()
+  const activeKey = habitKeys.list('active')
+
+  return useMutation({
+    mutationFn: reorderHabits,
+    onMutate: async (ids: string[]) => {
+      await queryClient.cancelQueries({ queryKey: activeKey })
+      const previous = queryClient.getQueryData<Habit[]>(activeKey)
+
+      if (previous) {
+        const byId = new Map(previous.map((habit) => [habit.id, habit]))
+        const next = ids
+          .map((id) => byId.get(id))
+          .filter((habit): habit is Habit => habit !== undefined)
+
+        queryClient.setQueryData(activeKey, next)
+      }
+
+      return { previous }
+    },
+    onError: (_error, _ids, context) => {
+      if (context?.previous) {
+        queryClient.setQueryData(activeKey, context.previous)
+      }
+    },
+    onSettled: () => queryClient.invalidateQueries({ queryKey: habitKeys.lists() }),
   })
 }
