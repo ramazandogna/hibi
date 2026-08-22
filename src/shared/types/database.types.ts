@@ -141,7 +141,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      reorder_habits: { Args: { ids: string[] }; Returns: undefined }
     }
     Enums: {
       habit_kind: "build" | "quit" | "scale"
