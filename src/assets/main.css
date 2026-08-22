@@ -80,12 +80,12 @@
     @apply w-full max-w-[430px] md:h-[880px] md:max-h-[92vh];
   }
 
-  /* ---- Tab-to-tab screen transition ----
-     Each screen owns its own scroll and stays full width: during a transition
-     both screens are absolutely positioned, so a shrink-to-fit parent would
-     collapse. Horizontal centering therefore lives here, not on the parent. */
+  /* ---- Screen wrapper ----
+     Lands on every view's root element (see App.vue), so this is the one place
+     that owns the scroll box, the side gutter and the room the floating tab bar
+     needs at the bottom. Views only decide their own inner layout. */
   .page-slide {
-    @apply flex h-full w-full flex-col items-center overflow-y-auto;
+    @apply h-full w-full overflow-y-auto px-4 pb-24;
   }
 
   .slide-forward-enter-active,
