@@ -1,13 +1,13 @@
-import type { Enums, Tables, TablesInsert, TablesUpdate } from '@/shared/types/database.types'
+import type { Tables, TablesInsert, TablesUpdate } from '@/shared/types/database.types'
 
-/** 'build' | 'quit' | 'scale' — kaynağı veritabanındaki habit_kind enum'ı. */
-export type HabitKind = Enums<'habit_kind'>
+// Defined in shared/lib/kind.ts so shared UI never has to import from a feature.
+export type { HabitKind } from '@/shared/lib/kind'
 
-/** Veritabanından okunan bir takip satırı. */
+/** A habit row as read from the database. */
 export type Habit = Tables<'habits'>
 
-/** Yeni takip oluştururken gönderilen alanlar. */
+/** Fields accepted when creating a habit; database defaults stay optional. */
 export type NewHabit = TablesInsert<'habits'>
 
-/** Var olan bir takibi güncellerken gönderilen kısmi alanlar. */
+/** Partial fields accepted when updating an existing habit. */
 export type HabitPatch = TablesUpdate<'habits'>

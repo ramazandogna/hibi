@@ -10,12 +10,12 @@ const {
   type = 'text',
 } = defineProps<{
   label: string
-  error?: string
-  hint?: string
+  error?: string | undefined
+  hint?: string | undefined
   type?: 'text' | 'email' | 'password' | 'number'
 }>()
 
-const model = defineModel<string>()
+const model = defineModel<string | undefined>()
 
 const id = useId()
 const errorId = `${id}-error`

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { KIND_META } from '@/shared/lib/kind'
-import type { HabitKind } from '@/features/habits/habit.types'
+import type { HabitKind } from '@/shared/lib/kind'
 
 const props = defineProps<{
   kind: HabitKind

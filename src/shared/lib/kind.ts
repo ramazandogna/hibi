@@ -1,6 +1,7 @@
 import type { Enums } from '@/shared/types/database.types'
 
-type HabitKind = Enums<'habit_kind'>
+/** 'build' | 'quit' | 'scale' — sourced from the habit_kind enum in Postgres. */
+export type HabitKind = Enums<'habit_kind'>
 
 /** Everything the UI needs to render a habit kind: label, colours, wording. */
 export interface KindMeta {
