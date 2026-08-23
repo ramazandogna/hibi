@@ -7,8 +7,39 @@ import { toAppError } from '@/shared/lib/app-error'
 import type { HabitKind } from '@/shared/lib/kind'
 import BaseButton from '@/shared/ui/BaseButton.vue'
 import EmptyState from '@/shared/ui/EmptyState.vue'
-import KindDot from '@/shared/ui/KindDot.vue'
 import SkeletonList from '@/shared/ui/SkeletonList.vue'
+import { lastNDays, todayKey } from '@/shared/lib/date'
+import { useEntriesInRange, useToggleEntry } from '@/features/entries/entries.queries'
+import HabitRow from '@/features/habits/components/HabitRow.vue'
+
+/** Today plus the four days before it, oldest first. */
+const days = computed(() => lastNDays(5))
+const rangeFrom = computed(() => days.value[0] ?? todayKey())
+const rangeTo = computed(() => days.value.at(-1) ?? todayKey())
+
+const { data: entries } = useEntriesInRange(rangeFrom, rangeTo)
+
+/**
+ * One request feeds every row: the flat entry list is folded into a lookup so
+ * a row can answer "is this day marked" in O(1) without querying for itself.
+ */
+const markedByHabit = computed(() => {
+  const map = new Map<string, Set<string>>()
+
+  for (const entry of entries.value ?? []) {
+    const marked = map.get(entry.habit_id) ?? new Set<string>()
+    marked.add(entry.entry_date)
+    map.set(entry.habit_id, marked)
+  }
+
+  return map
+})
+
+const { toggle } = useToggleEntry()
+
+function onToggle(habitId: string, dateKey: string) {
+  toggle({ habitId, dateKey }, markedByHabit.value.get(habitId)?.has(dateKey) ?? false)
+}
 
 const { data: habits, isPending, isError, error, refetch } = useHabits()
 const createHabit = useCreateHabit()
@@ -60,15 +91,16 @@ function addSuggestion(suggestion: Suggestion) {
       </template>
     </EmptyState>
 
-    <ul v-else class="flex flex-col gap-1">
-      <li
+    <ul v-else class="flex flex-col gap-2">
+      <HabitRow
         v-for="habit in habits ?? []"
         :key="habit.id"
-        class="border-hair rounded-card flex h-14 items-center gap-3 border px-3"
-      >
-        <KindDot :kind="habit.kind" />
-        <span class="text-ink flex-1 truncate text-sm font-medium">{{ habit.name }}</span>
-      </li>
+        :habit="habit"
+        :days="days"
+        :today="rangeTo"
+        :marked-days="markedByHabit.get(habit.id) ?? new Set()"
+        @toggle="(day) => onToggle(habit.id, day)"
+      />
     </ul>
   </div>
 </template>
