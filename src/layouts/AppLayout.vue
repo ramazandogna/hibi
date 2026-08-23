@@ -6,6 +6,7 @@ import AppNavbar from '@/layouts/components/app/AppNavbar.vue'
 import AppFooter from './components/app/AppFooter.vue'
 import { TAB_PATH, tabAtOffset } from '@/shared/lib/tabs'
 import { forceSlideDirection } from '@/shared/lib/tab-transition'
+import { useOnline } from '@/shared/lib/use-online.ts'
 
 const route = useRoute()
 const router = useRouter()
@@ -48,6 +49,8 @@ function onPointerUp(event: PointerEvent) {
   void router.push(TAB_PATH[tabAtOffset(tab, offset)])
 }
 
+const isOnline = useOnline()
+
 function stopTracking() {
   tracking = false
 }
@@ -59,6 +62,17 @@ function stopTracking() {
     Navbar
     -->
     <AppNavbar />
+
+    <!--
+    isOnline?
+    -->
+    <p
+      v-if="!isOnline"
+      role="status"
+      class="bg-amber/20 text-ink rounded-card w-full px-3 py-2 text-center text-xs"
+    >
+      You're offline - changes won't be saved.
+    </p>
 
     <!--
     Content
