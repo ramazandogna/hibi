@@ -4,8 +4,9 @@ import { Check } from 'lucide-vue-next'
 
 import type { Habit } from '../habit.types'
 import { KIND_META } from '@/shared/lib/kind'
-import { fromDateKey } from '@/shared/lib/date'
+import { fromDateKey, toDateKey } from '@/shared/lib/date'
 import { tapFeedback } from '@/shared/lib/haptics'
+import { useHabitStats } from '@/features/stats/use-habit-stats'
 
 const { habit, days, today, markedDays, values } = defineProps<{
   habit: Habit
@@ -24,6 +25,13 @@ const emit = defineEmits<{
 const todayValue = computed(() => values?.get(today) ?? null)
 
 const meta = computed(() => KIND_META[habit.kind])
+
+const { summary } = useHabitStats(
+  () => ({ kind: habit.kind, createdAt: toDateKey(new Date(habit.created_at)) }),
+  () => markedDays,
+  () => values ?? new Map(),
+  () => today,
+)
 
 /** Days before today; today gets its own larger button. */
 const previousDays = computed(() => days.filter((day) => day !== today))
@@ -62,7 +70,7 @@ function onTodayTap() {
 
     <div class="min-w-0 flex-1">
       <p class="text-ink truncate text-sm font-medium">{{ habit.name }}</p>
-      <p class="text-ink-soft text-xs">{{ markedDays.size }} of {{ days.length }} days</p>
+      <p class="text-ink-soft text-xs">{{ summary }}</p>
     </div>
 
     <div class="flex shrink-0 items-center gap-1">
