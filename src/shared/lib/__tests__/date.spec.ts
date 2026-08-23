@@ -5,6 +5,7 @@ import {
   eachDayOfYear,
   fromDateKey,
   lastNDays,
+  leadingBlanks,
   startOfWeek,
   toDateKey,
   todayKey,
@@ -120,5 +121,21 @@ describe('eachDayOfYear', () => {
 
     expect(days[0]).toBe('2026-01-01')
     expect(days.at(-1)).toBe('2026-12-31')
+  })
+})
+
+describe('leadingBlanks', () => {
+  it('counts blanks for a Monday-first grid', () => {
+    // 2026-01-01 is a Thursday
+    expect(leadingBlanks(2026, 1)).toBe(3)
+  })
+
+  it('counts blanks for a Sunday-first grid', () => {
+    expect(leadingBlanks(2026, 0)).toBe(4)
+  })
+
+  it('is zero when the year starts on the first weekday', () => {
+    // 2024-01-01 is a Monday
+    expect(leadingBlanks(2024, 1)).toBe(0)
   })
 })

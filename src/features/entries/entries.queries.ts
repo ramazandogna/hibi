@@ -1,5 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/vue-query'
 import type { QueryClient } from '@tanstack/vue-query'
+import { keepPreviousData } from '@tanstack/vue-query'
 import { computed, toValue } from 'vue'
 import type { MaybeRefOrGetter } from 'vue'
 
@@ -52,10 +53,15 @@ function patchRanges(
 }
 
 /** Entries for a date range, refetching when the range changes. */
-export function useEntriesInRange(from: MaybeRefOrGetter<string>, to: MaybeRefOrGetter<string>) {
+export function useEntriesInRange(
+  from: MaybeRefOrGetter<string>,
+  to: MaybeRefOrGetter<string>,
+  options: { keepPrevious?: boolean } = {},
+) {
   return useQuery({
     queryKey: computed(() => entryKeys.range(toValue(from), toValue(to))),
     queryFn: () => listEntriesInRange(toValue(from), toValue(to)),
+    ...(options.keepPrevious ? { placeholderData: keepPreviousData } : {}),
   })
 }
 
