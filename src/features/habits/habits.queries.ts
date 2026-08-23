@@ -12,6 +12,8 @@ import {
 } from './habits.api'
 import { habitKeys } from './habits.keys'
 import type { Habit, HabitPatch } from './habit.types'
+import { computed, toValue, type MaybeRefOrGetter } from 'vue'
+import { getHabit } from '../stats/use-habit-stats'
 
 /**
  * Vue bindings for the habits API.
@@ -123,5 +125,13 @@ export function useReorderHabits() {
       }
     },
     onSettled: () => queryClient.invalidateQueries({ queryKey: habitKeys.lists() }),
+  })
+}
+
+/** One habit, cached under its own detail key. */
+export function useHabit(id: MaybeRefOrGetter<string>) {
+  return useQuery({
+    queryKey: computed(() => habitKeys.detail(toValue(id))),
+    queryFn: () => getHabit(toValue(id)),
   })
 }

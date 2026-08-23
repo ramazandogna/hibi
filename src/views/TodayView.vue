@@ -13,11 +13,18 @@ import { useEntriesInRange, useSetEntry, useToggleEntry } from '@/features/entri
 import ScalePicker from '@/features/entries/components/ScalePicker.vue'
 import HabitRow from '@/features/habits/components/HabitRow.vue'
 import BaseSheet from '@/shared/ui/BaseSheet.vue'
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
+
+/** Squares show five days; the query pulls a year so streaks are exact. */
+const STATS_WINDOW_DAYS = 365
 
 /** Today plus the four days before it, oldest first. */
 const days = computed(() => lastNDays(5))
-const rangeFrom = computed(() => days.value[0] ?? todayKey())
-const rangeTo = computed(() => days.value.at(-1) ?? todayKey())
+const statsWindow = computed(() => lastNDays(STATS_WINDOW_DAYS))
+const rangeFrom = computed(() => statsWindow.value[0] ?? todayKey())
+const rangeTo = computed(() => statsWindow.value.at(-1) ?? todayKey())
 
 const { data: entries } = useEntriesInRange(rangeFrom, rangeTo)
 
@@ -95,6 +102,10 @@ function saveScale(payload: { value: number; note: string | null }) {
   setEntry.mutate({ ...target, ...payload })
   scaleTarget.value = null
 }
+
+function openHabit(habitId: string) {
+  void router.push({ name: 'HabitDetailView', params: { id: habitId } })
+}
 </script>
 
 <template>
@@ -138,6 +149,7 @@ function saveScale(payload: { value: number; note: string | null }) {
         :marked-days="markedByHabit.get(habit.id) ?? new Set()"
         @toggle="(day) => onToggle(habit.id, day)"
         @scale="(day) => openScale(habit.id, day)"
+        @open="openHabit"
       />
     </ul>
 

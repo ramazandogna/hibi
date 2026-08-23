@@ -83,10 +83,21 @@ const router = createRouter({
       },
     },
 
+    {
+      path: '/habit/:id',
+      name: 'HabitDetailView',
+      component: () => import('@/views/HabitDetailView.vue'),
+      props: true,
+      meta: {
+        layout: 'app',
+        requiresAuth: true,
+        title: 'Habit',
+      },
+    },
+
     /* 
     404
     */
-
     {
       path: '/:pathMatch(.*)*',
       name: 'NotFound',
