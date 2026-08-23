@@ -96,13 +96,18 @@ function stopTracking() {
 <style scoped>
 @reference "@/assets/main.css";
 
+/* min-height: 0 lets these flex items shrink below their content, which is
+   what allows .page-slide's own overflow-y-auto to take over. Without it the
+   default min-height: auto pushes the layout past the shell and nothing
+   scrolls. */
 .app-layout {
   display: flex;
   flex-grow: 1;
+  min-height: 0;
 }
 
 .page-content {
-  @apply relative mt-8 w-full grow overflow-hidden;
+  @apply relative mt-8 min-h-0 w-full grow overflow-hidden;
   /* Let the browser own vertical scrolling and leave horizontal drags to us. */
   touch-action: pan-y;
 }
