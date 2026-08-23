@@ -156,25 +156,22 @@ export function eachDayOfYear(year: number): string[] {
 }
 
 /**
- * Empty cells before January 1 in a week-column heatmap grid.
+ * Empty cells before a block's first day in a seven-row column grid.
  *
- * The grid has seven rows (weekdays) and fills column by column, so the first
- * column is only partly used unless the year starts exactly on the week's first
- * day. Off-by-one here shifts the entire year by a row, so it is unit tested.
+ * The grid fills column by column, so the first column is only partly used
+ * unless the block starts exactly on the week's first day. An off-by-one here
+ * shifts the whole block by a row, so this is unit tested.
  *
- * @param year - Four-digit year.
+ * @param firstDayKey - First day of the block, e.g. `'2026-02-01'`.
  * @param weekStartsOn - 0 for Sunday, 1 for Monday.
  * @returns 0-6 blank cells.
  *
  * @example
  * ```ts
- * // 2026-01-01 is a Thursday
- * leadingBlanks(2026, 1)  // 3 — Mon, Tue, Wed are blank
- * leadingBlanks(2026, 0)  // 4 — Sun..Wed are blank
+ * leadingBlanks('2026-01-01', 1)  // 3 — a Thursday, Mon-Wed are blank
+ * leadingBlanks('2024-01-01', 1)  // 0 — a Monday
  * ```
  */
-export function leadingBlanks(year: number, weekStartsOn: WeekStart): number {
-  const firstDay = new Date(year, 0, 1).getDay()
-
-  return (firstDay - weekStartsOn + 7) % 7
+export function leadingBlanks(firstDayKey: string, weekStartsOn: WeekStart): number {
+  return (fromDateKey(firstDayKey).getDay() - weekStartsOn + 7) % 7
 }

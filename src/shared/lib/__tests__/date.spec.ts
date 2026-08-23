@@ -127,15 +127,20 @@ describe('eachDayOfYear', () => {
 describe('leadingBlanks', () => {
   it('counts blanks for a Monday-first grid', () => {
     // 2026-01-01 is a Thursday
-    expect(leadingBlanks(2026, 1)).toBe(3)
+    expect(leadingBlanks('2026-01-01', 1)).toBe(3)
   })
 
   it('counts blanks for a Sunday-first grid', () => {
-    expect(leadingBlanks(2026, 0)).toBe(4)
+    expect(leadingBlanks('2026-01-01', 0)).toBe(4)
   })
 
-  it('is zero when the year starts on the first weekday', () => {
+  it('is zero when the block starts on the first weekday', () => {
     // 2024-01-01 is a Monday
-    expect(leadingBlanks(2024, 1)).toBe(0)
+    expect(leadingBlanks('2024-01-01', 1)).toBe(0)
+  })
+
+  it('works for a month that is not January', () => {
+    // 2026-02-01 is a Sunday
+    expect(leadingBlanks('2026-02-01', 1)).toBe(6)
   })
 })

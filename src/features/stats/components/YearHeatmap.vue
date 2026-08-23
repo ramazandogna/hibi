@@ -1,20 +1,18 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue'
 
-import { leadingBlanks, todayKey } from '@/shared/lib/date'
+import { fromDateKey, leadingBlanks, todayKey } from '@/shared/lib/date'
 import type { WeekStart } from '@/shared/lib/date'
 import { KIND_META } from '@/shared/lib/kind'
 import type { HabitKind } from '@/shared/lib/kind'
 
 const {
-  year,
   days,
   kind,
   markedDays,
   values,
   weekStartsOn = 1,
 } = defineProps<{
-  year: number
   days: readonly string[]
   kind: HabitKind
   markedDays: ReadonlySet<string>
@@ -24,9 +22,41 @@ const {
 
 const emit = defineEmits<{ select: [dateKey: string] }>()
 
+type MonthBlock = { key: string; label: string; blanks: number; days: string[] }
+
 const scroller = ref<HTMLElement | null>(null)
-const blanks = computed(() => leadingBlanks(year, weekStartsOn))
 const today = todayKey()
+const monthFormatter = new Intl.DateTimeFormat('en', { month: 'short' })
+
+/**
+ * The year split into month blocks.
+ *
+ * Each month starts a fresh column instead of flowing on from the previous one,
+ * so its label sits directly above its own block and the grid reads as a
+ * calendar rather than one continuous strip.
+ */
+const months = computed<MonthBlock[]>(() => {
+  const blocks: MonthBlock[] = []
+
+  for (const day of days) {
+    const monthKey = day.slice(0, 7)
+    let block = blocks.at(-1)
+
+    if (!block || block.key !== monthKey) {
+      block = {
+        key: monthKey,
+        label: monthFormatter.format(fromDateKey(day)),
+        blanks: leadingBlanks(day, weekStartsOn),
+        days: [],
+      }
+      blocks.push(block)
+    }
+
+    block.days.push(day)
+  }
+
+  return blocks
+})
 
 /** Same 20-100% ramp the scale picker uses, so the two screens read alike. */
 const SCALE_OPACITY = ['opacity-20', 'opacity-40', 'opacity-60', 'opacity-80', 'opacity-100']
@@ -64,19 +94,29 @@ onMounted(() => {
 
 <template>
   <div ref="scroller" class="-mx-1 overflow-x-auto px-1">
-    <div class="grid grid-flow-col grid-rows-7 gap-[2px]" @click="onGridClick">
-      <span v-for="blank in blanks" :key="`blank-${blank}`" aria-hidden="true" class="size-2.5" />
+    <div class="flex gap-1.5" @click="onGridClick">
+      <div v-for="month in months" :key="month.key" class="flex flex-col gap-1">
+        <span class="text-ink-soft text-[9px] leading-none">{{ month.label }}</span>
 
-      <button
-        v-for="day in days"
-        :key="day"
-        type="button"
-        :data-date="day"
-        :disabled="day > today"
-        :aria-label="day"
-        class="rounded-cell size-2.5"
-        :class="cellClass(day)"
-      />
+        <div class="grid grid-flow-col grid-rows-7 gap-[2px]">
+          <span
+            v-for="blank in month.blanks"
+            :key="`blank-${blank}`"
+            aria-hidden="true"
+            class="size-2.5"
+          />
+          <button
+            v-for="day in month.days"
+            :key="day"
+            type="button"
+            :data-date="day"
+            :disabled="day > today"
+            :aria-label="day"
+            class="rounded-cell size-2.5"
+            :class="cellClass(day)"
+          />
+        </div>
+      </div>
     </div>
   </div>
 </template>
