@@ -5,6 +5,7 @@ import { Check } from 'lucide-vue-next'
 import type { Habit } from '../habit.types'
 import { KIND_META } from '@/shared/lib/kind'
 import { fromDateKey } from '@/shared/lib/date'
+import { tapFeedback } from '@/shared/lib/haptics'
 
 const { habit, days, today, markedDays, values } = defineProps<{
   habit: Habit
@@ -32,6 +33,22 @@ const dayFormatter = new Intl.DateTimeFormat('en', { month: 'short', day: 'numer
 function dayLabel(dateKey: string) {
   return dayFormatter.format(fromDateKey(dateKey))
 }
+
+function onDayTap(dateKey: string) {
+  tapFeedback()
+  emit('toggle', dateKey)
+}
+
+/** Binary kinds toggle; scale kinds open the 1-5 picker instead. */
+function onTodayTap() {
+  tapFeedback()
+
+  if (meta.value.isBinary) {
+    emit('toggle', today)
+  } else {
+    emit('scale', today)
+  }
+}
 </script>
 
 <template>
@@ -57,7 +74,7 @@ function dayLabel(dateKey: string) {
         :class="markedDays.has(day) ? meta.fill : 'bg-mist'"
         :aria-pressed="markedDays.has(day)"
         :aria-label="`${habit.name}, ${dayLabel(day)}`"
-        @click.stop="emit('toggle', day)"
+        @click.stop="onDayTap(day)"
       />
     </div>
 
@@ -67,7 +84,7 @@ function dayLabel(dateKey: string) {
       :class="markedDays.has(today) ? [meta.fill, 'text-white'] : 'bg-mist text-ink-soft'"
       :aria-pressed="markedDays.has(today)"
       :aria-label="`${habit.name}, today`"
-      @click.stop="meta.isBinary ? emit('toggle', today) : emit('scale', today)"
+      @click.stop="onTodayTap"
     >
       <Check v-if="meta.isBinary" class="size-5" />
       <span v-else class="text-sm font-semibold">{{ todayValue ?? '–' }}</span>
