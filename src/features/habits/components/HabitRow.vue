@@ -6,14 +6,21 @@ import type { Habit } from '../habit.types'
 import { KIND_META } from '@/shared/lib/kind'
 import { fromDateKey } from '@/shared/lib/date'
 
-const { habit, days, today, markedDays } = defineProps<{
+const { habit, days, today, markedDays, values } = defineProps<{
   habit: Habit
   days: readonly string[]
   today: string
   markedDays: ReadonlySet<string>
+  values: ReadonlyMap<string, number> | undefined
 }>()
 
-const emit = defineEmits<{ toggle: [dateKey: string]; open: [habitId: string] }>()
+const emit = defineEmits<{
+  toggle: [dateKey: string]
+  scale: [dateKey: string]
+  open: [habitId: string]
+}>()
+
+const todayValue = computed(() => values?.get(today) ?? null)
 
 const meta = computed(() => KIND_META[habit.kind])
 
@@ -60,9 +67,10 @@ function dayLabel(dateKey: string) {
       :class="markedDays.has(today) ? [meta.fill, 'text-white'] : 'bg-mist text-ink-soft'"
       :aria-pressed="markedDays.has(today)"
       :aria-label="`${habit.name}, today`"
-      @click.stop="emit('toggle', today)"
+      @click.stop="meta.isBinary ? emit('toggle', today) : emit('scale', today)"
     >
-      <Check class="size-5" />
+      <Check v-if="meta.isBinary" class="size-5" />
+      <span v-else class="text-sm font-semibold">{{ todayValue ?? '–' }}</span>
     </button>
   </li>
 </template>

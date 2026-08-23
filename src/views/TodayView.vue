@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import { Sparkles } from 'lucide-vue-next'
 
 import { useCreateHabit, useHabits } from '@/features/habits/habits.queries'
@@ -9,8 +9,10 @@ import BaseButton from '@/shared/ui/BaseButton.vue'
 import EmptyState from '@/shared/ui/EmptyState.vue'
 import SkeletonList from '@/shared/ui/SkeletonList.vue'
 import { lastNDays, todayKey } from '@/shared/lib/date'
-import { useEntriesInRange, useToggleEntry } from '@/features/entries/entries.queries'
+import { useEntriesInRange, useSetEntry, useToggleEntry } from '@/features/entries/entries.queries'
+import ScalePicker from '@/features/entries/components/ScalePicker.vue'
 import HabitRow from '@/features/habits/components/HabitRow.vue'
+import BaseSheet from '@/shared/ui/BaseSheet.vue'
 
 /** Today plus the four days before it, oldest first. */
 const days = computed(() => lastNDays(5))
@@ -59,6 +61,40 @@ const isEmpty = computed(() => (habits.value?.length ?? 0) === 0)
 function addSuggestion(suggestion: Suggestion) {
   createHabit.mutate({ name: suggestion.name, kind: suggestion.kind })
 }
+
+/** Values only matter for scale habits; build/quit rows ignore this map. */
+const valuesByHabit = computed(() => {
+  const map = new Map<string, Map<string, number>>()
+
+  for (const entry of entries.value ?? []) {
+    const perDay = map.get(entry.habit_id) ?? new Map<string, number>()
+    perDay.set(entry.entry_date, entry.value)
+    map.set(entry.habit_id, perDay)
+  }
+
+  return map
+})
+
+const setEntry = useSetEntry()
+const scaleTarget = ref<{ habitId: string; dateKey: string } | null>(null)
+const scaleOpen = computed({
+  get: () => scaleTarget.value !== null,
+  set: (open: boolean) => {
+    if (!open) scaleTarget.value = null
+  },
+})
+
+function openScale(habitId: string, dateKey: string) {
+  scaleTarget.value = { habitId, dateKey }
+}
+
+function saveScale(payload: { value: number; note: string | null }) {
+  const target = scaleTarget.value
+  if (!target) return
+
+  setEntry.mutate({ ...target, ...payload })
+  scaleTarget.value = null
+}
 </script>
 
 <template>
@@ -95,12 +131,23 @@ function addSuggestion(suggestion: Suggestion) {
       <HabitRow
         v-for="habit in habits ?? []"
         :key="habit.id"
+        :values="valuesByHabit.get(habit.id)"
         :habit="habit"
         :days="days"
         :today="rangeTo"
         :marked-days="markedByHabit.get(habit.id) ?? new Set()"
         @toggle="(day) => onToggle(habit.id, day)"
+        @scale="(day) => openScale(habit.id, day)"
       />
     </ul>
+
+    <BaseSheet v-model="scaleOpen" title="How was it?">
+      <ScalePicker
+        v-if="scaleTarget"
+        :key="`${scaleTarget.habitId}-${scaleTarget.dateKey}`"
+        :initial-value="valuesByHabit.get(scaleTarget.habitId)?.get(scaleTarget.dateKey) ?? null"
+        @submit="saveScale"
+      />
+    </BaseSheet>
   </div>
 </template>
