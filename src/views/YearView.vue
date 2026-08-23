@@ -1,14 +1,57 @@
 <script lang="ts" setup>
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 
-import { useEntriesInRange } from '@/features/entries/entries.queries'
+import DayPanel from '@/features/entries/components/DayPanel.vue'
+import ScalePicker from '@/features/entries/components/ScalePicker.vue'
+import { useEntriesInRange, useSetEntry, useToggleEntry } from '@/features/entries/entries.queries'
 import { useHabits } from '@/features/habits/habits.queries'
-import { eachDayOfYear } from '@/shared/lib/date'
-import { KIND_META } from '@/shared/lib/kind'
+import YearHeatmap from '@/features/stats/components/YearHeatmap.vue'
+import { eachDayOfYear, todayKey } from '@/shared/lib/date'
+import BaseSheet from '@/shared/ui/BaseSheet.vue'
+import KindDot from '@/shared/ui/KindDot.vue'
+import SkeletonList from '@/shared/ui/SkeletonList.vue'
 
 const route = useRoute()
 const router = useRouter()
+
+const { toggle } = useToggleEntry()
+const setEntry = useSetEntry()
+
+const selectedDay = ref<string | null>(null)
+const scalingHabitId = ref<string | null>(null)
+
+/** One sheet, two contents: the day summary, or the 1-5 picker for one habit. */
+const daySheetOpen = computed({
+  get: () => selectedDay.value !== null,
+  set: (open: boolean) => {
+    if (!open) {
+      selectedDay.value = null
+      scalingHabitId.value = null
+    }
+  },
+})
+
+function onSelectDay(_habitId: string, dateKey: string) {
+  scalingHabitId.value = null
+  selectedDay.value = dateKey
+}
+
+function onToggle(habitId: string) {
+  const dateKey = selectedDay.value
+  if (!dateKey) return
+
+  toggle({ habitId, dateKey }, markedByHabit.value.get(habitId)?.has(dateKey) ?? false)
+}
+
+function onScaleSubmit(payload: { value: number; note: string | null }) {
+  const dateKey = selectedDay.value
+  const habitId = scalingHabitId.value
+  if (!dateKey || !habitId) return
+
+  setEntry.mutate({ habitId, dateKey, ...payload })
+  scalingHabitId.value = null
+}
 
 const currentYear = new Date().getFullYear()
 
@@ -24,28 +67,42 @@ const year = computed({
   },
 })
 
-/** `'all'` or a habit id. Also in the URL. */
-const habitFilter = computed({
-  get: () => (typeof route.query.h === 'string' ? route.query.h : 'all'),
-  set: (next: string) => {
-    void router.push({ query: { ...route.query, h: next } })
-  },
-})
-
 const rangeFrom = computed(() => `${year.value}-01-01`)
 const rangeTo = computed(() => `${year.value}-12-31`)
 
-const days = computed(() => eachDayOfYear(year.value))
+/** The grid stops at today: future cells would be empty placeholders. */
+const days = computed(() => {
+  const today = todayKey()
 
-const { data: habits } = useHabits()
-const { data: entries, isPending } = useEntriesInRange(rangeFrom, rangeTo, { keepPrevious: true })
+  return eachDayOfYear(year.value).filter((day) => day <= today)
+})
 
-const visibleEntries = computed(() => {
-  const all = entries.value ?? []
+const { data: habits, isPending } = useHabits()
+const { data: entries } = useEntriesInRange(rangeFrom, rangeTo, { keepPrevious: true })
 
-  return habitFilter.value === 'all'
-    ? all
-    : all.filter((entry) => entry.habit_id === habitFilter.value)
+/** One request feeds every grid; entries are folded per habit for O(1) lookups. */
+const markedByHabit = computed(() => {
+  const map = new Map<string, Set<string>>()
+
+  for (const entry of entries.value ?? []) {
+    const marked = map.get(entry.habit_id) ?? new Set<string>()
+    marked.add(entry.entry_date)
+    map.set(entry.habit_id, marked)
+  }
+
+  return map
+})
+
+const valuesByHabit = computed(() => {
+  const map = new Map<string, Map<string, number>>()
+
+  for (const entry of entries.value ?? []) {
+    const perDay = map.get(entry.habit_id) ?? new Map<string, number>()
+    perDay.set(entry.entry_date, entry.value)
+    map.set(entry.habit_id, perDay)
+  }
+
+  return map
 })
 </script>
 
@@ -72,34 +129,46 @@ const visibleEntries = computed(() => {
       </button>
     </header>
 
-    <div class="-mx-4 flex gap-2 overflow-x-auto px-4 pb-1">
-      <button
-        type="button"
-        class="rounded-card shrink-0 px-3 py-1.5 text-xs font-medium"
-        :class="habitFilter === 'all' ? 'bg-sea text-white' : 'bg-mist text-ink-soft'"
-        @click="habitFilter = 'all'"
-      >
-        All
-      </button>
-      <button
+    <SkeletonList v-if="isPending" row-height="h-28" label="Loading habits…" />
+
+    <ul v-else class="flex flex-col gap-3">
+      <li
         v-for="habit in habits ?? []"
         :key="habit.id"
-        type="button"
-        class="rounded-card shrink-0 px-3 py-1.5 text-xs font-medium"
-        :class="
-          habitFilter === habit.id
-            ? [KIND_META[habit.kind].fill, 'text-white']
-            : 'bg-mist text-ink-soft'
-        "
-        @click="habitFilter = habit.id"
+        class="border-hair rounded-card flex flex-col gap-2 border p-3"
       >
-        {{ habit.name }}
-      </button>
-    </div>
+        <div class="flex items-center gap-2">
+          <KindDot :kind="habit.kind" />
+          <span class="text-ink flex-1 truncate text-sm font-medium">{{ habit.name }}</span>
+        </div>
 
-    <p class="text-ink-soft text-xs">
-      {{ days.length }} days · {{ visibleEntries.length }} entries
-      <span v-if="isPending"> · loading…</span>
-    </p>
+        <YearHeatmap
+          :days="days"
+          :kind="habit.kind"
+          :marked-days="markedByHabit.get(habit.id) ?? new Set()"
+          :values="valuesByHabit.get(habit.id)"
+          @select="(day) => onSelectDay(habit.id, day)"
+        />
+      </li>
+    </ul>
+
+    <BaseSheet v-model="daySheetOpen" :title="scalingHabitId ? 'How was it?' : 'Day'">
+      <ScalePicker
+        v-if="scalingHabitId && selectedDay"
+        :key="`${scalingHabitId}-${selectedDay}`"
+        :initial-value="valuesByHabit.get(scalingHabitId)?.get(selectedDay) ?? null"
+        @submit="onScaleSubmit"
+      />
+
+      <DayPanel
+        v-else-if="selectedDay"
+        :date-key="selectedDay"
+        :habits="habits ?? []"
+        :marked-by-habit="markedByHabit"
+        :values-by-habit="valuesByHabit"
+        @toggle="onToggle"
+        @scale="(habitId) => (scalingHabitId = habitId)"
+      />
+    </BaseSheet>
   </div>
 </template>
