@@ -6,7 +6,8 @@
   --color-mist: #ddf4e7; /* yüzey, boş hücre */
   --color-leaf: #67c090; /* build */
   --color-sea: #26667f; /* scale + primary aksiyon */
-  --color-deep: #124170; /* quit */
+  --color-deep: #124170; /* reserved accent */
+  --color-ember: #e05b4f; /* quit — its own red, kept apart from --color-alert */
 
   /* Sistem durumları — ASLA kategori rengi olarak kullanma */
   --color-alert: #c2483c;

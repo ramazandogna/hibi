@@ -43,9 +43,9 @@ export const KIND_META: Record<HabitKind, KindMeta> = {
   },
   quit: {
     label: 'Quit',
-    fill: 'bg-deep',
-    soft: 'bg-deep/15',
-    text: 'text-deep',
+    fill: 'bg-ember',
+    soft: 'bg-ember/15',
+    text: 'text-ember',
     streakLabel: 'clean days',
     isBinary: true,
   },
@@ -57,4 +57,41 @@ export const KIND_META: Record<HabitKind, KindMeta> = {
     streakLabel: 'avg this week',
     isBinary: false,
   },
+}
+
+const SCALE_OPACITY = ['opacity-20', 'opacity-40', 'opacity-60', 'opacity-80', 'opacity-100']
+
+/**
+ * Tailwind classes for one day cell.
+ *
+ * Single source for cell colour: the habit row, the year heatmap and the week
+ * grid all call this, so changing how a marked day looks is one edit.
+ *
+ * @param options.kind - Habit mode, decides the fill colour.
+ * @param options.isMarked - Whether the day has an entry.
+ * @param options.value - 1-5 value for `scale` habits; drives opacity.
+ * @param options.isFuture - Future days render as an empty outline.
+ *
+ * @example
+ * ```ts
+ * dayCellClass({ kind: 'build', isMarked: true })            // 'bg-leaf'
+ * dayCellClass({ kind: 'scale', isMarked: true, value: 3 })  // 'bg-sea opacity-60'
+ * dayCellClass({ kind: 'quit', isMarked: false })            // 'bg-mist'
+ * ```
+ */
+export function dayCellClass(options: {
+  kind: HabitKind
+  isMarked: boolean
+  value?: number | null | undefined
+  isFuture?: boolean | undefined
+}): string {
+  const { kind, isMarked, value = null, isFuture = false } = options
+
+  if (isFuture) return 'border-hair border bg-transparent'
+  if (!isMarked) return 'bg-mist'
+
+  const meta = KIND_META[kind]
+  if (kind !== 'scale') return meta.fill
+
+  return `${meta.fill} ${SCALE_OPACITY[(value ?? 1) - 1] ?? 'opacity-100'}`
 }
