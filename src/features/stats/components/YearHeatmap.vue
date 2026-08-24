@@ -3,7 +3,7 @@ import { computed, onMounted, ref } from 'vue'
 
 import { fromDateKey, leadingBlanks, todayKey } from '@/shared/lib/date'
 import type { WeekStart } from '@/shared/lib/date'
-import { KIND_META } from '@/shared/lib/kind'
+import { dayCellClass } from '@/shared/lib/kind'
 import type { HabitKind } from '@/shared/lib/kind'
 
 const {
@@ -11,12 +11,14 @@ const {
   kind,
   markedDays,
   values,
+  noteDays = undefined,
   weekStartsOn = 1,
 } = defineProps<{
   days: readonly string[]
   kind: HabitKind
   markedDays: ReadonlySet<string>
   values: ReadonlyMap<string, number> | undefined
+  noteDays?: ReadonlySet<string> | undefined
   weekStartsOn?: WeekStart
 }>()
 
@@ -58,21 +60,6 @@ const months = computed<MonthBlock[]>(() => {
   return blocks
 })
 
-/** Same 20-100% ramp the scale picker uses, so the two screens read alike. */
-const SCALE_OPACITY = ['opacity-20', 'opacity-40', 'opacity-60', 'opacity-80', 'opacity-100']
-
-function cellClass(day: string): string {
-  if (day > today) return 'border-hair border bg-transparent'
-  if (!markedDays.has(day)) return 'bg-mist'
-
-  const meta = KIND_META[kind]
-  if (kind !== 'scale') return meta.fill
-
-  const value = values?.get(day) ?? 1
-
-  return `${meta.fill} ${SCALE_OPACITY[value - 1] ?? 'opacity-100'}`
-}
-
 /**
  * One listener for the whole grid instead of one per cell.
  *
@@ -112,8 +99,16 @@ onMounted(() => {
             :data-date="day"
             :disabled="day > today"
             :aria-label="day"
-            class="rounded-cell size-2.5"
-            :class="cellClass(day)"
+            class="rounded-cell relative size-2.5 after:absolute after:right-0 after:bottom-0 after:hidden after:size-[3px] after:rounded-full after:bg-black/40 after:content-[''] data-[note]:after:block"
+            :data-note="noteDays?.has(day) ? '' : undefined"
+            :class="
+              dayCellClass({
+                kind,
+                isMarked: markedDays.has(day),
+                value: values?.get(day),
+                isFuture: day > today,
+              })
+            "
           />
         </div>
       </div>

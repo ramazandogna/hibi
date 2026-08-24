@@ -6,10 +6,13 @@ import DayPanel from '@/features/entries/components/DayPanel.vue'
 import ScalePicker from '@/features/entries/components/ScalePicker.vue'
 import { useEntriesInRange, useSetEntry, useToggleEntry } from '@/features/entries/entries.queries'
 import { useHabits } from '@/features/habits/habits.queries'
+import DayNoteField from '@/features/notes/components/DayNoteField.vue'
+import { useNotesInRange } from '@/features/notes/notes.queries'
 import YearHeatmap from '@/features/stats/components/YearHeatmap.vue'
 import { eachDayOfYear, todayKey } from '@/shared/lib/date'
 import BaseSheet from '@/shared/ui/BaseSheet.vue'
 import KindDot from '@/shared/ui/KindDot.vue'
+import PageHeader from '@/shared/ui/PageHeader.vue'
 import SkeletonList from '@/shared/ui/SkeletonList.vue'
 
 const route = useRoute()
@@ -79,6 +82,14 @@ const days = computed(() => {
 
 const { data: habits, isPending } = useHabits()
 const { data: entries } = useEntriesInRange(rangeFrom, rangeTo, { keepPrevious: true })
+const { data: notes } = useNotesInRange(rangeFrom, rangeTo)
+
+/** Days that have a note, for the small marker on each cell. */
+const noteDays = computed(() => new Set((notes.value ?? []).map((note) => note.entry_date)))
+
+const noteBodyByDay = computed(
+  () => new Map((notes.value ?? []).map((note) => [note.entry_date, note.body])),
+)
 
 /** One request feeds every grid; entries are folded per habit for O(1) lookups. */
 const markedByHabit = computed(() => {
@@ -108,26 +119,29 @@ const valuesByHabit = computed(() => {
 
 <template>
   <div class="flex w-full flex-col gap-4">
-    <header class="flex items-center justify-between">
-      <button
-        type="button"
-        class="text-ink-soft hover:text-ink p-2"
-        aria-label="Previous year"
-        @click="year -= 1"
-      >
-        ‹
-      </button>
-      <h1 class="text-ink text-lg font-semibold tabular-nums">{{ year }}</h1>
-      <button
-        type="button"
-        class="text-ink-soft hover:text-ink p-2 disabled:opacity-30"
-        aria-label="Next year"
-        :disabled="year >= currentYear"
-        @click="year += 1"
-      >
-        ›
-      </button>
-    </header>
+    <PageHeader :title="String(year)">
+      <template #left>
+        <button
+          type="button"
+          class="text-ink-soft hover:text-ink p-2"
+          aria-label="Previous year"
+          @click="year -= 1"
+        >
+          ‹
+        </button>
+      </template>
+      <template #right>
+        <button
+          type="button"
+          class="text-ink-soft hover:text-ink p-2 disabled:opacity-30"
+          aria-label="Next year"
+          :disabled="year >= currentYear"
+          @click="year += 1"
+        >
+          ›
+        </button>
+      </template>
+    </PageHeader>
 
     <SkeletonList v-if="isPending" row-height="h-28" label="Loading habits…" />
 
@@ -147,6 +161,7 @@ const valuesByHabit = computed(() => {
           :kind="habit.kind"
           :marked-days="markedByHabit.get(habit.id) ?? new Set()"
           :values="valuesByHabit.get(habit.id)"
+          :note-days="noteDays"
           @select="(day) => onSelectDay(habit.id, day)"
         />
       </li>
@@ -168,7 +183,15 @@ const valuesByHabit = computed(() => {
         :values-by-habit="valuesByHabit"
         @toggle="onToggle"
         @scale="(habitId) => (scalingHabitId = habitId)"
-      />
+      >
+        <template #note>
+          <DayNoteField
+            :key="selectedDay"
+            :date-key="selectedDay"
+            :initial-body="noteBodyByDay.get(selectedDay) ?? ''"
+          />
+        </template>
+      </DayPanel>
     </BaseSheet>
   </div>
 </template>

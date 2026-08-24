@@ -66,5 +66,8 @@ const doneCount = computed(() => rows.value.filter((row) => row.isMarked).length
     </ul>
 
     <p class="text-ink-soft text-xs">{{ doneCount }} of {{ rows.length }} completed</p>
+
+    <!-- Filled by the parent: features/entries must not import features/notes. -->
+    <slot name="note" />
   </div>
 </template>
