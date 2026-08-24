@@ -7,9 +7,11 @@ import { toAppError } from '@/shared/lib/app-error'
 import type { HabitKind } from '@/shared/lib/kind'
 import BaseButton from '@/shared/ui/BaseButton.vue'
 import EmptyState from '@/shared/ui/EmptyState.vue'
+import PageHeader from '@/shared/ui/PageHeader.vue'
 import SkeletonList from '@/shared/ui/SkeletonList.vue'
-import { lastNDays, todayKey } from '@/shared/lib/date'
+import { fromDateKey, lastNDays, todayKey } from '@/shared/lib/date'
 import { useEntriesInRange, useSetEntry, useToggleEntry } from '@/features/entries/entries.queries'
+import ScaleCheckIn from '@/features/entries/components/ScaleCheckIn.vue'
 import ScalePicker from '@/features/entries/components/ScalePicker.vue'
 import HabitRow from '@/features/habits/components/HabitRow.vue'
 import BaseSheet from '@/shared/ui/BaseSheet.vue'
@@ -43,6 +45,13 @@ const markedByHabit = computed(() => {
 
   return map
 })
+
+const todayFormatter = new Intl.DateTimeFormat('en', {
+  weekday: 'long',
+  day: 'numeric',
+  month: 'long',
+})
+const todayTitle = computed(() => todayFormatter.format(fromDateKey(rangeTo.value)))
 
 const { toggle } = useToggleEntry()
 
@@ -95,6 +104,22 @@ function openScale(habitId: string, dateKey: string) {
   scaleTarget.value = { habitId, dateKey }
 }
 
+/**
+ * Scale habits with no value for today.
+ *
+ * Asking inline costs one tap instead of opening the picker, which is the
+ * difference between a mood tracker that gets filled in and one that does not.
+ */
+const pendingCheckIns = computed(() =>
+  (habits.value ?? []).filter(
+    (habit) => habit.kind === 'scale' && !markedByHabit.value.get(habit.id)?.has(rangeTo.value),
+  ),
+)
+
+function checkIn(habitId: string, value: number) {
+  setEntry.mutate({ habitId, dateKey: rangeTo.value, value })
+}
+
 function saveScale(payload: { value: number; note: string | null }) {
   const target = scaleTarget.value
   if (!target) return
@@ -110,7 +135,7 @@ function openHabit(habitId: string) {
 
 <template>
   <div class="flex w-full flex-col gap-4">
-    <h1 class="text-ink text-lg font-semibold">Today</h1>
+    <PageHeader :title="todayTitle" />
 
     <SkeletonList v-if="isPending" row-height="h-14" label="Loading habits…" />
 
@@ -138,7 +163,16 @@ function openHabit(habitId: string) {
       </template>
     </EmptyState>
 
-    <ul v-else class="flex flex-col gap-2">
+    <template v-else>
+      <ScaleCheckIn
+        v-for="habit in pendingCheckIns"
+        :key="`checkin-${habit.id}`"
+        :habit-name="habit.name"
+        @select="(value) => checkIn(habit.id, value)"
+      />
+    </template>
+
+    <ul v-if="!isPending && !isError && !isEmpty" class="flex flex-col gap-2">
       <HabitRow
         v-for="habit in habits ?? []"
         :key="habit.id"
