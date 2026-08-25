@@ -17,6 +17,7 @@ function onKeydown(event: KeyboardEvent) {
 
 watch(open, async (isOpen) => {
   if (isOpen) {
+    setBackgroundInert(true)
     lastFocused = document.activeElement instanceof HTMLElement ? document.activeElement : null
     window.addEventListener('keydown', onKeydown)
     await nextTick()
@@ -25,10 +26,26 @@ watch(open, async (isOpen) => {
     window.removeEventListener('keydown', onKeydown)
     lastFocused?.focus()
     lastFocused = null
+    setBackgroundInert(false)
   }
 })
 
-onUnmounted(() => window.removeEventListener('keydown', onKeydown))
+/**
+ * `inert` takes the whole app out of tab order and pointer events while the
+ * sheet is open — a real focus trap without keydown bookkeeping.
+ *
+ * The sheet itself is teleported to `#sheet-root`, a sibling of `#app`, so it
+ * stays interactive.
+ */
+function setBackgroundInert(isInert: boolean) {
+  document.getElementById('app')?.toggleAttribute('inert', isInert)
+}
+
+onUnmounted(() => {
+  window.removeEventListener('keydown', onKeydown)
+  // Unmounting while open would otherwise leave the whole app inert forever.
+  setBackgroundInert(false)
+})
 </script>
 
 <template>

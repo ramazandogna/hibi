@@ -74,6 +74,12 @@
 }
 
 @layer components {
+  /* One visible focus ring everywhere, so no component can quietly lose it. */
+  :focus-visible {
+    outline: 2px solid var(--color-sea);
+    outline-offset: 2px;
+  }
+
   /* Geometry of the phone shell. Shared by the shell itself and by overlays
      that must line up with it (BaseSheet teleports outside the app tree). */
   .shell-frame {
