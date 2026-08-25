@@ -6,16 +6,18 @@ import { useEntriesInRange, useToggleEntry } from '@/features/entries/entries.qu
 import { useHabits } from '@/features/habits/habits.queries'
 import { useNotesInRange } from '@/features/notes/notes.queries'
 import { addDays, fromDateKey, startOfWeek, todayKey } from '@/shared/lib/date'
-import type { WeekStart } from '@/shared/lib/date'
 import { dayCellClass } from '@/shared/lib/kind'
 import PageHeader from '@/shared/ui/PageHeader.vue'
 import SkeletonList from '@/shared/ui/SkeletonList.vue'
+
+import { useWeekStart } from '@/features/profile/profile.queries'
 
 const route = useRoute()
 const router = useRouter()
 
 /** Read from the profile in a later step; Monday for now. */
-const weekStartsOn: WeekStart = 1
+const weekStartsOn = useWeekStart()
+
 const today = todayKey()
 
 /**
@@ -29,8 +31,8 @@ const weekStart = computed({
     const raw = route.query.w
 
     return typeof raw === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(raw)
-      ? startOfWeek(raw, weekStartsOn)
-      : startOfWeek(today, weekStartsOn)
+      ? startOfWeek(raw, weekStartsOn.value)
+      : startOfWeek(today, weekStartsOn.value)
   },
   set: (next: string) => {
     void router.push({ query: { ...route.query, w: next } })

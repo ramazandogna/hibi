@@ -13,6 +13,8 @@ import BaseSheet from '@/shared/ui/BaseSheet.vue'
 import PageHeader from '@/shared/ui/PageHeader.vue'
 import StatCard from '@/shared/ui/StatCard.vue'
 
+import ProfileSettings from '@/features/profile/components/ProfileSettings.vue'
+
 const auth = useAuthStore()
 const router = useRouter()
 
@@ -94,6 +96,8 @@ async function logout() {
         New habit
       </BaseButton>
     </div>
+
+    <ProfileSettings />
 
     <BaseSheet v-model="sheetOpen" :title="editing ? 'Edit habit' : 'New habit'">
       <HabitForm :key="editing?.id ?? 'new'" :habit="editing" @saved="sheetOpen = false" />

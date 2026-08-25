@@ -8,6 +8,7 @@ import { useEntriesInRange, useSetEntry, useToggleEntry } from '@/features/entri
 import { useHabits } from '@/features/habits/habits.queries'
 import DayNoteField from '@/features/notes/components/DayNoteField.vue'
 import { useNotesInRange } from '@/features/notes/notes.queries'
+import { useWeekStart } from '@/features/profile/profile.queries'
 import YearHeatmap from '@/features/stats/components/YearHeatmap.vue'
 import { eachDayOfYear, todayKey } from '@/shared/lib/date'
 import BaseSheet from '@/shared/ui/BaseSheet.vue'
@@ -57,6 +58,9 @@ function onScaleSubmit(payload: { value: number; note: string | null }) {
 }
 
 const currentYear = new Date().getFullYear()
+
+/** Grids reflow when the user changes this in Profile. */
+const weekStartsOn = useWeekStart()
 
 /** Selected year lives in the URL so it survives refresh, sharing and back. */
 const year = computed({
@@ -162,6 +166,7 @@ const valuesByHabit = computed(() => {
           :marked-days="markedByHabit.get(habit.id) ?? new Set()"
           :values="valuesByHabit.get(habit.id)"
           :note-days="noteDays"
+          :week-starts-on="weekStartsOn"
           @select="(day) => onSelectDay(habit.id, day)"
         />
       </li>
