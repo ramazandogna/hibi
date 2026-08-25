@@ -20,7 +20,14 @@ export async function getProfile(): Promise<Profile> {
 
 /** Applies a partial update and returns the stored row. */
 export async function updateProfile(patch: ProfilePatch): Promise<Profile> {
-  const { data, error } = await supabase.from('profiles').update(patch).select().single()
+  // PostgREST rejects an UPDATE with no filter, so match every row the policy
+  // lets us see — which RLS has already narrowed to this user's single row.
+  const { data, error } = await supabase
+    .from('profiles')
+    .update(patch)
+    .not('id', 'is', null)
+    .select()
+    .single()
 
   if (error) throw toAppError(error)
   return data

@@ -13,11 +13,21 @@ const update = useUpdateProfile()
 const displayName = ref('')
 const theme = useTheme()
 
-// The database copy is the cross-device source; adopt it once it arrives.
+/**
+ * Adopt the stored theme exactly once, when the row first arrives.
+ *
+ * Without the guard this watcher re-applies the database value on every refetch
+ * and undoes a choice the user just made locally.
+ */
+let hasAdoptedStoredTheme = false
+
 watch(
   profile,
   (next) => {
-    if (next && isThemePreference(next.theme) && next.theme !== theme.value) {
+    if (hasAdoptedStoredTheme || !next) return
+
+    hasAdoptedStoredTheme = true
+    if (isThemePreference(next.theme) && next.theme !== theme.value) {
       theme.value = next.theme
     }
   },
