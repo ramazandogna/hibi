@@ -4,11 +4,30 @@ import { ref, watch } from 'vue'
 import { useProfile, useUpdateProfile } from '../profile.queries'
 import { useDebouncedCallback } from '@/shared/lib/use-debounced-callback'
 import BaseInput from '@/shared/ui/BaseInput.vue'
+import { isThemePreference, useTheme } from '@/shared/lib/theme'
+import type { ThemePreference } from '@/shared/lib/theme'
 
 const { data: profile } = useProfile()
 const update = useUpdateProfile()
 
 const displayName = ref('')
+const theme = useTheme()
+
+// The database copy is the cross-device source; adopt it once it arrives.
+watch(
+  profile,
+  (next) => {
+    if (next && isThemePreference(next.theme) && next.theme !== theme.value) {
+      theme.value = next.theme
+    }
+  },
+  { immediate: true },
+)
+
+function selectTheme(preference: ThemePreference) {
+  theme.value = preference
+  update.mutate({ theme: preference })
+}
 
 // Seed the field once the row arrives, without fighting the user's typing.
 watch(
@@ -70,9 +89,9 @@ const THEME_OPTIONS = [
           :key="option.value"
           type="button"
           class="flex h-10 flex-1 items-center justify-center rounded-xl text-sm font-medium transition-colors select-none"
-          :class="profile?.theme === option.value ? 'bg-sea text-white' : 'text-ink-soft'"
-          :aria-pressed="profile?.theme === option.value"
-          @click="update.mutate({ theme: option.value })"
+          :class="theme === option.value ? 'bg-sea text-white' : 'text-ink-soft'"
+          :aria-pressed="theme === option.value"
+          @click="selectTheme(option.value)"
         >
           {{ option.label }}
         </button>
