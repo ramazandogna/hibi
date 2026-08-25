@@ -5,8 +5,10 @@ import AuthLayout from '@/layouts/AuthLayout.vue'
 import { computed } from 'vue'
 import { VueQueryDevtools } from '@tanstack/vue-query-devtools'
 import { slideDirection } from '@/shared/lib/tab-transition'
+import { useTheme } from '@/shared/lib/theme'
 
 const route = useRoute()
+useTheme()
 
 const transitionName = computed(() =>
   slideDirection.value === 'none' ? '' : `slide-${slideDirection.value}`,

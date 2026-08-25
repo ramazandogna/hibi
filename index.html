@@ -7,6 +7,20 @@
     <meta name="theme-color" content="#26667F" />
 
     <title>Hibi</title>
+    <script>
+      // Runs before the bundle: a dark-theme user must not see a white flash.
+      ;(function () {
+        try {
+          var pref = localStorage.getItem('hibi-theme') || 'system'
+          var dark =
+            pref === 'dark' ||
+            (pref === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches)
+          if (dark) document.documentElement.classList.add('dark')
+        } catch (e) {
+          /* storage blocked */
+        }
+      })()
+    </script>
   </head>
   <body>
     <div id="app"></div>
