@@ -15,6 +15,12 @@ export interface KindMeta {
   text: string
   /** Noun that follows the streak number, e.g. "21 day streak". */
   streakLabel: string
+  /** Heading for the group this kind forms in a habit list. */
+  groupLabel: string
+  /** Tinted card surface: background, border and shadow in the kind's colour. */
+  card: string
+  /** Unmarked cell: the fill at low opacity, so a card reads as one colour. */
+  empty: string
   /** Binary kinds are toggled; `scale` asks for a 1-5 value instead. */
   isBinary: boolean
 }
@@ -39,6 +45,9 @@ export const KIND_META: Record<HabitKind, KindMeta> = {
     soft: 'bg-leaf/15',
     text: 'text-leaf',
     streakLabel: 'day streak',
+    groupLabel: 'Habits to build',
+    card: 'bg-leaf/5 border-leaf/25 shadow-sm shadow-leaf/20',
+    empty: 'bg-leaf/15',
     isBinary: true,
   },
   quit: {
@@ -47,6 +56,9 @@ export const KIND_META: Record<HabitKind, KindMeta> = {
     soft: 'bg-ember/15',
     text: 'text-ember',
     streakLabel: 'clean days',
+    groupLabel: 'Things to quit',
+    card: 'bg-ember/5 border-ember/25 shadow-sm shadow-ember/20',
+    empty: 'bg-ember/15',
     isBinary: true,
   },
   scale: {
@@ -55,6 +67,9 @@ export const KIND_META: Record<HabitKind, KindMeta> = {
     soft: 'bg-sea/15',
     text: 'text-sea',
     streakLabel: 'avg this week',
+    groupLabel: 'How you feel',
+    card: 'bg-sea/5 border-sea/25 shadow-sm shadow-sea/20',
+    empty: 'bg-sea/15',
     isBinary: false,
   },
 }
@@ -87,11 +102,38 @@ export function dayCellClass(options: {
 }): string {
   const { kind, isMarked, value = null, isFuture = false } = options
 
-  if (isFuture) return 'border-hair border bg-transparent'
-  if (!isMarked) return 'bg-mist'
-
   const meta = KIND_META[kind]
+
+  if (isFuture) return 'border-hair border bg-transparent'
+  if (!isMarked) return meta.empty
+
   if (kind !== 'scale') return meta.fill
 
   return `${meta.fill} ${SCALE_OPACITY[(value ?? 1) - 1] ?? 'opacity-100'}`
+}
+
+/**
+ * Splits habits into one group per kind, in `KIND_ORDER`.
+ *
+ * Grouping is a reading aid: a screen of twelve mixed rows is noise, three
+ * labelled blocks is a summary. Empty kinds are dropped so a user who only
+ * builds habits never sees an empty "Things to quit" heading.
+ *
+ * @example
+ * ```ts
+ * groupByKind(habits, (habit) => habit.kind)
+ * // [{ kind: 'build', label: 'Habits to build', items: [...] }, ...]
+ * ```
+ */
+export const KIND_ORDER = ['build', 'quit', 'scale'] as const satisfies readonly HabitKind[]
+
+export function groupByKind<T>(
+  items: readonly T[],
+  getKind: (item: T) => HabitKind,
+): { kind: HabitKind; label: string; items: T[] }[] {
+  return KIND_ORDER.map((kind) => ({
+    kind,
+    label: KIND_META[kind].groupLabel,
+    items: items.filter((item) => getKind(item) === kind),
+  })).filter((group) => group.items.length > 0)
 }
