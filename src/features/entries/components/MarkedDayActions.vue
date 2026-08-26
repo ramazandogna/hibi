@@ -28,6 +28,13 @@ const note = ref(initialNote)
     />
 
     <BaseButton @click="emit('save', note.trim() || null)">Save note</BaseButton>
-    <BaseButton variant="danger" @click="emit('remove')">Remove mark</BaseButton>
+
+    <button
+      type="button"
+      class="text-ink-soft hover:text-alert self-center text-xs underline underline-offset-2 transition-colors"
+      @click="emit('remove')"
+    >
+      Remove mark
+    </button>
   </div>
 </template>

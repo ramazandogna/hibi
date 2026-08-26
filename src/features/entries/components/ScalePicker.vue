@@ -8,7 +8,10 @@ const { initialValue = null, initialNote = '' } = defineProps<{
   initialNote?: string
 }>()
 
-const emit = defineEmits<{ submit: [payload: { value: number; note: string | null }] }>()
+const emit = defineEmits<{
+  submit: [payload: { value: number; note: string | null }]
+  remove: []
+}>()
 
 /** Opacity carries the value, so the same scale reads in the year heatmap. */
 const LEVELS = [
@@ -61,5 +64,14 @@ function submit() {
     />
 
     <BaseButton :disabled="selected === null" @click="submit">Save</BaseButton>
+
+    <button
+      v-if="initialValue !== null"
+      type="button"
+      class="text-ink-soft hover:text-alert self-center text-xs underline underline-offset-2 transition-colors"
+      @click="emit('remove')"
+    >
+      Remove entry
+    </button>
   </div>
 </template>
