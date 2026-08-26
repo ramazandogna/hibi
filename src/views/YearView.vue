@@ -1,16 +1,20 @@
 <script lang="ts" setup>
 import { computed, ref } from 'vue'
+import { ChevronDown } from 'lucide-vue-next'
 import { useRoute, useRouter } from 'vue-router'
 
-import { useEntriesInRange } from '@/features/entries/entries.queries'
+import DayPanel from '@/features/entries/components/DayPanel.vue'
+import ScalePicker from '@/features/entries/components/ScalePicker.vue'
+import { useEntriesInRange, useSetEntry, useToggleEntry } from '@/features/entries/entries.queries'
 import { useHabits } from '@/features/habits/habits.queries'
+import DayNoteField from '@/features/notes/components/DayNoteField.vue'
 import { useNotesInRange } from '@/features/notes/notes.queries'
 import { useWeekStart } from '@/features/profile/profile.queries'
+import YearHabitHeader from '@/features/stats/components/YearHabitHeader.vue'
 import YearHeatmap from '@/features/stats/components/YearHeatmap.vue'
 import { eachDayOfYear, fromDateKey, todayKey } from '@/shared/lib/date'
 import { groupByKind, KIND_META } from '@/shared/lib/kind'
 import BaseSheet from '@/shared/ui/BaseSheet.vue'
-import KindDot from '@/shared/ui/KindDot.vue'
 import PageHeader from '@/shared/ui/PageHeader.vue'
 import SectionHeading from '@/shared/ui/SectionHeading.vue'
 import SkeletonList from '@/shared/ui/SkeletonList.vue'
@@ -146,6 +150,43 @@ const selectedDayTitle = computed(() =>
   selectedDay.value ? noteTitleFormatter.format(fromDateKey(selectedDay.value)) : '',
 )
 
+const { toggle } = useToggleEntry()
+const setEntry = useSetEntry()
+
+/** Today's panel, reachable from the year title so every screen offers it. */
+const dayPanelDate = ref<string | null>(null)
+const scalingHabitId = ref<string | null>(null)
+
+const dayPanelOpen = computed({
+  get: () => dayPanelDate.value !== null,
+  set: (open: boolean) => {
+    if (!open) {
+      dayPanelDate.value = null
+      scalingHabitId.value = null
+    }
+  },
+})
+
+const dayPanelTitle = computed(() =>
+  dayPanelDate.value ? noteTitleFormatter.format(fromDateKey(dayPanelDate.value)) : '',
+)
+
+function onPanelToggle(habitId: string) {
+  const dateKey = dayPanelDate.value
+  if (!dateKey) return
+
+  toggle({ habitId, dateKey }, markedByHabit.value.get(habitId)?.has(dateKey) ?? false)
+}
+
+function onScaleSubmit(payload: { value: number; note: string | null }) {
+  const dateKey = dayPanelDate.value
+  const habitId = scalingHabitId.value
+  if (!dateKey || !habitId) return
+
+  setEntry.mutate({ habitId, dateKey, ...payload })
+  scalingHabitId.value = null
+}
+
 /** The year grid is read-only: a cell only opens the notes it holds. */
 function onSelectDay(habitId: string, dateKey: string) {
   selectedHabitId.value = habitId
@@ -156,6 +197,17 @@ function onSelectDay(habitId: string, dateKey: string) {
 <template>
   <div class="flex w-full flex-col gap-4">
     <PageHeader :title="String(year)">
+      <template #title>
+        <button
+          type="button"
+          class="header-action"
+          :aria-label="`Open today`"
+          @click="dayPanelDate = todayKey()"
+        >
+          <span class="truncate">{{ year }}</span>
+          <ChevronDown class="text-ink-soft size-4 shrink-0" aria-hidden="true" />
+        </button>
+      </template>
       <template #left>
         <button
           type="button"
@@ -195,10 +247,11 @@ function onSelectDay(habitId: string, dateKey: string) {
           class="rounded-card flex flex-col gap-2 border p-3"
           :class="KIND_META[habit.kind].card"
         >
-          <div class="flex items-center gap-2">
-            <KindDot :kind="habit.kind" />
-            <span class="text-ink flex-1 truncate text-sm font-medium">{{ habit.name }}</span>
-          </div>
+          <YearHabitHeader
+            :habit="habit"
+            :marked-days="markedByHabit.get(habit.id) ?? new Set()"
+            :values="valuesByHabit.get(habit.id)"
+          />
 
           <YearHeatmap
             :days="days"
@@ -212,6 +265,33 @@ function onSelectDay(habitId: string, dateKey: string) {
         </li>
       </ul>
     </section>
+
+    <BaseSheet v-model="dayPanelOpen" :title="scalingHabitId ? 'How was it?' : dayPanelTitle">
+      <ScalePicker
+        v-if="scalingHabitId && dayPanelDate"
+        :key="`${scalingHabitId}-${dayPanelDate}`"
+        :initial-value="valuesByHabit.get(scalingHabitId)?.get(dayPanelDate) ?? null"
+        @submit="onScaleSubmit"
+      />
+
+      <DayPanel
+        v-else-if="dayPanelDate"
+        :date-key="dayPanelDate"
+        :habits="habits ?? []"
+        :marked-by-habit="markedByHabit"
+        :values-by-habit="valuesByHabit"
+        @toggle="onPanelToggle"
+        @scale="(habitId) => (scalingHabitId = habitId)"
+      >
+        <template #note>
+          <DayNoteField
+            :key="dayPanelDate"
+            :date-key="dayPanelDate"
+            :initial-body="noteBodyByDay.get(dayPanelDate) ?? ''"
+          />
+        </template>
+      </DayPanel>
+    </BaseSheet>
 
     <BaseSheet v-model="daySheetOpen" :title="selectedDayTitle">
       <div class="flex flex-col gap-4">

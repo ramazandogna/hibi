@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { computed, ref } from 'vue'
+import { ChevronDown } from 'lucide-vue-next'
 import { useRoute, useRouter } from 'vue-router'
 
 import DayPanel from '@/features/entries/components/DayPanel.vue'
@@ -219,6 +220,17 @@ function score(habitId: string, target: number): string {
 <template>
   <div class="flex w-full flex-col gap-4">
     <PageHeader :title="title">
+      <template #title>
+        <button
+          type="button"
+          class="header-action"
+          :aria-label="`Open ${title}`"
+          @click="openDay(today)"
+        >
+          <span class="truncate">{{ title }}</span>
+          <ChevronDown class="text-ink-soft size-4 shrink-0" aria-hidden="true" />
+        </button>
+      </template>
       <template #left>
         <button
           type="button"
