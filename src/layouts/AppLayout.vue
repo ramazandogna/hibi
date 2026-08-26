@@ -1,10 +1,12 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 
 import { Plus } from 'lucide-vue-next'
 
 import HabitForm from '@/features/habits/components/HabitForm.vue'
+import OnboardingTour from '@/features/onboarding/components/OnboardingTour.vue'
+import { useOnboarding } from '@/features/onboarding/onboarding'
 import BaseSheet from '@/shared/ui/BaseSheet.vue'
 import TipBanner from '@/shared/ui/TipBanner.vue'
 import AppNavbar from '@/layouts/components/app/AppNavbar.vue'
@@ -56,6 +58,11 @@ function onPointerUp(event: PointerEvent) {
 }
 
 const isOnline = useOnline()
+
+// First run only. Mounted here rather than in a view so it survives tab
+// switches and covers the chrome as well as the page.
+const tour = useOnboarding()
+onMounted(tour.openIfFirstRun)
 
 /** Creating a habit is reachable from every screen, not just Profile. */
 const createOpen = ref(false)
@@ -110,11 +117,9 @@ function stopTracking() {
       </button>
     </div>
 
-    <BaseSheet
-      v-model="createOpen"
-      :title="$t('habit.new')"
-      :subtitle="$t('habit.newSubtitle')"
-    >
+    <OnboardingTour />
+
+    <BaseSheet v-model="createOpen" :title="$t('habit.new')" :subtitle="$t('habit.newSubtitle')">
       <HabitForm @saved="createOpen = false" />
     </BaseSheet>
   </div>

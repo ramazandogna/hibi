@@ -1,7 +1,8 @@
 <script setup lang="ts">
-const { size = 'md' } = defineProps<{ size?: 'md' | 'lg' }>()
+const { size = 'md' } = defineProps<{ size?: 'sm' | 'md' | 'lg' }>()
 
 const SIZE = {
+  sm: { hiragana: 'text-[1.6rem]', latin: 'text-[0.6rem]' },
   md: { hiragana: 'text-[2.75rem]', latin: 'text-sm' },
   lg: { hiragana: 'text-6xl', latin: 'text-base' },
 } as const
