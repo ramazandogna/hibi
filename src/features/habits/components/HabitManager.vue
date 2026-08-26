@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import { Archive, ArrowDown, ArrowUp, Pencil, RotateCcw, Trash2 } from 'lucide-vue-next'
 
 import { countHabitEntries } from '../habits.api'
@@ -12,33 +12,48 @@ import {
   useUnarchiveHabit,
 } from '../habits.queries'
 import type { Habit } from '../habit.types'
+import { groupByKind, KIND_META } from '@/shared/lib/kind'
 import BaseButton from '@/shared/ui/BaseButton.vue'
 import BaseSheet from '@/shared/ui/BaseSheet.vue'
 import KindDot from '@/shared/ui/KindDot.vue'
+import SectionHeading from '@/shared/ui/SectionHeading.vue'
 
 const emit = defineEmits<{ edit: [habit: Habit] }>()
 
 const { data: habits, isPending } = useHabits()
 const { data: archivedHabits } = useArchivedHabits()
 
+const habitGroups = computed(() => groupByKind(habits.value ?? [], (habit) => habit.kind))
+
 const reorder = useReorderHabits()
 const archive = useArchiveHabit()
 const unarchive = useUnarchiveHabit()
 const remove = useDeleteHabit()
 
-/** Moves a habit one slot up or down and persists the whole new order. */
-function move(index: number, offset: number) {
+/**
+ * Moves a habit within its own group and persists the whole new order.
+ *
+ * Reordering across kinds would be meaningless now that the list is grouped, so
+ * only this kind's slots are rewritten; every other habit keeps its position.
+ */
+function move(group: readonly Habit[], index: number, offset: number) {
   const list = habits.value
   if (!list) return
 
   const target = index + offset
-  if (target < 0 || target >= list.length) return
+  if (target < 0 || target >= group.length) return
 
-  const ids = list.map((habit) => habit.id)
-  const [moved] = ids.splice(index, 1)
+  const reordered = [...group]
+  const [moved] = reordered.splice(index, 1)
   if (!moved) return
 
-  ids.splice(target, 0, moved)
+  reordered.splice(target, 0, moved)
+
+  let cursor = 0
+  const ids = list.map((habit) =>
+    habit.kind === moved.kind ? (reordered[cursor++]?.id ?? habit.id) : habit.id,
+  )
+
   reorder.mutate(ids)
 }
 
@@ -65,16 +80,17 @@ async function confirmDelete() {
 
 <template>
   <div class="flex flex-col gap-6">
-    <section class="flex flex-col gap-2">
-      <h2 class="text-ink-soft text-xs font-semibold tracking-wide uppercase">Habits</h2>
+    <p v-if="isPending" class="text-ink-soft text-sm">Loading…</p>
 
-      <p v-if="isPending" class="text-ink-soft text-sm">Loading…</p>
+    <section v-for="group in habitGroups" v-else :key="group.kind" class="flex flex-col gap-2">
+      <SectionHeading :kind="group.kind" :label="group.label" :count="group.items.length" />
 
-      <ul v-else class="flex flex-col gap-1">
+      <ul class="flex flex-col gap-1">
         <li
-          v-for="(habit, index) in habits ?? []"
+          v-for="(habit, index) in group.items"
           :key="habit.id"
-          class="border-hair rounded-card flex items-center gap-2 border p-2"
+          class="rounded-card flex items-center gap-2 border p-2"
+          :class="KIND_META[habit.kind].card"
         >
           <KindDot :kind="habit.kind" />
           <span class="text-ink flex-1 truncate text-sm font-medium">{{ habit.name }}</span>
@@ -84,16 +100,16 @@ async function confirmDelete() {
             class="text-ink-soft hover:text-ink p-1 disabled:opacity-30"
             :disabled="index === 0"
             :aria-label="`Move ${habit.name} up`"
-            @click="move(index, -1)"
+            @click="move(group.items, index, -1)"
           >
             <ArrowUp class="size-4" />
           </button>
           <button
             type="button"
             class="text-ink-soft hover:text-ink p-1 disabled:opacity-30"
-            :disabled="index === (habits?.length ?? 0) - 1"
+            :disabled="index === group.items.length - 1"
             :aria-label="`Move ${habit.name} down`"
-            @click="move(index, 1)"
+            @click="move(group.items, index, 1)"
           >
             <ArrowDown class="size-4" />
           </button>
