@@ -34,6 +34,10 @@ function onPointerDown(event: PointerEvent) {
   // Desktop has the tab bar; dragging with a mouse usually means selecting text.
   if (event.pointerType === 'mouse') return
 
+  // Inside a horizontally scrolling area the drag belongs to that area, not to
+  // tab navigation — otherwise scrolling the year grid changes the screen.
+  if (event.target instanceof Element && event.target.closest('[data-hscroll]')) return
+
   startX = event.clientX
   startY = event.clientY
   tracking = true
@@ -140,8 +144,12 @@ function stopTracking() {
 
 .page-content {
   @apply relative mt-2 min-h-0 w-full grow overflow-hidden;
-  /* Let the browser own vertical scrolling and leave horizontal drags to us. */
-  touch-action: pan-y;
+  /* `pan-y` here used to disable horizontal touch panning for every descendant,
+     which meant the year heatmap could not be scrolled by finger at all — a
+     child cannot re-enable a direction an ancestor has taken away. The swipe
+     gesture is pointer-driven anyway, so the browser keeps its defaults and
+     onPointerDown skips drags that start in a horizontally scrolling area. */
+  touch-action: auto;
 }
 
 /* Floats just above the tab bar, inside the shell, and lets clicks through
