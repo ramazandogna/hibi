@@ -91,7 +91,9 @@ onUnmounted(() => {
               </button>
             </header>
 
-            <div class="safe-b min-h-0 flex-1 overflow-y-auto px-6 pb-8">
+            <div
+              class="min-h-0 flex-1 overflow-y-auto px-6 pb-[calc(2rem+env(safe-area-inset-bottom,0px))]"
+            >
               <slot />
             </div>
           </section>

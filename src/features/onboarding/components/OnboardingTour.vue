@@ -60,7 +60,7 @@ function onKeydown(event: KeyboardEvent) {
         @keydown="onKeydown"
       >
         <div class="shell-frame md:rounded-shell bg-canvas relative flex flex-col overflow-hidden">
-          <header class="flex shrink-0 items-center justify-between px-5 pt-5">
+          <header class="flex shrink-0 items-center justify-between px-6 pt-6 pb-1">
             <BrandMark size="sm" />
 
             <button
@@ -74,7 +74,7 @@ function onKeydown(event: KeyboardEvent) {
 
           <!-- min-h-0 keeps the body inside the shell so long pages scroll here
                rather than pushing the buttons off the bottom. -->
-          <div class="flex min-h-0 flex-1 flex-col justify-center overflow-y-auto px-7 py-6">
+          <div class="flex min-h-0 flex-1 flex-col justify-center overflow-y-auto px-6 py-8">
             <Transition :name="transitionName" mode="out-in">
               <div :key="tour.step.value.key" class="flex flex-col items-start gap-5">
                 <span
@@ -96,11 +96,13 @@ function onKeydown(event: KeyboardEvent) {
             </Transition>
           </div>
 
-          <footer class="safe-b flex shrink-0 flex-col gap-4 px-7 pt-2 pb-7">
+          <footer
+            class="flex shrink-0 flex-col gap-5 px-6 pt-4 pb-[calc(2rem+env(safe-area-inset-bottom,0px))]"
+          >
             <!-- Dots double as navigation: on a thirteen-page guide, being able
                  to jump back to the mode you half-read matters. -->
             <div
-              class="flex items-center justify-center gap-1.5"
+              class="-my-2 flex items-center justify-center gap-1"
               role="tablist"
               :aria-label="$t('onboarding.progress', { current: tour.index.value + 1, total })"
             >
@@ -111,17 +113,38 @@ function onKeydown(event: KeyboardEvent) {
                 role="tab"
                 :aria-selected="position === tour.index.value"
                 :aria-label="$t('onboarding.progress', { current: position + 1, total })"
-                class="h-1.5 rounded-full transition-all duration-200"
-                :class="
-                  position === tour.index.value ? 'bg-sea w-5' : 'bg-hair hover:bg-ink-soft w-1.5'
-                "
+                class="group flex items-center px-0.5 py-2.5"
                 @click="tour.goTo(position)"
-              />
+              >
+                <!-- The bar stays 6px; the button around it is 26px tall, which
+                     is what the finger has to find among thirteen of them. -->
+                <span
+                  class="h-1.5 rounded-full transition-all duration-200"
+                  :class="
+                    position === tour.index.value
+                      ? 'bg-sea w-5'
+                      : 'bg-hair group-hover:bg-ink-soft w-1.5'
+                  "
+                />
+              </button>
             </div>
 
-            <BaseButton class="w-full" @click="tour.next()">
-              {{ tour.isLast.value ? $t('onboarding.start') : $t('onboarding.next') }}
-            </BaseButton>
+            <!-- Thirteen pages of one-way Next is a guide you cannot re-read.
+                 Back appears from the second page, where it has somewhere to go. -->
+            <div class="flex gap-2">
+              <BaseButton
+                v-if="tour.index.value > 0"
+                variant="ghost"
+                class="shrink-0 px-5"
+                @click="tour.goTo(tour.index.value - 1)"
+              >
+                {{ $t('common.back') }}
+              </BaseButton>
+
+              <BaseButton class="flex-1" @click="tour.next()">
+                {{ tour.isLast.value ? $t('onboarding.start') : $t('onboarding.next') }}
+              </BaseButton>
+            </div>
           </footer>
         </div>
       </div>

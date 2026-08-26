@@ -87,10 +87,6 @@
   @apply from-leaf via-sea to-deep bg-gradient-to-r;
 }
 
-@utility safe-b {
-  padding-bottom: env(safe-area-inset-bottom, 0px);
-}
-
 /* Scrolling stays, the bar goes. A visible track cuts across the year grid and
    reads as a stray line among the cells. */
 @utility no-scrollbar {
