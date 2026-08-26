@@ -12,7 +12,8 @@ import EmptyState from '@/shared/ui/EmptyState.vue'
 import PageHeader from '@/shared/ui/PageHeader.vue'
 import SectionHeading from '@/shared/ui/SectionHeading.vue'
 import SkeletonList from '@/shared/ui/SkeletonList.vue'
-import { fromDateKey, lastNDays, todayKey } from '@/shared/lib/date'
+import { fromDateKey, lastNDays } from '@/shared/lib/date'
+import { useToday } from '@/shared/lib/today'
 import { formatDate } from '@/shared/lib/format'
 import { useEntriesInRange, useSetEntry, useToggleEntry } from '@/features/entries/entries.queries'
 import DayPanel from '@/features/entries/components/DayPanel.vue'
@@ -31,11 +32,15 @@ const router = useRouter()
 /** Squares show five days; the query pulls a year so streaks are exact. */
 const STATS_WINDOW_DAYS = 365
 
+const today = useToday()
+
+// Reading `today` is what makes these recompute when the date rolls over;
+// `lastNDays` on its own has no reactive dependency to track.
 /** Today plus the four days before it, oldest first. */
-const days = computed(() => lastNDays(5))
-const statsWindow = computed(() => lastNDays(STATS_WINDOW_DAYS))
-const rangeFrom = computed(() => statsWindow.value[0] ?? todayKey())
-const rangeTo = computed(() => statsWindow.value.at(-1) ?? todayKey())
+const days = computed(() => lastNDays(5, today.value))
+const statsWindow = computed(() => lastNDays(STATS_WINDOW_DAYS, today.value))
+const rangeFrom = computed(() => statsWindow.value[0] ?? today.value)
+const rangeTo = computed(() => statsWindow.value.at(-1) ?? today.value)
 
 const { data: entries } = useEntriesInRange(rangeFrom, rangeTo)
 

@@ -9,7 +9,8 @@ import { useEntriesInRange, useSetEntry, useToggleEntry } from '@/features/entri
 import { useHabits } from '@/features/habits/habits.queries'
 import DayNoteField from '@/features/notes/components/DayNoteField.vue'
 import { useNotesInRange } from '@/features/notes/notes.queries'
-import { addDays, fromDateKey, startOfWeek, todayKey } from '@/shared/lib/date'
+import { addDays, fromDateKey, startOfWeek } from '@/shared/lib/date'
+import { useToday } from '@/shared/lib/today'
 import { formatDate } from '@/shared/lib/format'
 import { dayCellClass, groupByKind, KIND_META } from '@/shared/lib/kind'
 import type { HabitKind } from '@/shared/lib/kind'
@@ -26,7 +27,7 @@ const router = useRouter()
 /** Read from the profile in a later step; Monday for now. */
 const weekStartsOn = useWeekStart()
 
-const today = todayKey()
+const today = useToday()
 
 /**
  * Selected week in the URL, normalised to its first day.
@@ -40,7 +41,7 @@ const weekStart = computed({
 
     return typeof raw === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(raw)
       ? startOfWeek(raw, weekStartsOn.value)
-      : startOfWeek(today, weekStartsOn.value)
+      : startOfWeek(today.value, weekStartsOn.value)
   },
   set: (next: string) => {
     void router.push({ query: { ...route.query, w: next } })
@@ -169,7 +170,7 @@ const selectedDayTitle = computed(() =>
 )
 
 function openDay(dateKey: string) {
-  if (dateKey > today) return
+  if (dateKey > today.value) return
 
   scalingHabitId.value = null
   selectedDay.value = dateKey
@@ -204,7 +205,7 @@ function onScaleSubmit(payload: { value: number; note: string | null }) {
  * a number the user never chose.
  */
 function onCellTap(habit: { id: string; kind: HabitKind }, dateKey: string) {
-  if (dateKey > today) return
+  if (dateKey > today.value) return
 
   if (!KIND_META[habit.kind].isBinary) {
     selectedDay.value = dateKey
@@ -216,7 +217,7 @@ function onCellTap(habit: { id: string; kind: HabitKind }, dateKey: string) {
 }
 
 function onToggle(habitId: string, dateKey: string) {
-  if (dateKey > today) return
+  if (dateKey > today.value) return
 
   toggle({ habitId, dateKey }, markedByHabit.value.get(habitId)?.has(dateKey) ?? false)
 }
