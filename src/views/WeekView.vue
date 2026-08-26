@@ -244,67 +244,70 @@ function score(habitId: string, target: number): string {
 
     <SkeletonList v-if="isPending" row-height="h-8" label="Loading habits…" />
 
-    <div v-else class="grid grid-cols-[1fr_repeat(7,1.75rem)_2.5rem] items-center gap-1">
-      <span />
-      <button
-        v-for="day in days"
-        :key="`head-${day}`"
-        type="button"
-        class="text-ink-soft rounded-cell py-1 text-center text-[10px] disabled:opacity-40"
-        :class="day === today ? 'text-sea font-bold' : ''"
-        :disabled="day > today"
-        :aria-label="`Open ${day}`"
-        @click="openDay(day)"
-      >
-        {{ weekdayFormatter.format(fromDateKey(day)) }}
-      </button>
-      <span />
-
-      <template v-for="group in habitGroups" :key="group.kind">
-        <div class="col-span-9 mt-3 flex">
-          <SectionHeading :kind="group.kind" :label="group.label" :count="group.items.length" />
-        </div>
-
-        <template v-for="habit in group.items" :key="habit.id">
-          <span class="text-ink truncate text-xs font-medium">{{ habit.name }}</span>
-
-          <button
-            v-for="day in days"
-            :key="`${habit.id}-${day}`"
-            type="button"
-            :disabled="day > today"
-            class="rounded-cell mx-auto size-6 transition-transform duration-100 active:scale-90"
-            :class="
-              dayCellClass({
-                kind: habit.kind,
-                isMarked: markedByHabit.get(habit.id)?.has(day) ?? false,
-                value: valuesByHabit.get(habit.id)?.get(day),
-                isFuture: day > today,
-              })
-            "
-            :aria-pressed="markedByHabit.get(habit.id)?.has(day) ?? false"
-            :aria-label="`${habit.name}, ${day}`"
-            @click="onCellTap(habit, day)"
-          />
-
-          <span class="text-ink-soft text-right text-[10px] tabular-nums">
-            {{ score(habit.id, habit.target_per_week) }}
-          </span>
-        </template>
-
-        <p
-          v-if="reviewByKind.get(group.kind)"
-          class="text-ink-soft col-span-9 mt-1 mb-1 text-[11px]"
+    <template v-else>
+      <!-- Day headers sit once, above the cards; every grid below uses the same
+           fixed column template, so columns line up across cards. -->
+      <div class="grid grid-cols-[1fr_repeat(7,1.75rem)_2.5rem] items-center gap-1 px-3">
+        <span />
+        <button
+          v-for="day in days"
+          :key="`head-${day}`"
+          type="button"
+          class="text-ink-soft rounded-cell py-1 text-center text-[10px] disabled:opacity-40"
+          :class="day === today ? 'text-sea font-bold' : ''"
+          :disabled="day > today"
+          :aria-label="`Open ${day}`"
+          @click="openDay(day)"
         >
-          <span class="tabular-nums">{{ reviewByKind.get(group.kind)?.completed }}</span> of
-          <span class="tabular-nums">{{ reviewByKind.get(group.kind)?.planned }}</span> days ·
-          <span class="tabular-nums">{{ reviewByKind.get(group.kind)?.percent }}%</span>
-          <template v-if="reviewByKind.get(group.kind)?.best">
-            · strongest {{ reviewByKind.get(group.kind)?.best?.habit.name }}
-          </template>
-        </p>
-      </template>
-    </div>
+          {{ weekdayFormatter.format(fromDateKey(day)) }}
+        </button>
+        <span />
+      </div>
+
+      <section v-for="group in habitGroups" :key="group.kind" class="flex flex-col gap-2">
+        <SectionHeading :kind="group.kind" :label="group.label" :count="group.items.length" />
+
+        <div class="rounded-card border p-3" :class="KIND_META[group.kind].card">
+          <div class="grid grid-cols-[1fr_repeat(7,1.75rem)_2.5rem] items-center gap-1">
+            <template v-for="habit in group.items" :key="habit.id">
+              <span class="text-ink truncate text-xs font-medium">{{ habit.name }}</span>
+
+              <button
+                v-for="day in days"
+                :key="`${habit.id}-${day}`"
+                type="button"
+                :disabled="day > today"
+                class="rounded-cell mx-auto size-6 transition-transform duration-100 active:scale-90"
+                :class="
+                  dayCellClass({
+                    kind: habit.kind,
+                    isMarked: markedByHabit.get(habit.id)?.has(day) ?? false,
+                    value: valuesByHabit.get(habit.id)?.get(day),
+                    isFuture: day > today,
+                  })
+                "
+                :aria-pressed="markedByHabit.get(habit.id)?.has(day) ?? false"
+                :aria-label="`${habit.name}, ${day}`"
+                @click="onCellTap(habit, day)"
+              />
+
+              <span class="text-ink-soft text-right text-[10px] tabular-nums">
+                {{ score(habit.id, habit.target_per_week) }}
+              </span>
+            </template>
+          </div>
+
+          <p v-if="reviewByKind.get(group.kind)" class="text-ink-soft mt-3 text-[11px]">
+            <span class="tabular-nums">{{ reviewByKind.get(group.kind)?.completed }}</span> of
+            <span class="tabular-nums">{{ reviewByKind.get(group.kind)?.planned }}</span> days ·
+            <span class="tabular-nums">{{ reviewByKind.get(group.kind)?.percent }}%</span>
+            <template v-if="reviewByKind.get(group.kind)?.best">
+              · strongest {{ reviewByKind.get(group.kind)?.best?.habit.name }}
+            </template>
+          </p>
+        </div>
+      </section>
+    </template>
 
     <section
       v-if="weekNotes.length > 0"

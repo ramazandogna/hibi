@@ -74,8 +74,33 @@ const valuesByHabit = computed(() => {
   return map
 })
 
-/** Days that have a note; the only cells the year grid lets you open. */
-const noteDays = computed(() => new Set((notes.value ?? []).map((note) => note.entry_date)))
+/** Day-level notes, shared by every habit. */
+const dayNoteDays = computed(() => new Set((notes.value ?? []).map((note) => note.entry_date)))
+
+/** Per-habit entry notes, written when a day was checked off. */
+const entryNotesByHabit = computed(() => {
+  const map = new Map<string, Map<string, string>>()
+
+  for (const entry of entries.value ?? []) {
+    const body = (entry.note ?? '').trim()
+    if (!body) continue
+
+    const perDay = map.get(entry.habit_id) ?? new Map<string, string>()
+    perDay.set(entry.entry_date, body)
+    map.set(entry.habit_id, perDay)
+  }
+
+  return map
+})
+
+/** Cells a habit's grid lets you open: its own notes plus the day's notes. */
+function noteDaysFor(habitId: string): Set<string> {
+  const days = new Set(dayNoteDays.value)
+
+  for (const day of entryNotesByHabit.value.get(habitId)?.keys() ?? []) days.add(day)
+
+  return days
+}
 
 const noteBodyByDay = computed(
   () => new Map((notes.value ?? []).map((note) => [note.entry_date, note.body])),
@@ -84,6 +109,7 @@ const noteBodyByDay = computed(
 const habitGroups = computed(() => groupByKind(habits.value ?? [], (habit) => habit.kind))
 
 const selectedDay = ref<string | null>(null)
+const selectedHabitId = ref<string | null>(null)
 
 const noteTitleFormatter = new Intl.DateTimeFormat('en', {
   weekday: 'long',
@@ -95,20 +121,34 @@ const noteTitleFormatter = new Intl.DateTimeFormat('en', {
 const daySheetOpen = computed({
   get: () => selectedDay.value !== null,
   set: (open: boolean) => {
-    if (!open) selectedDay.value = null
+    if (!open) {
+      selectedDay.value = null
+      selectedHabitId.value = null
+    }
   },
 })
 
-const selectedNote = computed(() =>
+const selectedDayNote = computed(() =>
   selectedDay.value ? (noteBodyByDay.value.get(selectedDay.value) ?? '') : '',
+)
+
+const selectedEntryNote = computed(() =>
+  selectedDay.value && selectedHabitId.value
+    ? (entryNotesByHabit.value.get(selectedHabitId.value)?.get(selectedDay.value) ?? '')
+    : '',
+)
+
+const selectedHabitName = computed(
+  () => (habits.value ?? []).find((habit) => habit.id === selectedHabitId.value)?.name ?? '',
 )
 
 const selectedDayTitle = computed(() =>
   selectedDay.value ? noteTitleFormatter.format(fromDateKey(selectedDay.value)) : '',
 )
 
-/** The year grid is read-only: a cell only opens the note it holds. */
-function onSelectDay(dateKey: string) {
+/** The year grid is read-only: a cell only opens the notes it holds. */
+function onSelectDay(habitId: string, dateKey: string) {
+  selectedHabitId.value = habitId
   selectedDay.value = dateKey
 }
 </script>
@@ -165,16 +205,28 @@ function onSelectDay(dateKey: string) {
             :kind="habit.kind"
             :marked-days="markedByHabit.get(habit.id) ?? new Set()"
             :values="valuesByHabit.get(habit.id)"
-            :note-days="noteDays"
+            :note-days="noteDaysFor(habit.id)"
             :week-starts-on="weekStartsOn"
-            @select="onSelectDay"
+            @select="(day) => onSelectDay(habit.id, day)"
           />
         </li>
       </ul>
     </section>
 
     <BaseSheet v-model="daySheetOpen" :title="selectedDayTitle">
-      <p v-if="selectedNote" class="text-ink text-sm whitespace-pre-wrap">{{ selectedNote }}</p>
+      <div class="flex flex-col gap-4">
+        <section v-if="selectedEntryNote" class="flex flex-col gap-1">
+          <h3 class="text-ink-soft text-xs font-semibold tracking-wide uppercase">
+            {{ selectedHabitName }}
+          </h3>
+          <p class="text-ink text-sm whitespace-pre-wrap">{{ selectedEntryNote }}</p>
+        </section>
+
+        <section v-if="selectedDayNote" class="flex flex-col gap-1">
+          <h3 class="text-ink-soft text-xs font-semibold tracking-wide uppercase">That day</h3>
+          <p class="text-ink text-sm whitespace-pre-wrap">{{ selectedDayNote }}</p>
+        </section>
+      </div>
     </BaseSheet>
   </div>
 </template>
