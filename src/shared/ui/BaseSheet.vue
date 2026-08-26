@@ -63,7 +63,7 @@ onUnmounted(() => {
             aria-modal="true"
             :aria-label="title"
             tabindex="-1"
-            class="bg-surface safe-b relative max-h-[85%] overflow-y-auto rounded-t-3xl p-5 outline-none"
+            class="bg-surface safe-b no-scrollbar relative max-h-[85%] min-h-[42vh] overflow-y-auto rounded-t-3xl p-5 pb-8 outline-none"
           >
             <header class="mb-4 flex items-center justify-between">
               <h2 class="text-ink text-lg font-semibold">{{ title }}</h2>
