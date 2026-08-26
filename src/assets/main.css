@@ -114,6 +114,12 @@
      Lands on every view's root element (see App.vue), so this is the one place
      that owns the scroll box, the side gutter and the room the floating tab bar
      needs at the bottom. Views only decide their own inner layout. */
+  /* Auth screens have no tab bar and no action button, so they get none of the
+     bottom clearance the app screens need. */
+  .page-auth {
+    @apply h-full w-full overflow-y-auto px-4;
+  }
+
   .page-slide {
     /* pb clears both the floating tab bar and the action button above it, so
        the last row of any list stays reachable. */

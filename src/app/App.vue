@@ -15,6 +15,9 @@ const transitionName = computed(() =>
   slideDirection.value === 'none' ? '' : `slide-${slideDirection.value}`,
 )
 
+/** App screens clear the tab bar; auth screens must not inherit that padding. */
+const pageClass = computed(() => (route.meta.layout === 'app' ? 'page-slide' : 'page-auth'))
+
 const layoutComponent = computed(() => {
   if (route.meta.layout === 'app') {
     return AppLayout
@@ -44,7 +47,7 @@ const layoutComponent = computed(() => {
       <component :is="layoutComponent">
         <RouterView v-slot="{ Component, route: matched }">
           <Transition :name="transitionName">
-            <component :is="Component" :key="matched.path" class="page-slide" />
+            <component :is="Component" :key="matched.path" :class="pageClass" />
           </Transition>
         </RouterView>
       </component>
