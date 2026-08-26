@@ -3,6 +3,7 @@ import { RouterView, useRoute } from 'vue-router'
 import AppLayout from '@/layouts/AppLayout.vue'
 import AuthLayout from '@/layouts/AuthLayout.vue'
 import { computed } from 'vue'
+import { Github, Mail } from 'lucide-vue-next'
 import { VueQueryDevtools } from '@tanstack/vue-query-devtools'
 import { slideDirection } from '@/shared/lib/tab-transition'
 import { useThemeSync } from '@/features/profile/use-theme-sync'
@@ -25,6 +26,20 @@ const layoutComponent = computed(() => {
 
 <template>
   <div class="screen-view">
+    <!-- Desktop-only: on a phone the shell fills the screen and this would be
+         hidden behind it anyway. The address is split so scrapers miss it. -->
+    <aside class="credits">
+      <p>© 2026 Hibi</p>
+      <a class="credit-link" href="https://github.com/ramazandogna" target="_blank" rel="noopener">
+        <Github class="size-3.5" />
+        ramazandogna
+      </a>
+      <span class="credit-link">
+        <Mail class="size-3.5" />
+        doganrmzn40 [ at ] gmail.com
+      </span>
+    </aside>
+
     <div class="shell-frame mobile-screen-view">
       <component :is="layoutComponent">
         <RouterView v-slot="{ Component, route: matched }">
@@ -72,6 +87,14 @@ const layoutComponent = computed(() => {
       color-mix(in srgb, var(--color-leaf) 7%, transparent) 0 1px,
       transparent 1px 56px
     );
+}
+
+.credits {
+  @apply text-ink-soft absolute bottom-6 left-6 hidden flex-col gap-1 text-[11px] md:flex;
+}
+
+.credit-link {
+  @apply hover:text-sea flex items-center gap-1.5 transition-colors;
 }
 
 .mobile-screen-view {
