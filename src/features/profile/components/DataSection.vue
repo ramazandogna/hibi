@@ -58,7 +58,13 @@ async function deleteData() {
       Export everything as JSON
     </BaseButton>
 
-    <BaseButton variant="danger" @click="confirmOpen = true">Delete my data</BaseButton>
+    <button
+      type="button"
+      class="text-ink-soft hover:text-alert self-start text-xs underline underline-offset-2 transition-colors"
+      @click="confirmOpen = true"
+    >
+      Delete my data
+    </button>
 
     <p v-if="errorMessage" role="alert" class="text-alert text-sm">{{ errorMessage }}</p>
 

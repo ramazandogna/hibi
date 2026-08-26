@@ -84,6 +84,17 @@ const router = createRouter({
     },
 
     {
+      path: '/settings',
+      name: 'SettingsView',
+      component: () => import('@/views/SettingsView.vue'),
+      meta: {
+        layout: 'app',
+        requiresAuth: true,
+        title: 'Settings',
+      },
+    },
+
+    {
       path: '/habit/:id',
       name: 'HabitDetailView',
       component: () => import('@/views/HabitDetailView.vue'),

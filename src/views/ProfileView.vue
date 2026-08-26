@@ -13,7 +13,6 @@ import BaseSheet from '@/shared/ui/BaseSheet.vue'
 import PageHeader from '@/shared/ui/PageHeader.vue'
 import StatCard from '@/shared/ui/StatCard.vue'
 
-import ProfileSettings from '@/features/profile/components/ProfileSettings.vue'
 import DataSection from '@/features/profile/components/DataSection.vue'
 
 const auth = useAuthStore()
@@ -97,8 +96,6 @@ async function logout() {
         New habit
       </BaseButton>
     </div>
-
-    <ProfileSettings />
 
     <DataSection />
 

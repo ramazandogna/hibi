@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { ref } from 'vue'
-import { Sparkles } from 'lucide-vue-next'
+import { Settings, Sparkles } from 'lucide-vue-next'
+import { RouterLink } from 'vue-router'
 
 /** Tooltip is click-driven, not hover: it has to work on touch too. */
 const showPremiumHint = ref(false)
@@ -8,7 +9,7 @@ const showPremiumHint = ref(false)
 
 <template>
   <header class="flex h-20 w-full shrink-0 items-center px-1">
-    <span class="w-11" aria-hidden="true" />
+    <span class="w-22" aria-hidden="true" />
 
     <h1 class="flex flex-1 justify-center">
       <!-- The column shrinks to the hiragana, so the Latin line below can
@@ -23,7 +24,7 @@ const showPremiumHint = ref(false)
         </span>
 
         <span
-          class="from-leaf via-sea to-deep flex w-full justify-between bg-gradient-to-r bg-clip-text text-sm leading-none font-semibold text-transparent"
+          class="from-leaf via-sea to-deep flex w-full justify-between bg-gradient-to-r bg-clip-text px-2 text-sm leading-none font-semibold text-transparent"
           aria-hidden="true"
         >
           <span>h</span><span>İ</span><span>b</span><span>İ</span>
@@ -33,7 +34,15 @@ const showPremiumHint = ref(false)
       </span>
     </h1>
 
-    <div class="relative w-11">
+    <div class="relative flex w-22 justify-end">
+      <RouterLink
+        to="/settings"
+        class="text-ink-soft hover:text-sea flex size-11 items-center justify-center transition-colors"
+        aria-label="Settings"
+      >
+        <Settings class="size-5" />
+      </RouterLink>
+
       <button
         type="button"
         class="text-ink-soft hover:text-sea flex size-11 items-center justify-center transition-colors"
