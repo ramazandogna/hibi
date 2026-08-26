@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
 import { computed, shallowRef, ref } from 'vue'
 
-import { supabase } from '@/shared/lib/supabase'
+import { setRememberMe, supabase } from '@/shared/lib/supabase'
 
 import type { User } from '@supabase/supabase-js'
 
@@ -43,8 +43,27 @@ export const useAuthStore = defineStore('auth', () => {
     return { needsEmailConfirmation: data.session === null }
   }
 
-  async function signIn(email: string, password: string) {
+  async function signIn(email: string, password: string, remember = true) {
+    setRememberMe(remember)
+
     const { error } = await supabase.auth.signInWithPassword({ email, password })
+    if (error) throw error
+  }
+
+  /**
+   * Starts the Google redirect flow.
+   *
+   * Resolves when the browser is about to navigate away, so callers should not
+   * expect a session on return — the app reloads and `init()` picks it up.
+   */
+  async function signInWithGoogle(remember = true) {
+    setRememberMe(remember)
+
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: { redirectTo: window.location.origin },
+    })
+
     if (error) throw error
   }
 
@@ -55,5 +74,5 @@ export const useAuthStore = defineStore('auth', () => {
     queryClient.clear()
   }
 
-  return { user, isReady, isAuthenticated, init, signUp, signIn, signOut }
+  return { user, isReady, isAuthenticated, init, signUp, signIn, signInWithGoogle, signOut }
 })

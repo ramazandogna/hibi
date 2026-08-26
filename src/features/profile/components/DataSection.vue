@@ -60,7 +60,7 @@ async function deleteData() {
 
     <button
       type="button"
-      class="text-ink-soft hover:text-alert self-start text-xs underline underline-offset-2 transition-colors"
+      class="text-ink-soft hover:text-alert self-center text-xs underline underline-offset-2 transition-colors"
       @click="confirmOpen = true"
     >
       Delete my data

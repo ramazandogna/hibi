@@ -1,29 +1,13 @@
+<script setup lang="ts">
+import BrandMark from '@/shared/ui/BrandMark.vue'
+</script>
+
 <template>
-  <div class="auth-layout">
-    <main class="auth-card">
+  <div class="flex min-h-0 w-full flex-1 flex-col items-center justify-center gap-8 px-6 py-10">
+    <BrandMark size="lg" />
+
+    <main class="w-full max-w-[22rem]">
       <slot />
     </main>
   </div>
 </template>
-
-<style scoped>
-.auth-layout {
-  display: flex;
-  justify-content: center;
-  min-height: 100vh;
-  background-color: var(--color-background, #f9f9f9);
-}
-
-.auth-card {
-  width: 100%;
-  max-width: 400px;
-  padding: 2rem;
-  background-color: var(--color-background-soft, #ffffff);
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  margin: 10rem 0;
-  display: flex;
-  flex-direction: column;
-  flex-grow: 1;
-}
-</style>
