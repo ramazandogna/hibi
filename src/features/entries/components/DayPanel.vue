@@ -48,7 +48,7 @@ const doneCount = computed(() => rows.value.filter((row) => row.isMarked).length
 
         <button
           type="button"
-          class="flex size-9 items-center justify-center rounded-xl transition-transform duration-100 active:scale-95"
+          class="flex size-11 items-center justify-center rounded-xl transition-transform duration-100 active:scale-95"
           :class="
             row.isMarked ? [KIND_META[row.habit.kind].fill, 'text-white'] : 'bg-mist text-ink-soft'
           "

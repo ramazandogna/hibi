@@ -115,7 +115,7 @@ async function archiveAndLeave() {
     <header class="flex items-center gap-2">
       <button
         type="button"
-        class="text-ink-soft hover:text-ink p-1"
+        class="text-ink-soft hover:text-ink hover:bg-mist flex size-11 shrink-0 items-center justify-center rounded-full transition-colors active:scale-90"
         :aria-label="$t('common.back')"
         @click="router.back()"
       >
@@ -125,7 +125,7 @@ async function archiveAndLeave() {
       <button
         v-if="habit"
         type="button"
-        class="text-ink-soft hover:text-ink p-1"
+        class="text-ink-soft hover:text-ink hover:bg-mist flex size-11 shrink-0 items-center justify-center rounded-full transition-colors active:scale-90"
         :aria-label="$t('habit.edit')"
         @click="editOpen = true"
       >

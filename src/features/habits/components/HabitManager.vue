@@ -111,7 +111,7 @@ async function confirmDelete() {
         <li
           v-for="(habit, index) in group.items"
           :key="habit.id"
-          class="rounded-card flex items-center gap-2 border p-2"
+          class="rounded-card flex items-center gap-1 border py-1.5 pr-1.5 pl-3"
           :class="KIND_META[habit.kind].card"
         >
           <KindDot :kind="habit.kind" />
@@ -119,7 +119,7 @@ async function confirmDelete() {
 
           <button
             type="button"
-            class="text-ink-soft hover:text-ink p-1 disabled:opacity-30"
+            class="text-ink-soft hover:text-ink hover:bg-mist flex size-11 items-center justify-center rounded-full transition-colors active:scale-90 disabled:opacity-30"
             :disabled="index === 0"
             :aria-label="$t('common.moveUp', { name: habit.name })"
             @click="move(group.items, index, -1)"
@@ -128,7 +128,7 @@ async function confirmDelete() {
           </button>
           <button
             type="button"
-            class="text-ink-soft hover:text-ink p-1 disabled:opacity-30"
+            class="text-ink-soft hover:text-ink hover:bg-mist flex size-11 items-center justify-center rounded-full transition-colors active:scale-90 disabled:opacity-30"
             :disabled="index === group.items.length - 1"
             :aria-label="$t('common.moveDown', { name: habit.name })"
             @click="move(group.items, index, 1)"
@@ -137,7 +137,7 @@ async function confirmDelete() {
           </button>
           <button
             type="button"
-            class="text-ink-soft hover:text-ink p-1"
+            class="text-ink-soft hover:text-ink hover:bg-mist flex size-11 items-center justify-center rounded-full transition-colors active:scale-90"
             :aria-label="$t('common.openItem', { name: habit.name })"
             @click="emit('edit', habit)"
           >
@@ -145,7 +145,7 @@ async function confirmDelete() {
           </button>
           <button
             type="button"
-            class="text-ink-soft hover:text-ink p-1"
+            class="text-ink-soft hover:text-ink hover:bg-mist flex size-11 items-center justify-center rounded-full transition-colors active:scale-90"
             :aria-label="$t('common.archive')"
             @click="archive.mutate(habit.id)"
           >
@@ -164,14 +164,14 @@ async function confirmDelete() {
         <li
           v-for="habit in archivedHabits ?? []"
           :key="habit.id"
-          class="border-hair rounded-card flex items-center gap-2 border border-dashed p-2"
+          class="border-hair rounded-card flex items-center gap-1 border border-dashed py-1.5 pr-1.5 pl-3"
         >
           <KindDot :kind="habit.kind" />
           <span class="text-ink-soft flex-1 truncate text-sm">{{ habit.name }}</span>
 
           <button
             type="button"
-            class="text-ink-soft hover:text-ink p-1"
+            class="text-ink-soft hover:text-ink hover:bg-mist flex size-11 items-center justify-center rounded-full transition-colors active:scale-90"
             :aria-label="$t('common.restore')"
             @click="unarchive.mutate(habit.id)"
           >
@@ -179,7 +179,7 @@ async function confirmDelete() {
           </button>
           <button
             type="button"
-            class="text-alert p-1"
+            class="text-alert hover:bg-alert/10 flex size-11 items-center justify-center rounded-full transition-colors active:scale-90"
             :aria-label="$t('common.delete')"
             @click="askDelete(habit)"
           >

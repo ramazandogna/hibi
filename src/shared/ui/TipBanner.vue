@@ -23,7 +23,7 @@ const dismissed = ref(false)
     <p class="text-ink-soft flex-1 text-[11px] leading-snug">{{ $t(tipKey) }}</p>
     <button
       type="button"
-      class="text-ink-soft hover:text-ink -mt-1 -mr-1 flex size-7 shrink-0 items-center justify-center"
+      class="text-ink-soft hover:text-ink -my-1.5 -mr-1.5 flex size-11 shrink-0 items-center justify-center rounded-full active:scale-90"
       :aria-label="$t('tip.dismiss')"
       @click="dismissed = true"
     >

@@ -84,22 +84,28 @@ function onTodayTap() {
     </div>
 
     <div class="flex shrink-0 items-center gap-1">
+      <!-- The square stays 24px so five of them fit; the button around it is
+           44px tall, which is what a thumb actually has to hit. -->
       <button
         v-for="day in previousDays"
         :key="day"
         type="button"
-        class="rounded-cell size-6 transition-transform duration-100 select-none active:scale-90"
-        :class="
-          dayCellClass({
-            kind: habit.kind,
-            isMarked: markedDays.has(day),
-            value: values?.get(day),
-          })
-        "
+        class="flex h-11 w-6 items-center justify-center transition-transform duration-100 select-none active:scale-90"
         :aria-pressed="markedDays.has(day)"
         :aria-label="`${habit.name}, ${dayLabel(day)}`"
         @click.stop="onDayTap(day)"
-      />
+      >
+        <span
+          class="rounded-cell size-6"
+          :class="
+            dayCellClass({
+              kind: habit.kind,
+              isMarked: markedDays.has(day),
+              value: values?.get(day),
+            })
+          "
+        />
+      </button>
     </div>
 
     <button
@@ -107,7 +113,7 @@ function onTodayTap() {
       class="flex size-11 shrink-0 items-center justify-center rounded-xl transition-transform duration-100 select-none active:scale-95"
       :class="markedDays.has(today) ? [meta.fill, 'text-white'] : 'bg-mist text-ink-soft'"
       :aria-pressed="markedDays.has(today)"
-      :aria-label="`${habit.name}, today`"
+      :aria-label="`${habit.name}, ${$t('today.todayLabel')}`"
       @click.stop="onTodayTap"
     >
       <Check v-if="meta.isBinary" class="size-5" />

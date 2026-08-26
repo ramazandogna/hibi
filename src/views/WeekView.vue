@@ -279,7 +279,7 @@ function score(habitId: string, target: number): string {
           v-for="day in days"
           :key="`head-${day}`"
           type="button"
-          class="text-ink-soft rounded-cell py-1 text-center text-[10px] disabled:opacity-40"
+          class="text-ink-soft rounded-cell flex h-10 items-center justify-center text-center text-[10px] disabled:opacity-40"
           :class="day === today ? 'text-sea font-bold' : ''"
           :disabled="day > today"
           :aria-label="$t('common.openItem', { name: day })"
@@ -307,19 +307,25 @@ function score(habitId: string, target: number): string {
                 :key="`${habit.id}-${day}`"
                 type="button"
                 :disabled="day > today"
-                class="rounded-cell mx-auto size-6 transition-transform duration-100 active:scale-90"
-                :class="
-                  dayCellClass({
-                    kind: habit.kind,
-                    isMarked: markedByHabit.get(habit.id)?.has(day) ?? false,
-                    value: valuesByHabit.get(habit.id)?.get(day),
-                    isFuture: day > today,
-                  })
-                "
+                class="flex h-10 w-full items-center justify-center transition-transform duration-100 active:scale-90"
                 :aria-pressed="markedByHabit.get(habit.id)?.has(day) ?? false"
                 :aria-label="`${habit.name}, ${day}`"
                 @click="onCellTap(habit, day)"
-              />
+              >
+                <!-- The visual cell stays 24px; the button around it is 40px so
+                     a thumb has something to land on. -->
+                <span
+                  class="rounded-cell size-6"
+                  :class="
+                    dayCellClass({
+                      kind: habit.kind,
+                      isMarked: markedByHabit.get(habit.id)?.has(day) ?? false,
+                      value: valuesByHabit.get(habit.id)?.get(day),
+                      isFuture: day > today,
+                    })
+                  "
+                />
+              </button>
 
               <span class="text-ink-soft text-right text-[10px] tabular-nums">
                 {{ score(habit.id, habit.target_per_week) }}
