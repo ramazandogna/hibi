@@ -220,7 +220,7 @@ const tr: typeof en = {
     google: 'Google ile devam et',
     or: 'veya',
     email: 'E-posta',
-    emailPlaceholder: 'sen@ornek.com',
+    emailPlaceholder: "sen{'@'}ornek.com",
     password: 'Parola',
     confirmPassword: 'Parolayı doğrula',
     passwordHint: 'En az 8 karakter',

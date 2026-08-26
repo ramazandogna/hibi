@@ -223,7 +223,7 @@ const en = {
     google: 'Continue with Google',
     or: 'or',
     email: 'Email',
-    emailPlaceholder: 'you@example.com',
+    emailPlaceholder: "you{'@'}example.com",
     password: 'Password',
     confirmPassword: 'Confirm password',
     passwordHint: 'At least 8 characters',

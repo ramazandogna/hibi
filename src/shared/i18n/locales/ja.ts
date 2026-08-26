@@ -219,7 +219,7 @@ const ja: typeof en = {
     google: 'Google で続ける',
     or: 'または',
     email: 'メールアドレス',
-    emailPlaceholder: 'you@example.com',
+    emailPlaceholder: "you{'@'}example.com",
     password: 'パスワード',
     confirmPassword: 'パスワードの確認',
     passwordHint: '8 文字以上',

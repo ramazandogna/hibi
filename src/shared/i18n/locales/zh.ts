@@ -218,7 +218,7 @@ const zh: typeof en = {
     google: '使用 Google 继续',
     or: '或',
     email: '邮箱',
-    emailPlaceholder: 'you@example.com',
+    emailPlaceholder: "you{'@'}example.com",
     password: '密码',
     confirmPassword: '确认密码',
     passwordHint: '至少 8 个字符',
