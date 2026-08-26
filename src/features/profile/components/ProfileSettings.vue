@@ -4,7 +4,7 @@ import { ref, watch } from 'vue'
 import { useProfile, useUpdateProfile } from '../profile.queries'
 import { useDebouncedCallback } from '@/shared/lib/use-debounced-callback'
 import BaseInput from '@/shared/ui/BaseInput.vue'
-import { isThemePreference, useTheme } from '@/shared/lib/theme'
+import { useTheme } from '@/shared/lib/theme'
 import type { ThemePreference } from '@/shared/lib/theme'
 
 const { data: profile } = useProfile()
@@ -12,27 +12,6 @@ const update = useUpdateProfile()
 
 const displayName = ref('')
 const theme = useTheme()
-
-/**
- * Adopt the stored theme exactly once, when the row first arrives.
- *
- * Without the guard this watcher re-applies the database value on every refetch
- * and undoes a choice the user just made locally.
- */
-let hasAdoptedStoredTheme = false
-
-watch(
-  profile,
-  (next) => {
-    if (hasAdoptedStoredTheme || !next) return
-
-    hasAdoptedStoredTheme = true
-    if (isThemePreference(next.theme) && next.theme !== theme.value) {
-      theme.value = next.theme
-    }
-  },
-  { immediate: true },
-)
 
 function selectTheme(preference: ThemePreference) {
   theme.value = preference

@@ -1,5 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/vue-query'
-import { computed } from 'vue'
+import { computed, toValue } from 'vue'
+import type { MaybeRefOrGetter } from 'vue'
 
 import { getProfile, updateProfile } from './profile.api'
 import { profileKeys } from './profile.keys'
@@ -11,11 +12,12 @@ import type { WeekStart } from '@/shared/lib/date'
  * `staleTime: Infinity` because preferences only change when this app changes
  * them, and every mutation writes the fresh row straight back into the cache.
  */
-export function useProfile() {
+export function useProfile(enabled?: MaybeRefOrGetter<boolean>) {
   return useQuery({
     queryKey: profileKeys.current(),
     queryFn: getProfile,
     staleTime: Infinity,
+    ...(enabled === undefined ? {} : { enabled: computed(() => toValue(enabled)) }),
   })
 }
 

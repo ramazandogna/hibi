@@ -1,4 +1,4 @@
-import { onScopeDispose, ref, watch } from 'vue'
+import { ref, watch } from 'vue'
 
 /** What the user asked for; `system` follows the OS. */
 export type ThemePreference = 'system' | 'light' | 'dark'
@@ -37,35 +37,32 @@ export function applyTheme(preference: ThemePreference): void {
 }
 
 /**
- * Owns the live theme preference.
+ * The live theme preference, shared by every caller.
  *
- * `localStorage` is the source read at boot, because the inline script in
- * index.html needs an answer before any JS bundle loads. The database copy is
- * only for carrying the choice between devices.
- *
- * @returns A writable ref; assigning to it stores and applies the theme.
+ * Module level on purpose: a per-call ref would let the settings screen and the
+ * app root drift apart. `localStorage` is the source read at boot, because the
+ * inline script in index.html needs an answer before any bundle loads; the
+ * database copy only carries the choice between devices.
  */
+const preference = ref<ThemePreference>(readStoredTheme())
+
+watch(
+  preference,
+  (next) => {
+    storeTheme(next)
+    applyTheme(next)
+  },
+  { immediate: true },
+)
+
+// While on `system`, follow the OS if the user flips it at night.
+const media = window.matchMedia('(prefers-color-scheme: dark)')
+
+media.addEventListener('change', () => {
+  if (preference.value === 'system') applyTheme('system')
+})
+
+/** @returns The shared preference ref; assigning to it stores and applies it. */
 export function useTheme() {
-  const preference = ref<ThemePreference>(readStoredTheme())
-
-  watch(
-    preference,
-    (next) => {
-      storeTheme(next)
-      applyTheme(next)
-    },
-    { immediate: true },
-  )
-
-  // While on `system`, follow the OS if the user flips it at night.
-  const media = window.matchMedia('(prefers-color-scheme: dark)')
-
-  function onSystemChange() {
-    if (preference.value === 'system') applyTheme('system')
-  }
-
-  media.addEventListener('change', onSystemChange)
-  onScopeDispose(() => media.removeEventListener('change', onSystemChange))
-
   return preference
 }

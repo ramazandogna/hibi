@@ -5,10 +5,10 @@ import AuthLayout from '@/layouts/AuthLayout.vue'
 import { computed } from 'vue'
 import { VueQueryDevtools } from '@tanstack/vue-query-devtools'
 import { slideDirection } from '@/shared/lib/tab-transition'
-import { useTheme } from '@/shared/lib/theme'
+import { useThemeSync } from '@/features/profile/use-theme-sync'
 
 const route = useRoute()
-useTheme()
+useThemeSync()
 
 const transitionName = computed(() =>
   slideDirection.value === 'none' ? '' : `slide-${slideDirection.value}`,
@@ -42,8 +42,36 @@ const layoutComponent = computed(() => {
 <style>
 @reference "@/assets/main.css";
 
+/* A barely-there diamond lattice so the area around the shell is not a flat
+   white slab. Both layers are theme colours at very low alpha, so it reads as
+   texture rather than decoration and inverts with the theme for free. */
 .screen-view {
   @apply bg-canvas fixed inset-0 flex items-center justify-center;
+  background-image:
+    repeating-linear-gradient(
+      45deg,
+      color-mix(in srgb, var(--color-deep) 5%, transparent) 0 1px,
+      transparent 1px 56px
+    ),
+    repeating-linear-gradient(
+      -45deg,
+      color-mix(in srgb, var(--color-deep) 5%, transparent) 0 1px,
+      transparent 1px 56px
+    );
+}
+
+:global(.dark) .screen-view {
+  background-image:
+    repeating-linear-gradient(
+      45deg,
+      color-mix(in srgb, var(--color-leaf) 7%, transparent) 0 1px,
+      transparent 1px 56px
+    ),
+    repeating-linear-gradient(
+      -45deg,
+      color-mix(in srgb, var(--color-leaf) 7%, transparent) 0 1px,
+      transparent 1px 56px
+    );
 }
 
 .mobile-screen-view {
