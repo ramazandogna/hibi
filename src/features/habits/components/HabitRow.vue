@@ -3,7 +3,7 @@ import { computed } from 'vue'
 import { Check } from 'lucide-vue-next'
 
 import type { Habit } from '../habit.types'
-import { KIND_META } from '@/shared/lib/kind'
+import { dayCellClass, KIND_META } from '@/shared/lib/kind'
 import { fromDateKey, toDateKey } from '@/shared/lib/date'
 import { tapFeedback } from '@/shared/lib/haptics'
 import { useHabitStats } from '@/features/stats/use-habit-stats'
@@ -43,26 +43,26 @@ function dayLabel(dateKey: string) {
   return dayFormatter.format(fromDateKey(dateKey))
 }
 
+/** Binary kinds toggle; scale kinds ask for a value, past days included. */
 function onDayTap(dateKey: string) {
-  tapFeedback()
-  emit('toggle', dateKey)
-}
-
-/** Binary kinds toggle; scale kinds open the 1-5 picker instead. */
-function onTodayTap() {
   tapFeedback()
 
   if (meta.value.isBinary) {
-    emit('toggle', today)
+    emit('toggle', dateKey)
   } else {
-    emit('scale', today)
+    emit('scale', dateKey)
   }
+}
+
+function onTodayTap() {
+  onDayTap(today)
 }
 </script>
 
 <template>
   <li
-    class="border-hair rounded-card flex cursor-pointer items-center gap-3 border p-3"
+    class="rounded-card flex cursor-pointer items-center gap-3 border p-3"
+    :class="meta.card"
     @click="emit('open', habit.id)"
   >
     <div class="flex size-10 shrink-0 items-center justify-center rounded-xl" :class="meta.soft">
@@ -81,7 +81,13 @@ function onTodayTap() {
         :key="day"
         type="button"
         class="rounded-cell size-6 transition-transform duration-100 select-none active:scale-90"
-        :class="markedDays.has(day) ? meta.fill : 'bg-mist'"
+        :class="
+          dayCellClass({
+            kind: habit.kind,
+            isMarked: markedDays.has(day),
+            value: values?.get(day),
+          })
+        "
         :aria-pressed="markedDays.has(day)"
         :aria-label="`${habit.name}, ${dayLabel(day)}`"
         @click.stop="onDayTap(day)"
