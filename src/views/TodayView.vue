@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { computed, ref } from 'vue'
-import { Sparkles } from 'lucide-vue-next'
+import { ChevronDown, Sparkles } from 'lucide-vue-next'
 
 import { useCreateHabit, useHabits } from '@/features/habits/habits.queries'
 import { toAppError } from '@/shared/lib/app-error'
@@ -240,11 +240,12 @@ function openHabit(habitId: string) {
       <template #title>
         <button
           type="button"
-          class="hover:text-sea transition-colors"
+          class="header-action"
           :aria-label="`Open ${todayTitle}`"
           @click="dayPanelOpen = true"
         >
-          {{ todayTitle }}
+          <span class="truncate">{{ todayTitle }}</span>
+          <ChevronDown class="text-ink-soft size-4 shrink-0" aria-hidden="true" />
         </button>
       </template>
     </PageHeader>

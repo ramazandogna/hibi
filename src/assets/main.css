@@ -91,6 +91,11 @@
 }
 
 @layer components {
+  /* A header title that opens something. The chevron and the tinted pill are
+     the only cues a user gets that a heading is a control, so both stay. */
+  .header-action {
+    @apply hover:bg-mist flex min-w-0 items-center gap-1 rounded-full px-3 py-1 transition-colors;
+  }
 
   /* One visible focus ring everywhere, so no component can quietly lose it. */
   :focus-visible {
