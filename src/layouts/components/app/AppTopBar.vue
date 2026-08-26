@@ -1,12 +1,22 @@
 <script lang="ts" setup>
 import { ref } from 'vue'
-import { Crown, Settings } from 'lucide-vue-next'
+import { BellRing, Crown, Settings, Sparkles, TrendingUp } from 'lucide-vue-next'
 import { RouterLink } from 'vue-router'
 
+import BaseSheet from '@/shared/ui/BaseSheet.vue'
 import BrandMark from '@/shared/ui/BrandMark.vue'
 
-/** Tooltip is click-driven, not hover: it has to work on touch too. */
-const showPremiumHint = ref(false)
+/**
+ * A sheet, not a tooltip: a floating card anchored to a 36px icon has nowhere
+ * to go on a narrow screen, and there is no hover on touch to dismiss it.
+ */
+const premiumOpen = ref(false)
+
+const PERKS = [
+  { icon: BellRing, key: 'premium.reminders' },
+  { icon: TrendingUp, key: 'premium.recaps' },
+  { icon: Sparkles, key: 'premium.insights' },
+] as const
 </script>
 
 <template>
@@ -21,37 +31,45 @@ const showPremiumHint = ref(false)
     <div class="flex w-11 flex-col items-center gap-1">
       <RouterLink
         to="/settings"
-        class="text-ink-soft hover:bg-mist hover:text-sea rounded-card flex size-9 items-center justify-center transition-colors"
-        aria-label="Settings"
+        class="text-ink-soft hover:bg-mist hover:text-sea rounded-card flex size-9 items-center justify-center transition-colors active:scale-90"
+        :aria-label="$t('topbar.settings')"
       >
         <Settings class="size-[18px]" />
       </RouterLink>
 
-      <div class="relative">
-        <button
-          type="button"
-          class="text-ink-soft hover:bg-mist hover:text-amber rounded-card flex size-9 items-center justify-center transition-colors"
-          aria-label="Premium"
-          :aria-expanded="showPremiumHint"
-          @click="showPremiumHint = !showPremiumHint"
-        >
-          <Crown class="size-[18px]" />
-        </button>
-
-        <div
-          v-if="showPremiumHint"
-          role="status"
-          class="border-hair bg-surface rounded-card absolute top-11 right-0 z-50 flex w-56 flex-col gap-1 border p-3 text-left shadow-xl"
-        >
-          <span class="text-amber flex items-center gap-1.5 text-xs font-semibold">
-            <Crown class="size-3.5" />
-            Hibi Premium
-          </span>
-          <p class="text-ink-soft text-xs leading-snug">
-            Reminders, yearly recaps and data insights. Coming soon.
-          </p>
-        </div>
-      </div>
+      <button
+        type="button"
+        class="text-amber/70 hover:bg-amber/10 hover:text-amber rounded-card flex size-9 items-center justify-center transition-colors active:scale-90"
+        :aria-label="$t('topbar.premium')"
+        @click="premiumOpen = true"
+      >
+        <Crown class="size-[18px]" />
+      </button>
     </div>
   </header>
+
+  <BaseSheet
+    v-model="premiumOpen"
+    :title="$t('premium.title')"
+    :subtitle="$t('premium.subtitle')"
+  >
+    <ul class="flex flex-col gap-3">
+      <li v-for="perk in PERKS" :key="perk.key" class="flex items-center gap-3">
+        <span
+          class="bg-amber/15 text-amber flex size-10 shrink-0 items-center justify-center rounded-xl"
+          aria-hidden="true"
+        >
+          <component :is="perk.icon" class="size-5" />
+        </span>
+        <span class="text-ink text-sm">{{ $t(perk.key) }}</span>
+      </li>
+    </ul>
+
+    <p
+      class="bg-mist text-ink-soft rounded-card mt-6 px-3 py-2 text-center text-xs font-medium"
+      role="status"
+    >
+      {{ $t('premium.soon') }}
+    </p>
+  </BaseSheet>
 </template>

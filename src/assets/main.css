@@ -65,6 +65,17 @@
   button {
     -webkit-tap-highlight-color: transparent;
   }
+
+  /* No scrollbars anywhere. The app is a phone shell: a track running down the
+     side of a 430px column reads as a stray line, and every scrollable area
+     here is short enough that its position is obvious from the content. */
+  * {
+    scrollbar-width: none;
+  }
+
+  *::-webkit-scrollbar {
+    display: none;
+  }
 }
 
 /* Declared with @utility (not @layer utilities) so it can also be used from

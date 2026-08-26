@@ -11,6 +11,7 @@ import AppNavbar from '@/layouts/components/app/AppNavbar.vue'
 import AppTopBar from '@/layouts/components/app/AppTopBar.vue'
 import { TAB_PATH, tabAtOffset } from '@/shared/lib/tabs'
 import { forceSlideDirection } from '@/shared/lib/tab-transition'
+import { tapFeedback } from '@/shared/lib/haptics'
 import { useOnline } from '@/shared/lib/use-online.ts'
 
 const route = useRoute()
@@ -59,6 +60,11 @@ const isOnline = useOnline()
 /** Creating a habit is reachable from every screen, not just Profile. */
 const createOpen = ref(false)
 
+function openCreate() {
+  tapFeedback()
+  createOpen.value = true
+}
+
 function stopTracking() {
   tracking = false
 }
@@ -82,7 +88,7 @@ function stopTracking() {
       role="status"
       class="bg-amber/20 text-ink rounded-card w-full px-3 py-2 text-center text-xs"
     >
-      You're offline - changes won't be saved.
+      {{ $t('offline') }}
     </p>
 
     <!--
@@ -97,11 +103,18 @@ function stopTracking() {
       <slot />
     </main>
 
-    <button type="button" class="fab" aria-label="New habit" @click="createOpen = true">
-      <Plus class="size-6" />
-    </button>
+    <div class="fab-slot">
+      <button type="button" class="fab" @click="openCreate">
+        <Plus class="fab-icon" aria-hidden="true" />
+        <span class="fab-label">{{ $t('habit.new') }}</span>
+      </button>
+    </div>
 
-    <BaseSheet v-model="createOpen" title="New habit">
+    <BaseSheet
+      v-model="createOpen"
+      :title="$t('habit.new')"
+      :subtitle="$t('habit.newSubtitle')"
+    >
       <HabitForm @saved="createOpen = false" />
     </BaseSheet>
   </div>
@@ -133,12 +146,36 @@ function stopTracking() {
   bottom: calc(5.25rem + env(safe-area-inset-bottom, 0px));
 }
 
-/* Sits just above the tab bar, on the shell's right edge — thumb reach on a
-   phone, and clear of the centred navigation. */
+/* Shares the tab bar's column so the button lines up with the bar's right edge
+   at every width. Anchoring it to the layout instead put it 400px away from the
+   shell on a desktop screen. */
+.fab-slot {
+  @apply pointer-events-none absolute left-1/2 z-40 flex w-full max-w-[360px] -translate-x-1/2 justify-end px-4;
+  bottom: calc(9.25rem + env(safe-area-inset-bottom, 0px));
+}
+
+/* An extended FAB: a bare "+" says nothing about what it adds, and this is the
+   one action the whole app is built around. */
 .fab {
-  @apply bg-sea absolute right-4 z-40 flex size-14 items-center justify-center text-white shadow-lg transition-transform duration-100 active:scale-95;
-  border-radius: var(--radius-card);
-  bottom: calc(9.5rem + env(safe-area-inset-bottom, 0px));
+  @apply bg-sea pointer-events-auto flex h-12 items-center gap-1.5 rounded-full pr-5 pl-4 text-white shadow-lg transition-transform duration-150 active:scale-95;
+  /* A ring in the canvas colour separates it from whatever scrolls behind. */
+  box-shadow:
+    0 0 0 4px var(--color-canvas),
+    0 10px 24px -8px color-mix(in srgb, var(--color-sea) 60%, transparent);
+}
+
+.fab-icon {
+  @apply size-5 shrink-0 stroke-[2.5px];
+}
+
+.fab-label {
+  @apply text-sm font-semibold whitespace-nowrap;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fab {
+    transition: none;
+  }
 }
 
 .global-wrapper {

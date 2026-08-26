@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import { nextTick, onUnmounted, ref, watch } from 'vue'
+import { X } from 'lucide-vue-next'
 
 const open = defineModel<boolean>({ required: true })
-const { title } = defineProps<{ title: string }>()
+const { title, subtitle = '' } = defineProps<{ title: string; subtitle?: string }>()
 
 const panel = ref<HTMLElement | null>(null)
 let lastFocused: HTMLElement | null = null
@@ -55,22 +56,44 @@ onUnmounted(() => {
         <div
           class="shell-frame md:rounded-shell relative flex flex-col justify-end overflow-hidden"
         >
-          <div class="bg-ink/40 absolute inset-0" @click="close" />
+          <div class="bg-ink/45 absolute inset-0 backdrop-blur-[2px]" @click="close" />
 
+          <!-- Header and footer stay put; only the slot scrolls. Sized in dvh so
+               the on-screen keyboard shrinks the sheet instead of pushing its
+               content out of reach. -->
           <section
             ref="panel"
             role="dialog"
             aria-modal="true"
             :aria-label="title"
             tabindex="-1"
-            class="bg-surface safe-b no-scrollbar relative max-h-[85%] min-h-[42vh] overflow-y-auto rounded-t-3xl p-5 pb-8 outline-none"
+            class="sheet-panel bg-surface relative flex max-h-[94%] min-h-[56dvh] flex-col rounded-t-[28px] shadow-2xl outline-none"
           >
-            <header class="mb-4 flex items-center justify-between">
-              <h2 class="text-ink text-lg font-semibold">{{ title }}</h2>
-              <button type="button" class="text-ink-soft text-sm" @click="close">Close</button>
+            <div class="flex shrink-0 justify-center pt-3" aria-hidden="true">
+              <span class="bg-hair h-1.5 w-10 rounded-full" />
+            </div>
+
+            <header class="flex shrink-0 items-start gap-3 px-6 pt-4 pb-5">
+              <div class="min-w-0 flex-1">
+                <h2 class="text-ink text-xl leading-tight font-semibold">{{ title }}</h2>
+                <p v-if="subtitle" class="text-ink-soft mt-1 text-sm leading-snug">
+                  {{ subtitle }}
+                </p>
+              </div>
+
+              <button
+                type="button"
+                class="text-ink-soft hover:bg-mist hover:text-ink -mt-1 flex size-10 shrink-0 items-center justify-center rounded-full transition-colors active:scale-90"
+                :aria-label="$t('common.close')"
+                @click="close"
+              >
+                <X class="size-5" />
+              </button>
             </header>
 
-            <slot />
+            <div class="safe-b min-h-0 flex-1 overflow-y-auto px-6 pb-8">
+              <slot />
+            </div>
           </section>
         </div>
       </div>
@@ -81,10 +104,28 @@ onUnmounted(() => {
 <style scoped>
 .sheet-enter-active,
 .sheet-leave-active {
-  transition: opacity 150ms ease;
+  transition: opacity 200ms ease;
 }
 .sheet-enter-from,
 .sheet-leave-to {
   opacity: 0;
+}
+
+/* The panel travels further than the scrim fades, which is what makes the
+   sheet read as rising rather than appearing. */
+.sheet-enter-active .sheet-panel,
+.sheet-leave-active .sheet-panel {
+  transition: transform 280ms cubic-bezier(0.32, 0.72, 0, 1);
+}
+.sheet-enter-from .sheet-panel,
+.sheet-leave-to .sheet-panel {
+  transform: translateY(6%);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sheet-enter-from .sheet-panel,
+  .sheet-leave-to .sheet-panel {
+    transform: none;
+  }
 }
 </style>
