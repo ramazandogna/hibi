@@ -15,6 +15,7 @@ const ja: typeof en = {
     loading: '読み込み中…',
     delete: '削除',
     deletePermanently: '完全に削除',
+    export: '書き出す',
     edit: '編集',
     archive: 'アーカイブ',
     restore: '元に戻す',

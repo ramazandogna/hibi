@@ -59,8 +59,16 @@ const cards = computed(() => {
 
   if (kind === 'scale') {
     return [
-      { value: average7.value?.toFixed(1) ?? '—', label: t('stats.avgThisWeek'), trend: trend.value },
-      { value: averagePrevious7.value?.toFixed(1) ?? '—', label: t('stats.avgLastWeek'), trend: null },
+      {
+        value: average7.value?.toFixed(1) ?? '—',
+        label: t('stats.avgThisWeek'),
+        trend: trend.value,
+      },
+      {
+        value: averagePrevious7.value?.toFixed(1) ?? '—',
+        label: t('stats.avgLastWeek'),
+        trend: null,
+      },
       { value: String(markedDays.value.size), label: t('stats.daysTracked'), trend: null },
     ]
   }
@@ -71,8 +79,6 @@ const cards = computed(() => {
     { value: `${Math.round(completion30.value * 100)}%`, label: t('stats.last30'), trend: null },
   ]
 })
-
-
 
 /**
  * Every entry that carries a note, newest first.
@@ -86,7 +92,11 @@ const notes = computed(() =>
     .sort((a, b) => b.entry_date.localeCompare(a.entry_date))
     .map((entry) => ({
       id: entry.id,
-      date: formatDate(fromDateKey(entry.entry_date), { day: 'numeric', month: 'long', year: 'numeric' }),
+      date: formatDate(fromDateKey(entry.entry_date), {
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric',
+      }),
       body: entry.note ?? '',
     })),
 )

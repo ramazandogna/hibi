@@ -15,6 +15,7 @@ const tr: typeof en = {
     loading: 'Yükleniyor…',
     delete: 'Sil',
     deletePermanently: 'Kalıcı olarak sil',
+    export: 'Dışa aktar',
     edit: 'Düzenle',
     archive: 'Arşivle',
     restore: 'Geri al',
@@ -114,7 +115,8 @@ const tr: typeof en = {
     mode: 'Mod',
     modeLocked: 'Takip modu değiştirilemez — geçmişinin anlamını baştan yazardı.',
     weeklyTarget: 'Haftalık hedef',
-    weeklyTargetHint: 'Haftada kaç gün hedefliyorsun. Tutabildiğin dört gün, bıraktığın yediden iyidir.',
+    weeklyTargetHint:
+      'Haftada kaç gün hedefliyorsun. Tutabildiğin dört gün, bıraktığın yediden iyidir.',
     create: 'Alışkanlık oluştur',
     saveChanges: 'Değişiklikleri kaydet',
     archiveHabit: 'Alışkanlığı arşivle',

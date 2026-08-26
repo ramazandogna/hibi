@@ -21,7 +21,9 @@ const emit = defineEmits<{ select: [value: number] }>()
         :key="level.value"
         type="button"
         class="flex flex-1 flex-col items-center gap-1.5 py-1"
-        :aria-label="$t('entry.levelLabel', { value: level.value, label: $t(`level.${level.value}`) })"
+        :aria-label="
+          $t('entry.levelLabel', { value: level.value, label: $t(`level.${level.value}`) })
+        "
         @click="emit('select', level.value)"
       >
         <span

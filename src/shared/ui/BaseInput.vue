@@ -8,10 +8,17 @@ const {
   error = '',
   hint = '',
   type = 'text',
+  labelHidden = false,
 } = defineProps<{
   label: string
   error?: string | undefined
   hint?: string | undefined
+  /**
+   * Hides the label visually but keeps it for assistive tech. For fields whose
+   * surrounding row already names them — dropping the label entirely would
+   * leave the input with no accessible name at all.
+   */
+  labelHidden?: boolean
   type?: 'text' | 'email' | 'password' | 'number'
 }>()
 
@@ -30,7 +37,9 @@ const describedBy = computed(() => {
 
 <template>
   <div class="flex flex-col gap-1.5">
-    <label :for="id" class="text-ink text-sm font-medium">{{ label }}</label>
+    <label :for="id" class="text-ink text-sm font-medium" :class="labelHidden ? 'sr-only' : ''">
+      {{ label }}
+    </label>
 
     <input
       :id="id"

@@ -248,7 +248,11 @@ function onSelectDay(habitId: string, dateKey: string) {
       :key="group.kind"
       class="flex flex-col gap-2"
     >
-      <SectionHeading :kind="group.kind" :label="$t(`kind.${group.kind}.group`)" :count="group.items.length" />
+      <SectionHeading
+        :kind="group.kind"
+        :label="$t(`kind.${group.kind}.group`)"
+        :count="group.items.length"
+      />
 
       <ul class="flex flex-col gap-3">
         <li
@@ -276,7 +280,10 @@ function onSelectDay(habitId: string, dateKey: string) {
       </ul>
     </section>
 
-    <BaseSheet v-model="dayPanelOpen" :title="scalingHabitId ? $t('today.howWasIt') : dayPanelTitle">
+    <BaseSheet
+      v-model="dayPanelOpen"
+      :title="scalingHabitId ? $t('today.howWasIt') : dayPanelTitle"
+    >
       <ScalePicker
         v-if="scalingHabitId && dayPanelDate"
         :key="`${scalingHabitId}-${dayPanelDate}`"
@@ -314,7 +321,9 @@ function onSelectDay(habitId: string, dateKey: string) {
         </section>
 
         <section v-if="selectedDayNote" class="flex flex-col gap-1">
-          <h3 class="text-ink-soft text-xs font-semibold tracking-wide uppercase">{{ $t('year.thatDay') }}</h3>
+          <h3 class="text-ink-soft text-xs font-semibold tracking-wide uppercase">
+            {{ $t('year.thatDay') }}
+          </h3>
           <p class="text-ink text-sm whitespace-pre-wrap">{{ selectedDayNote }}</p>
         </section>
       </div>

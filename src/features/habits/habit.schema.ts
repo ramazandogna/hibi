@@ -14,11 +14,7 @@ import { t } from '@/shared/i18n'
  */
 export function createHabitSchema() {
   return z.object({
-    name: z
-      .string()
-      .trim()
-      .min(1, t('validation.nameRequired'))
-      .max(40, t('validation.nameMax')),
+    name: z.string().trim().min(1, t('validation.nameRequired')).max(40, t('validation.nameMax')),
     kind: z.enum(Constants.public.Enums.habit_kind),
     icon: z.string().min(1).default('circle'),
     target_per_week: z.number().int().min(1).max(7).default(7),

@@ -48,11 +48,7 @@ const PERKS = [
     </div>
   </header>
 
-  <BaseSheet
-    v-model="premiumOpen"
-    :title="$t('premium.title')"
-    :subtitle="$t('premium.subtitle')"
-  >
+  <BaseSheet v-model="premiumOpen" :title="$t('premium.title')" :subtitle="$t('premium.subtitle')">
     <ul class="flex flex-col gap-3">
       <li v-for="perk in PERKS" :key="perk.key" class="flex items-center gap-3">
         <span

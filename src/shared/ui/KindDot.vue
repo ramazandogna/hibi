@@ -14,6 +14,8 @@ const meta = computed(() => KIND_META[props.kind])
 <template>
   <span class="inline-flex items-center gap-1.5">
     <span class="size-2 rounded-full" :class="meta.fill" />
-    <span v-if="showLabel" class="text-ink-soft text-xs font-medium">{{ $t(`kind.${kind}.label`) }}</span>
+    <span v-if="showLabel" class="text-ink-soft text-xs font-medium">{{
+      $t(`kind.${kind}.label`)
+    }}</span>
   </span>
 </template>

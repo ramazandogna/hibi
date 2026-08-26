@@ -313,7 +313,11 @@ function openHabit(habitId: string) {
       :key="group.kind"
       class="flex flex-col gap-2"
     >
-      <SectionHeading :kind="group.kind" :label="$t(`kind.${group.kind}.group`)" :count="group.items.length" />
+      <SectionHeading
+        :kind="group.kind"
+        :label="$t(`kind.${group.kind}.group`)"
+        :count="group.items.length"
+      />
 
       <ul class="flex flex-col gap-2">
         <HabitRow

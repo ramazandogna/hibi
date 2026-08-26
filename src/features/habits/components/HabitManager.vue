@@ -101,7 +101,11 @@ async function confirmDelete() {
     <p v-if="isPending" class="text-ink-soft text-sm">{{ $t('common.loading') }}</p>
 
     <section v-for="group in habitGroups" v-else :key="group.kind" class="flex flex-col gap-2">
-      <SectionHeading :kind="group.kind" :label="$t(`kind.${group.kind}.group`)" :count="group.items.length" />
+      <SectionHeading
+        :kind="group.kind"
+        :label="$t(`kind.${group.kind}.group`)"
+        :count="group.items.length"
+      />
 
       <ul class="flex flex-col gap-1">
         <li
@@ -152,7 +156,9 @@ async function confirmDelete() {
     </section>
 
     <section v-if="(archivedHabits?.length ?? 0) > 0" class="flex flex-col gap-2">
-      <h2 class="text-ink-soft text-xs font-semibold tracking-wide uppercase">{{ $t('habit.archiveSection') }}</h2>
+      <h2 class="text-ink-soft text-xs font-semibold tracking-wide uppercase">
+        {{ $t('habit.archiveSection') }}
+      </h2>
 
       <ul class="flex flex-col gap-1">
         <li

@@ -1,90 +1,85 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { computed } from 'vue'
+import { CalendarDays, GraduationCap, Palette } from 'lucide-vue-next'
 
+import LanguagePicker from './LanguagePicker.vue'
 import { useProfile, useUpdateProfile } from '../profile.queries'
-import { useDebouncedCallback } from '@/shared/lib/use-debounced-callback'
-import BaseInput from '@/shared/ui/BaseInput.vue'
+import { useOnboarding } from '@/features/onboarding/onboarding'
 import { useTheme } from '@/shared/lib/theme'
 import type { ThemePreference } from '@/shared/lib/theme'
+import { useI18n } from 'vue-i18n'
+import BaseButton from '@/shared/ui/BaseButton.vue'
+import SegmentedControl from '@/shared/ui/SegmentedControl.vue'
+import SettingsGroup from '@/shared/ui/SettingsGroup.vue'
+import SettingsRow from '@/shared/ui/SettingsRow.vue'
+
+const { t } = useI18n()
 
 const { data: profile } = useProfile()
 const update = useUpdateProfile()
-
-const displayName = ref('')
 const theme = useTheme()
+const tour = useOnboarding()
 
-function selectTheme(preference: ThemePreference) {
-  theme.value = preference
-  update.mutate({ theme: preference })
-}
+const THEME_OPTIONS = computed(() => [
+  { value: 'system' as ThemePreference, label: t('settings.themeSystem') },
+  { value: 'light' as ThemePreference, label: t('settings.themeLight') },
+  { value: 'dark' as ThemePreference, label: t('settings.themeDark') },
+])
 
-// Seed the field once the row arrives, without fighting the user's typing.
-watch(
-  profile,
-  (next) => {
-    if (next && displayName.value === '') displayName.value = next.display_name ?? ''
+const WEEK_OPTIONS = computed(() => [
+  { value: 1, label: t('settings.monday') },
+  { value: 0, label: t('settings.sunday') },
+])
+
+/**
+ * The theme is written to two places: the local singleton so the change is
+ * instant, and the profile row so the next device agrees.
+ */
+const themeModel = computed<ThemePreference>({
+  get: () => theme.value,
+  set: (next) => {
+    theme.value = next
+    update.mutate({ theme: next })
   },
-  { immediate: true },
-)
-
-const saveName = useDebouncedCallback((value: string) => {
-  update.mutate({ display_name: value.trim() || null })
-}, 800)
-
-watch(displayName, (value) => {
-  if (profile.value && value !== (profile.value.display_name ?? '')) saveName.run(value)
 })
 
-const WEEK_OPTIONS = [
-  { value: 1, label: 'Monday' },
-  { value: 0, label: 'Sunday' },
-] as const
-
-const THEME_OPTIONS = [
-  { value: 'system', label: 'System' },
-  { value: 'light', label: 'Light' },
-  { value: 'dark', label: 'Dark' },
-] as const
+// `?? 1` rather than a blank control: the row may still be loading, and an
+// unselected segmented control looks broken.
+const weekModel = computed<number>({
+  get: () => profile.value?.week_starts_on ?? 1,
+  set: (next) => update.mutate({ week_starts_on: next }),
+})
 </script>
 
 <template>
-  <section class="flex flex-col gap-5">
-    <h2 class="text-ink-soft text-xs font-semibold tracking-wide uppercase">Settings</h2>
+  <div class="flex flex-col gap-6">
+    <SettingsGroup :title="$t('settings.appearance')">
+      <SettingsRow :label="$t('settings.theme')" :icon="Palette" stacked>
+        <SegmentedControl v-model="themeModel" :options="THEME_OPTIONS" />
+      </SettingsRow>
+    </SettingsGroup>
 
-    <BaseInput v-model="displayName" label="Display name" placeholder="Your name" />
+    <SettingsGroup :title="$t('settings.calendar')">
+      <SettingsRow :label="$t('settings.weekStart')" :icon="CalendarDays" stacked>
+        <SegmentedControl v-model="weekModel" :options="WEEK_OPTIONS" />
+      </SettingsRow>
+    </SettingsGroup>
 
-    <fieldset class="flex w-full flex-col gap-1.5">
-      <legend class="text-ink text-sm font-medium">Week starts on</legend>
-      <div class="bg-mist rounded-card flex w-fit gap-1 p-1">
-        <button
-          v-for="option in WEEK_OPTIONS"
-          :key="option.value"
-          type="button"
-          class="flex h-10 items-center justify-center rounded-xl px-4 text-sm font-medium transition-colors select-none"
-          :class="profile?.week_starts_on === option.value ? 'bg-sea text-white' : 'text-ink-soft'"
-          :aria-pressed="profile?.week_starts_on === option.value"
-          @click="update.mutate({ week_starts_on: option.value })"
-        >
-          {{ option.label }}
-        </button>
-      </div>
-    </fieldset>
+    <SettingsGroup :title="$t('settings.language')">
+      <LanguagePicker />
+    </SettingsGroup>
 
-    <fieldset class="flex w-full flex-col gap-1.5">
-      <legend class="text-ink text-sm font-medium">Theme</legend>
-      <div class="bg-mist rounded-card flex w-fit gap-1 p-1">
-        <button
-          v-for="option in THEME_OPTIONS"
-          :key="option.value"
-          type="button"
-          class="flex h-10 items-center justify-center rounded-xl px-4 text-sm font-medium transition-colors select-none"
-          :class="theme === option.value ? 'bg-sea text-white' : 'text-ink-soft'"
-          :aria-pressed="theme === option.value"
-          @click="selectTheme(option.value)"
-        >
-          {{ option.label }}
-        </button>
-      </div>
-    </fieldset>
-  </section>
+    <SettingsGroup :title="$t('settings.help')">
+      <SettingsRow
+        :label="$t('settings.guide')"
+        :description="$t('settings.guideHint')"
+        :icon="GraduationCap"
+        stacked
+      >
+        <BaseButton variant="ghost" size="sm" class="self-start" @click="tour.restart()">
+          {{ $t('settings.replayGuide') }}
+        </BaseButton>
+      </SettingsRow>
+    </SettingsGroup>
+  </div>
 </template>

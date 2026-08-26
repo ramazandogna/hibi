@@ -67,11 +67,7 @@ const onSubmit = handleSubmit(async (formValues) => {
       autocomplete="off"
     />
 
-    <KindPicker
-      v-model="kind"
-      :disabled="isEdit"
-      :hint="isEdit ? $t('habit.modeLocked') : ''"
-    />
+    <KindPicker v-model="kind" :disabled="isEdit" :hint="isEdit ? $t('habit.modeLocked') : ''" />
 
     <fieldset v-if="values.kind === 'build'" class="flex w-full flex-col gap-1.5">
       <legend class="text-ink text-sm font-medium">{{ $t('habit.weeklyTarget') }}</legend>

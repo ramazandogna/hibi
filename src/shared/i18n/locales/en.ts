@@ -19,6 +19,7 @@ const en = {
     loading: 'Loading…',
     delete: 'Delete',
     deletePermanently: 'Delete permanently',
+    export: 'Export',
     edit: 'Edit',
     archive: 'Archive',
     restore: 'Restore',

@@ -15,6 +15,7 @@ const zh: typeof en = {
     loading: '加载中…',
     delete: '删除',
     deletePermanently: '永久删除',
+    export: '导出',
     edit: '编辑',
     archive: '归档',
     restore: '恢复',
@@ -205,8 +206,7 @@ const zh: typeof en = {
     exportHint: '一个包含所有习惯、记录和笔记的 JSON 文件。',
     deleteData: '删除我的数据',
     deleteDataTitle: '删除你的数据',
-    deleteDataBody:
-      '这会删除全部习惯、记录和笔记。账户会保留，你可以重新开始。此操作无法撤销。',
+    deleteDataBody: '这会删除全部习惯、记录和笔记。账户会保留，你可以重新开始。此操作无法撤销。',
     typeEmail: '输入你的邮箱以确认',
   },
 

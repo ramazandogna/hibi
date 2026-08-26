@@ -290,7 +290,11 @@ function score(habitId: string, target: number): string {
       </div>
 
       <section v-for="group in habitGroups" :key="group.kind" class="flex flex-col gap-2">
-        <SectionHeading :kind="group.kind" :label="$t(`kind.${group.kind}.group`)" :count="group.items.length" />
+        <SectionHeading
+          :kind="group.kind"
+          :label="$t(`kind.${group.kind}.group`)"
+          :count="group.items.length"
+        />
 
         <div class="rounded-card border p-3" :class="KIND_META[group.kind].card">
           <div class="grid grid-cols-[1fr_repeat(7,1.75rem)_2.5rem] items-center gap-1">
@@ -322,7 +326,10 @@ function score(habitId: string, target: number): string {
             </template>
           </div>
 
-          <p v-if="reviewByKind.get(group.kind)" class="text-ink-soft mt-3 text-[11px] tabular-nums">
+          <p
+            v-if="reviewByKind.get(group.kind)"
+            class="text-ink-soft mt-3 text-[11px] tabular-nums"
+          >
             {{
               $t('week.review', {
                 completed: reviewByKind.get(group.kind)?.completed,
@@ -343,7 +350,9 @@ function score(habitId: string, target: number): string {
       v-if="weekNotes.length > 0"
       class="border-hair rounded-card flex flex-col gap-2 border p-3"
     >
-      <h2 class="text-ink-soft text-xs font-semibold tracking-wide uppercase">{{ $t('week.notesThisWeek') }}</h2>
+      <h2 class="text-ink-soft text-xs font-semibold tracking-wide uppercase">
+        {{ $t('week.notesThisWeek') }}
+      </h2>
 
       <ul class="flex flex-col gap-1">
         <li v-for="note in weekNotes" :key="note.id" class="text-ink-soft truncate text-xs">
@@ -356,7 +365,10 @@ function score(habitId: string, target: number): string {
       {{ $t('week.noData') }}
     </p>
 
-    <BaseSheet v-model="dayPanelOpen" :title="scalingHabitId ? $t('today.howWasIt') : selectedDayTitle">
+    <BaseSheet
+      v-model="dayPanelOpen"
+      :title="scalingHabitId ? $t('today.howWasIt') : selectedDayTitle"
+    >
       <ScalePicker
         v-if="scalingHabitId && selectedDay"
         :key="`${scalingHabitId}-${selectedDay}`"
