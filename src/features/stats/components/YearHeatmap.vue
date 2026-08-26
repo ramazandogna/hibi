@@ -2,6 +2,7 @@
 import { computed, onMounted, ref } from 'vue'
 
 import { fromDateKey, leadingBlanks, todayKey } from '@/shared/lib/date'
+import { formatDate } from '@/shared/lib/format'
 import type { WeekStart } from '@/shared/lib/date'
 import { dayCellClass, KIND_META } from '@/shared/lib/kind'
 import type { HabitKind } from '@/shared/lib/kind'
@@ -28,8 +29,6 @@ type MonthBlock = { key: string; label: string; blanks: number; days: string[] }
 
 const scroller = ref<HTMLElement | null>(null)
 const today = todayKey()
-const monthFormatter = new Intl.DateTimeFormat('en', { month: 'short' })
-
 /**
  * The year split into month blocks.
  *
@@ -47,7 +46,7 @@ const months = computed<MonthBlock[]>(() => {
     if (!block || block.key !== monthKey) {
       block = {
         key: monthKey,
-        label: monthFormatter.format(fromDateKey(day)),
+        label: formatDate(fromDateKey(day), { month: 'short' }),
         blanks: leadingBlanks(day, weekStartsOn),
         days: [],
       }
@@ -98,7 +97,7 @@ onMounted(() => {
             type="button"
             :data-date="day"
             :disabled="!noteDays?.has(day)"
-            :aria-label="noteDays?.has(day) ? `${day} — open note` : day"
+            :aria-label="noteDays?.has(day) ? `${day} — ${$t('year.hasNote')}` : day"
             class="rounded-cell relative size-2.5 transition-transform after:absolute after:-top-px after:-right-px after:hidden after:size-[5px] after:rounded-full after:border after:border-white after:bg-black/70 after:content-[''] data-[note]:z-10 data-[note]:scale-125 data-[note]:cursor-pointer data-[note]:after:block data-[note]:hover:scale-150"
             :data-note="noteDays?.has(day) ? '' : undefined"
             :class="
@@ -123,7 +122,7 @@ onMounted(() => {
           class="absolute -top-px -right-px size-[5px] rounded-full border border-white bg-black/70"
         />
       </span>
-      has a note — tap to read
+      {{ $t('year.hasNote') }}
     </p>
   </div>
 </template>

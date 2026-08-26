@@ -16,14 +16,6 @@ export const TAB_PATH: Record<AppTab, string> = {
   profile: '/profile',
 }
 
-/** Visible label for each tab. */
-export const TAB_LABEL: Record<AppTab, string> = {
-  today: 'Today',
-  week: 'Week',
-  year: 'Year',
-  profile: 'Profile',
-}
-
 /**
  * The tab `offset` steps away, wrapping around both ends.
  *

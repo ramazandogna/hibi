@@ -15,26 +15,24 @@ const note = ref(initialNote)
 
 <template>
   <div class="flex flex-col gap-4">
-    <p class="text-ink text-sm">
-      {{ habitName }} is marked for this day. Edit the note, or remove the mark.
-    </p>
+    <p class="text-ink text-sm">{{ $t('entry.markedDay', { name: habitName }) }}</p>
 
     <textarea
       v-model="note"
       maxlength="280"
       rows="3"
-      placeholder="Why does this day stand out?"
+      :placeholder="$t('entry.standOut')"
       class="border-hair bg-surface text-ink rounded-card focus-visible:outline-sea border p-3 text-sm focus-visible:outline-2 focus-visible:outline-offset-1"
     />
 
-    <BaseButton @click="emit('save', note.trim() || null)">Save note</BaseButton>
+    <BaseButton @click="emit('save', note.trim() || null)">{{ $t('entry.saveNote') }}</BaseButton>
 
     <button
       type="button"
       class="text-ink-soft hover:text-alert self-center text-xs underline underline-offset-2 transition-colors"
       @click="emit('remove')"
     >
-      Remove mark
+      {{ $t('entry.removeMark') }}
     </button>
   </div>
 </template>

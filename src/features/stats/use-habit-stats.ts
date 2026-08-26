@@ -3,8 +3,8 @@ import type { MaybeRefOrGetter } from 'vue'
 
 import { cleanDays, completionRate, currentStreak, longestStreak, rollingAverage } from './streak'
 import { addDays, todayKey } from '@/shared/lib/date'
-import { KIND_META } from '@/shared/lib/kind'
 import type { HabitKind } from '@/shared/lib/kind'
+import { t } from '@/shared/i18n'
 import { supabase } from '@/shared/lib/supabase'
 import { toAppError } from '@/shared/lib/app-error'
 import type { Habit } from '../habits/habit.types'
@@ -65,10 +65,15 @@ export function useHabitStats(
     if (kind === 'scale') {
       const average = average7.value
 
-      return average === null ? 'No data yet' : `avg ${average.toFixed(1)} this week`
+      return average === null
+        ? t('stats.noData')
+        : t('stats.avgSummary', { value: average.toFixed(1) })
     }
 
-    return `${streak.value} ${KIND_META[kind].streakLabel}`
+    return t('stats.streakSummary', {
+      count: streak.value,
+      label: t(`kind.${kind}.streak`),
+    })
   })
 
   return { streak, longest, completion30, average7, averagePrevious7, summary }

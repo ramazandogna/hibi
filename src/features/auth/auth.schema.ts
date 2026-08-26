@@ -1,18 +1,28 @@
 import { z } from 'zod'
 
-export const loginSchema = z.object({
-  email: z.string().email('Enter a valid email address.'),
-  password: z.string().min(8, 'Password must be at least 8 characters.'),
-})
+import { t } from '@/shared/i18n'
 
-export const signupSchema = loginSchema
-  .extend({
-    confirmPassword: z.string(),
+/**
+ * Built on call, not at module load.
+ *
+ * Zod bakes its messages in at construction, so a schema created once at import
+ * time would keep whichever language was active when the bundle started.
+ */
+export function loginSchema() {
+  return z.object({
+    email: z.string().email(t('validation.emailInvalid')),
+    password: z.string().min(8, t('validation.passwordMin')),
   })
-  .refine((values) => values.password === values.confirmPassword, {
-    message: 'Passwords do not match!',
-    path: ['confirmPassword'],
-  })
+}
 
-export type LoginValues = z.infer<typeof loginSchema>
-export type SignupValues = z.infer<typeof signupSchema>
+export function signupSchema() {
+  return loginSchema()
+    .extend({ confirmPassword: z.string() })
+    .refine((values) => values.password === values.confirmPassword, {
+      message: t('validation.passwordsMismatch'),
+      path: ['confirmPassword'],
+    })
+}
+
+export type LoginValues = z.infer<ReturnType<typeof loginSchema>>
+export type SignupValues = z.infer<ReturnType<typeof signupSchema>>

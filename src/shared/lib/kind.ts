@@ -3,20 +3,19 @@ import type { Enums } from '@/shared/types/database.types'
 /** 'build' | 'quit' | 'scale' — sourced from the habit_kind enum in Postgres. */
 export type HabitKind = Enums<'habit_kind'>
 
-/** Everything the UI needs to render a habit kind: label, colours, wording. */
+/**
+ * Everything the UI needs to render a habit kind.
+ *
+ * Colours only. Wording lives in the message catalogue under `kind.<kind>.*`,
+ * because a label that cannot be translated is not a label, it is English.
+ */
 export interface KindMeta {
-  /** Human label for the mode picker and badges. */
-  label: string
   /** Solid background for a filled cell or dot. */
   fill: string
   /** Tinted background for icon tiles and chips. */
   soft: string
   /** Foreground colour that pairs with `soft`. */
   text: string
-  /** Noun that follows the streak number, e.g. "21 day streak". */
-  streakLabel: string
-  /** Heading for the group this kind forms in a habit list. */
-  groupLabel: string
   /** Tinted card surface: background, border and shadow in the kind's colour. */
   card: string
   /** Unmarked cell: the fill at low opacity, so a card reads as one colour. */
@@ -35,39 +34,30 @@ export interface KindMeta {
  * ```ts
  * const meta = KIND_META[habit.kind]
  * // <span :class="meta.fill" />
- * // {{ streak }} {{ meta.streakLabel }}
+ * // {{ t(`kind.${habit.kind}.label`) }}
  * ```
  */
 export const KIND_META: Record<HabitKind, KindMeta> = {
   build: {
-    label: 'Build',
     fill: 'bg-leaf',
     soft: 'bg-leaf/15',
     text: 'text-leaf',
-    streakLabel: 'day streak',
-    groupLabel: 'Habits to build',
     card: 'bg-leaf/5 border-leaf/25 shadow-sm shadow-leaf/20',
     empty: 'bg-leaf/15',
     isBinary: true,
   },
   quit: {
-    label: 'Quit',
     fill: 'bg-ember',
     soft: 'bg-ember/15',
     text: 'text-ember',
-    streakLabel: 'clean days',
-    groupLabel: 'Things to quit',
     card: 'bg-ember/5 border-ember/25 shadow-sm shadow-ember/20',
     empty: 'bg-ember/15',
     isBinary: true,
   },
   scale: {
-    label: 'Scale',
     fill: 'bg-sea',
     soft: 'bg-sea/15',
     text: 'text-sea',
-    streakLabel: 'avg this week',
-    groupLabel: 'How you feel',
     card: 'bg-sea/5 border-sea/25 shadow-sm shadow-sea/20',
     empty: 'bg-sea/15',
     isBinary: false,
@@ -122,7 +112,7 @@ export function dayCellClass(options: {
  * @example
  * ```ts
  * groupByKind(habits, (habit) => habit.kind)
- * // [{ kind: 'build', label: 'Habits to build', items: [...] }, ...]
+ * // [{ kind: 'build', items: [...] }]  — label comes from `kind.build.group`
  * ```
  */
 export const KIND_ORDER = ['build', 'quit', 'scale'] as const satisfies readonly HabitKind[]
@@ -130,10 +120,9 @@ export const KIND_ORDER = ['build', 'quit', 'scale'] as const satisfies readonly
 export function groupByKind<T>(
   items: readonly T[],
   getKind: (item: T) => HabitKind,
-): { kind: HabitKind; label: string; items: T[] }[] {
+): { kind: HabitKind; items: T[] }[] {
   return KIND_ORDER.map((kind) => ({
     kind,
-    label: KIND_META[kind].groupLabel,
     items: items.filter((item) => getKind(item) === kind),
   })).filter((group) => group.items.length > 0)
 }

@@ -2,8 +2,8 @@
 import { computed } from 'vue'
 import { Flame } from 'lucide-vue-next'
 
-import { KIND_META } from '@/shared/lib/kind'
 import type { HabitKind } from '@/shared/lib/kind'
+import { t } from '@/shared/i18n'
 
 const {
   streak,
@@ -38,11 +38,12 @@ const TIER_CLASS = {
 
 /** A nudge, not a scold: what is at stake, or how close the record is. */
 const hint = computed(() => {
-  if (streak === 0) return 'Start today'
-  if (longest > streak && longest - streak <= 3) return `${longest - streak} to your best`
-  if (streak >= 30) return "Don't break it"
+  if (streak === 0) return t('streak.startToday')
+  if (longest > streak && longest - streak <= 3)
+    return t('streak.toYourBest', { count: longest - streak })
+  if (streak >= 30) return t('streak.dontBreak')
 
-  return KIND_META[kind].streakLabel
+  return t(`kind.${kind}.streak`)
 })
 </script>
 

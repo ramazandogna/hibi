@@ -51,7 +51,7 @@ const router = createRouter({
       meta: {
         layout: 'app',
         requiresAuth: true,
-        title: 'Profil',
+        title: 'Profile',
         tab: 'profile',
       },
     },
@@ -116,7 +116,7 @@ const router = createRouter({
       meta: {
         layout: 'app',
         requiresAuth: false,
-        title: '404 - Sayfa Bulunamadı',
+        title: 'Not found',
       },
     },
   ],

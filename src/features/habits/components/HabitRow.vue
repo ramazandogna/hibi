@@ -5,6 +5,7 @@ import { Check } from 'lucide-vue-next'
 import type { Habit } from '../habit.types'
 import { dayCellClass, KIND_META } from '@/shared/lib/kind'
 import { fromDateKey, toDateKey } from '@/shared/lib/date'
+import { formatDate } from '@/shared/lib/format'
 import { tapFeedback } from '@/shared/lib/haptics'
 import { useHabitStats } from '@/features/stats/use-habit-stats'
 import StreakBadge from '@/features/stats/components/StreakBadge.vue'
@@ -37,10 +38,8 @@ const { summary, streak, longest } = useHabitStats(
 /** Days before today; today gets its own larger button. */
 const previousDays = computed(() => days.filter((day) => day !== today))
 
-const dayFormatter = new Intl.DateTimeFormat('en', { month: 'short', day: 'numeric' })
-
 function dayLabel(dateKey: string) {
-  return dayFormatter.format(fromDateKey(dateKey))
+  return formatDate(fromDateKey(dateKey), { month: 'short', day: 'numeric' })
 }
 
 /** Binary kinds toggle; scale kinds ask for a value, past days included. */

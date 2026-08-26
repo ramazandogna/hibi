@@ -1,6 +1,6 @@
 <template>
   <header class="app-navbar">
-    <nav class="app-nav" aria-label="Main">
+    <nav class="app-nav" :aria-label="$t('nav.main')">
       <RouterLink
         v-for="item in mainNavItems"
         :key="item.to"
@@ -8,9 +8,12 @@
         class="nav-link"
         :class="{ 'is-active-tab': route.meta.tab === item.tab }"
         :aria-current="route.meta.tab === item.tab ? 'page' : undefined"
+        @click="tapFeedback()"
       >
-        <component :is="item.icon" class="nav-icon" />
-        <span class="nav-label">{{ item.label }}</span>
+        <span class="nav-icon-slot">
+          <component :is="item.icon" class="nav-icon" />
+        </span>
+        <span class="nav-label">{{ $t(`nav.${item.tab}`) }}</span>
       </RouterLink>
     </nav>
   </header>
@@ -22,7 +25,8 @@ import { CheckCheck, Brackets, Calendar1, UserStar } from 'lucide-vue-next'
 import type { Component } from 'vue'
 
 import type { AppTab } from '@/shared/types/navigation.types'
-import { TAB_LABEL, TAB_ORDER, TAB_PATH } from '@/shared/lib/tabs'
+import { tapFeedback } from '@/shared/lib/haptics'
+import { TAB_ORDER, TAB_PATH } from '@/shared/lib/tabs'
 
 const route = useRoute()
 
@@ -33,12 +37,11 @@ const ICONS: Record<AppTab, Component> = {
   profile: UserStar,
 }
 
-// Order, paths and labels come from TAB_ORDER so the bar and the slide
-// direction can never disagree.
+// Order and paths come from TAB_ORDER so the bar and the slide direction can
+// never disagree; the label is looked up per render so it follows the language.
 const mainNavItems = TAB_ORDER.map((tab) => ({
   tab,
   to: TAB_PATH[tab],
-  label: TAB_LABEL[tab],
   icon: ICONS[tab],
 }))
 </script>
@@ -59,27 +62,58 @@ const mainNavItems = TAB_ORDER.map((tab) => ({
 }
 
 .nav-link {
-  @apply text-ink-soft flex min-h-[44px] flex-1 cursor-pointer flex-col items-center justify-center gap-0.5 py-1.5 transition-colors duration-200;
+  @apply text-ink-soft flex min-h-[52px] flex-1 cursor-pointer flex-col items-center justify-center gap-1 py-1.5;
   border-radius: calc(var(--radius-shell) - 6px);
+  /* Only the icon reacts to a press. Scaling the whole link would drag the
+     label and the pill with it, which reads as the bar wobbling. */
+  transition: color 200ms ease;
 }
 
 .nav-link:hover {
   @apply text-ink;
 }
 
+/* The pill is a background on the icon rather than the link, so the active tab
+   grows a marker instead of the row changing shape. */
+.nav-icon-slot {
+  @apply flex h-7 w-12 items-center justify-center rounded-full transition-all duration-200 ease-out;
+}
+
+.nav-link:active .nav-icon-slot {
+  transform: scale(0.88);
+}
+
 .is-active-tab {
-  @apply bg-mist text-sea;
+  @apply text-sea;
+}
+
+.is-active-tab .nav-icon-slot {
+  @apply bg-mist;
 }
 
 .nav-icon {
-  @apply size-5 stroke-2;
+  @apply size-[18px] stroke-2 transition-transform duration-200;
 }
 
 .is-active-tab .nav-icon {
-  @apply stroke-[2.5px];
+  @apply scale-110 stroke-[2.5px];
 }
 
 .nav-label {
   @apply text-[10px] leading-none font-medium;
+}
+
+.is-active-tab .nav-label {
+  @apply font-semibold;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nav-icon-slot,
+  .nav-icon {
+    transition: none;
+  }
+  .nav-link:active .nav-icon-slot {
+    transform: none;
+  }
 }
 </style>

@@ -21,7 +21,7 @@ const serverError = ref('')
 const isEdit = computed(() => Boolean(habit))
 
 const { defineField, errors, handleSubmit, isSubmitting, values } = useForm({
-  validationSchema: toTypedSchema(createHabitSchema),
+  validationSchema: toTypedSchema(createHabitSchema()),
   initialValues: {
     name: habit?.name ?? '',
     kind: habit?.kind ?? 'build',
@@ -61,38 +61,39 @@ const onSubmit = handleSubmit(async (formValues) => {
     <BaseInput
       v-model="name"
       v-bind="nameAttrs"
-      label="Name"
+      :label="$t('habit.name')"
       :error="errors.name"
-      placeholder="Write code"
+      :placeholder="$t('habit.namePlaceholder')"
       autocomplete="off"
     />
 
     <KindPicker
       v-model="kind"
       :disabled="isEdit"
-      :hint="isEdit ? 'Tracking mode cannot be changed - it would reinterpret your history.' : ''"
+      :hint="isEdit ? $t('habit.modeLocked') : ''"
     />
 
     <fieldset v-if="values.kind === 'build'" class="flex w-full flex-col gap-1.5">
-      <legend class="text-ink text-sm font-medium">Weekly target</legend>
+      <legend class="text-ink text-sm font-medium">{{ $t('habit.weeklyTarget') }}</legend>
       <div class="bg-mist rounded-card flex gap-1 p-1">
         <button
           v-for="day in 7"
           :key="day"
           type="button"
-          class="flex h-10 flex-1 items-center justify-center rounded-xl text-sm font-medium transition-colors select-none"
+          class="flex h-11 flex-1 items-center justify-center rounded-xl text-sm font-medium transition-colors select-none"
           :class="targetPerWeek === day ? 'bg-sea text-white' : 'text-ink-soft'"
           @click="targetPerWeek = day"
         >
           {{ day }}
         </button>
       </div>
+      <p class="text-ink-soft text-xs leading-snug">{{ $t('habit.weeklyTargetHint') }}</p>
     </fieldset>
 
     <p v-if="serverError" role="alert" class="text-alert text-sm">{{ serverError }}</p>
 
     <BaseButton type="submit" :loading="isSubmitting">
-      {{ isEdit ? 'Save changes' : 'Create habit' }}
+      {{ isEdit ? $t('habit.saveChanges') : $t('habit.create') }}
     </BaseButton>
   </form>
 </template>

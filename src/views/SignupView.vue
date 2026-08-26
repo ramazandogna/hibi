@@ -5,7 +5,7 @@ import { useForm } from 'vee-validate'
 import { toTypedSchema } from '@vee-validate/zod'
 
 import GoogleButton from '@/features/auth/components/GoogleButton.vue'
-import { toAuthMessage } from '@/features/auth/auth.errors'
+import { toAuthMessageKey } from '@/features/auth/auth.errors'
 import { signupSchema } from '@/features/auth/auth.schema'
 import { useAuthStore } from '@/features/auth/auth.store'
 import { safeRedirect } from '@/shared/lib/redirect'
@@ -20,7 +20,7 @@ const serverError = ref('')
 const awaitingConfirmation = ref(false)
 
 const { defineField, errors, handleSubmit, isSubmitting } = useForm({
-  validationSchema: toTypedSchema(signupSchema),
+  validationSchema: toTypedSchema(signupSchema()),
 })
 
 const [email, emailAttrs] = defineField('email', { validateOnModelUpdate: false })
@@ -41,7 +41,7 @@ const onSubmit = handleSubmit(async (values) => {
       await router.push(safeRedirect(route.query.redirect))
     }
   } catch (error) {
-    serverError.value = toAuthMessage(error)
+    serverError.value = toAuthMessageKey(error)
   }
 })
 
@@ -51,7 +51,7 @@ async function signUpWithGoogle() {
   try {
     await auth.signInWithGoogle()
   } catch (error) {
-    serverError.value = toAuthMessage(error)
+    serverError.value = toAuthMessageKey(error)
   }
 }
 </script>
@@ -59,21 +59,20 @@ async function signUpWithGoogle() {
 <template>
   <div class="flex flex-col gap-5">
     <p v-if="awaitingConfirmation" role="status" class="text-ink text-center text-sm">
-      Check your inbox — we sent a confirmation link to <strong>{{ email }}</strong
-      >.
+      {{ $t('auth.checkInbox', { email }) }}
     </p>
 
     <template v-else>
       <header class="flex flex-col gap-1 text-center">
-        <h2 class="text-ink text-lg font-semibold">Start tracking</h2>
-        <p class="text-ink-soft text-sm">Build, quit, and notice how you feel.</p>
+        <h2 class="text-ink text-lg font-semibold">{{ $t('auth.startTracking') }}</h2>
+        <p class="text-ink-soft text-sm">{{ $t('auth.startTrackingHint') }}</p>
       </header>
 
-      <GoogleButton label="Continue with Google" @click="signUpWithGoogle" />
+      <GoogleButton :label="$t('auth.google')" @click="signUpWithGoogle" />
 
       <div class="flex items-center gap-3">
         <span class="bg-hair h-px flex-1" />
-        <span class="text-ink-soft text-xs">or</span>
+        <span class="text-ink-soft text-xs">{{ $t('auth.or') }}</span>
         <span class="bg-hair h-px flex-1" />
       </div>
 
@@ -81,42 +80,42 @@ async function signUpWithGoogle() {
         <BaseInput
           v-model="email"
           v-bind="emailAttrs"
-          label="Email"
+          :label="$t('auth.email')"
           type="email"
           autocomplete="email"
-          placeholder="you@example.com"
+          :placeholder="$t('auth.emailPlaceholder')"
           :error="errors.email"
         />
 
         <BaseInput
           v-model="password"
           v-bind="passwordAttrs"
-          label="Password"
+          :label="$t('auth.password')"
           type="password"
           autocomplete="new-password"
-          hint="At least 8 characters"
+          :hint="$t('auth.passwordHint')"
           :error="errors.password"
         />
 
         <BaseInput
           v-model="confirmPassword"
           v-bind="confirmPasswordAttrs"
-          label="Confirm password"
+          :label="$t('auth.confirmPassword')"
           type="password"
           autocomplete="new-password"
           :error="errors.confirmPassword"
         />
 
-        <p v-if="serverError" role="alert" class="text-alert text-sm">{{ serverError }}</p>
+        <p v-if="serverError" role="alert" class="text-alert text-sm">{{ $t(serverError) }}</p>
 
         <BaseButton type="submit" :loading="isSubmitting">
-          {{ isSubmitting ? 'Creating account...' : 'Create account' }}
+          {{ isSubmitting ? $t('auth.creatingAccount') : $t('auth.createAccount') }}
         </BaseButton>
       </form>
 
       <p class="text-ink-soft text-center text-sm">
-        Already have an account?
-        <RouterLink to="/login" class="text-sea font-medium">Sign in</RouterLink>
+        {{ $t('auth.alreadyHave') }}
+        <RouterLink to="/login" class="text-sea font-medium">{{ $t('auth.signIn') }}</RouterLink>
       </p>
     </template>
   </div>

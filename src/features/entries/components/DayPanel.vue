@@ -4,6 +4,7 @@ import { Check } from 'lucide-vue-next'
 
 import type { Habit } from '@/features/habits/habit.types'
 import { fromDateKey } from '@/shared/lib/date'
+import { formatDate } from '@/shared/lib/format'
 import { KIND_META } from '@/shared/lib/kind'
 import KindDot from '@/shared/ui/KindDot.vue'
 
@@ -16,14 +17,14 @@ const { dateKey, habits, markedByHabit, valuesByHabit } = defineProps<{
 
 const emit = defineEmits<{ toggle: [habitId: string]; scale: [habitId: string] }>()
 
-const titleFormatter = new Intl.DateTimeFormat('en', {
-  weekday: 'long',
-  day: 'numeric',
-  month: 'long',
-  year: 'numeric',
-})
-
-const title = computed(() => titleFormatter.format(fromDateKey(dateKey)))
+const title = computed(() =>
+  formatDate(fromDateKey(dateKey), {
+    weekday: 'long',
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
+  }),
+)
 
 const rows = computed(() =>
   habits.map((habit) => ({
@@ -65,7 +66,9 @@ const doneCount = computed(() => rows.value.filter((row) => row.isMarked).length
       </li>
     </ul>
 
-    <p class="text-ink-soft text-xs">{{ doneCount }} of {{ rows.length }} completed</p>
+    <p class="text-ink-soft text-xs">
+      {{ $t('entry.completed', { done: doneCount, total: rows.length }) }}
+    </p>
 
     <!-- Filled by the parent: features/entries must not import features/notes. -->
     <slot name="note" />

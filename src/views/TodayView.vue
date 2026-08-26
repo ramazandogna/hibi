@@ -3,6 +3,7 @@ import { computed, ref } from 'vue'
 import { ChevronDown, Sparkles } from 'lucide-vue-next'
 
 import { useCreateHabit, useHabits } from '@/features/habits/habits.queries'
+import { t } from '@/shared/i18n'
 import { toAppError } from '@/shared/lib/app-error'
 import { groupByKind, KIND_META } from '@/shared/lib/kind'
 import type { HabitKind } from '@/shared/lib/kind'
@@ -12,6 +13,7 @@ import PageHeader from '@/shared/ui/PageHeader.vue'
 import SectionHeading from '@/shared/ui/SectionHeading.vue'
 import SkeletonList from '@/shared/ui/SkeletonList.vue'
 import { fromDateKey, lastNDays, todayKey } from '@/shared/lib/date'
+import { formatDate } from '@/shared/lib/format'
 import { useEntriesInRange, useSetEntry, useToggleEntry } from '@/features/entries/entries.queries'
 import DayPanel from '@/features/entries/components/DayPanel.vue'
 import EntryNoteSheet from '@/features/entries/components/EntryNoteSheet.vue'
@@ -53,12 +55,9 @@ const markedByHabit = computed(() => {
   return map
 })
 
-const todayFormatter = new Intl.DateTimeFormat('en', {
-  weekday: 'long',
-  day: 'numeric',
-  month: 'long',
-})
-const todayTitle = computed(() => todayFormatter.format(fromDateKey(rangeTo.value)))
+const todayTitle = computed(() =>
+  formatDate(fromDateKey(rangeTo.value), { weekday: 'long', day: 'numeric', month: 'long' }),
+)
 
 const { data: notes } = useNotesInRange(rangeFrom, rangeTo)
 
@@ -161,11 +160,12 @@ const { data: habits, isPending, isError, error, refetch } = useHabits()
 const createHabit = useCreateHabit()
 
 /** One example per tracking mode, so the empty state also explains the product. */
+/** One starter per kind, so the empty state also teaches the three modes. */
 const SUGGESTIONS = [
-  { name: 'Write code', kind: 'build' },
-  { name: 'Late-night scrolling', kind: 'quit' },
-  { name: 'How I feel', kind: 'scale' },
-] as const satisfies readonly { name: string; kind: HabitKind }[]
+  { key: 'today.suggestionCode', kind: 'build' },
+  { key: 'today.suggestionScroll', kind: 'quit' },
+  { key: 'today.suggestionFeel', kind: 'scale' },
+] as const satisfies readonly { key: string; kind: HabitKind }[]
 
 type Suggestion = (typeof SUGGESTIONS)[number]
 
@@ -191,7 +191,7 @@ const habitGroups = computed(() =>
 )
 
 function addSuggestion(suggestion: Suggestion) {
-  createHabit.mutate({ name: suggestion.name, kind: suggestion.kind })
+  createHabit.mutate({ name: t(suggestion.key), kind: suggestion.kind })
 }
 
 /** Values only matter for scale habits; build/quit rows ignore this map. */
@@ -264,7 +264,7 @@ function openHabit(habitId: string) {
         <button
           type="button"
           class="header-action"
-          :aria-label="`Open ${todayTitle}`"
+          :aria-label="$t('common.openItem', { name: todayTitle })"
           @click="dayPanelOpen = true"
         >
           <span class="truncate">{{ todayTitle }}</span>
@@ -273,28 +273,28 @@ function openHabit(habitId: string) {
       </template>
     </PageHeader>
 
-    <SkeletonList v-if="isPending" row-height="h-14" label="Loading habits…" />
+    <SkeletonList v-if="isPending" row-height="h-14" :label="$t('today.loadingHabits')" />
 
     <div v-else-if="isError" class="flex flex-col items-center gap-3 py-10 text-center">
       <p class="text-ink text-sm">{{ errorMessage }}</p>
-      <BaseButton variant="ghost" @click="refetch()">Try again</BaseButton>
+      <BaseButton variant="ghost" @click="refetch()">{{ $t('common.tryAgain') }}</BaseButton>
     </div>
 
     <EmptyState
       v-else-if="isEmpty"
-      title="Nothing tracked yet"
-      description="Pick one to start with — you can rename or remove it later."
+      :title="$t('today.emptyTitle')"
+      :description="$t('today.emptyDescription')"
     >
       <template #icon><Sparkles class="size-6" /></template>
       <template #action>
         <BaseButton
           v-for="suggestion in SUGGESTIONS"
-          :key="suggestion.name"
+          :key="suggestion.key"
           variant="ghost"
           :loading="createHabit.isPending.value"
           @click="addSuggestion(suggestion)"
         >
-          {{ suggestion.name }}
+          {{ $t(suggestion.key) }}
         </BaseButton>
       </template>
     </EmptyState>
@@ -313,7 +313,7 @@ function openHabit(habitId: string) {
       :key="group.kind"
       class="flex flex-col gap-2"
     >
-      <SectionHeading :kind="group.kind" :label="group.label" :count="group.items.length" />
+      <SectionHeading :kind="group.kind" :label="$t(`kind.${group.kind}.group`)" :count="group.items.length" />
 
       <ul class="flex flex-col gap-2">
         <HabitRow
@@ -331,7 +331,7 @@ function openHabit(habitId: string) {
       </ul>
     </section>
 
-    <BaseSheet v-model="markedSheetOpen" title="This day">
+    <BaseSheet v-model="markedSheetOpen" :title="$t('today.thisDay')">
       <MarkedDayActions
         v-if="markedTarget"
         :key="`${markedTarget.habitId}-${markedTarget.dateKey}`"
@@ -342,7 +342,7 @@ function openHabit(habitId: string) {
       />
     </BaseSheet>
 
-    <BaseSheet v-model="noteSheetOpen" title="Add a note">
+    <BaseSheet v-model="noteSheetOpen" :title="$t('today.addNote')">
       <EntryNoteSheet
         v-if="noteTarget"
         :key="`${noteTarget.habitId}-${noteTarget.dateKey}`"
@@ -372,7 +372,7 @@ function openHabit(habitId: string) {
       </DayPanel>
     </BaseSheet>
 
-    <BaseSheet v-model="scaleOpen" title="How was it?">
+    <BaseSheet v-model="scaleOpen" :title="$t('today.howWasIt')">
       <ScalePicker
         v-if="scaleTarget"
         :key="`${scaleTarget.habitId}-${scaleTarget.dateKey}`"

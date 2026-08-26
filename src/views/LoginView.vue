@@ -5,7 +5,7 @@ import { useForm } from 'vee-validate'
 import { toTypedSchema } from '@vee-validate/zod'
 
 import GoogleButton from '@/features/auth/components/GoogleButton.vue'
-import { toAuthMessage } from '@/features/auth/auth.errors'
+import { toAuthMessageKey } from '@/features/auth/auth.errors'
 import { loginSchema } from '@/features/auth/auth.schema'
 import { useAuthStore } from '@/features/auth/auth.store'
 import { safeRedirect } from '@/shared/lib/redirect'
@@ -20,7 +20,7 @@ const serverError = ref('')
 const rememberMe = ref(true)
 
 const { defineField, errors, handleSubmit, isSubmitting } = useForm({
-  validationSchema: toTypedSchema(loginSchema),
+  validationSchema: toTypedSchema(loginSchema()),
 })
 
 const [email, emailAttrs] = defineField('email', { validateOnModelUpdate: false })
@@ -33,7 +33,7 @@ const onSubmit = handleSubmit(async (values) => {
     await auth.signIn(values.email, values.password, rememberMe.value)
     await router.push(safeRedirect(route.query.redirect))
   } catch (error) {
-    serverError.value = toAuthMessage(error)
+    serverError.value = toAuthMessageKey(error)
   }
 })
 
@@ -43,7 +43,7 @@ async function signInWithGoogle() {
   try {
     await auth.signInWithGoogle(rememberMe.value)
   } catch (error) {
-    serverError.value = toAuthMessage(error)
+    serverError.value = toAuthMessageKey(error)
   }
 }
 </script>
@@ -51,15 +51,15 @@ async function signInWithGoogle() {
 <template>
   <div class="flex flex-col gap-5">
     <header class="flex flex-col gap-1 text-center">
-      <h2 class="text-ink text-lg font-semibold">Welcome back</h2>
-      <p class="text-ink-soft text-sm">Pick up where you left off.</p>
+      <h2 class="text-ink text-lg font-semibold">{{ $t('auth.welcomeBack') }}</h2>
+      <p class="text-ink-soft text-sm">{{ $t('auth.pickUp') }}</p>
     </header>
 
-    <GoogleButton label="Continue with Google" @click="signInWithGoogle" />
+    <GoogleButton :label="$t('auth.google')" @click="signInWithGoogle" />
 
     <div class="flex items-center gap-3">
       <span class="bg-hair h-px flex-1" />
-      <span class="text-ink-soft text-xs">or</span>
+      <span class="text-ink-soft text-xs">{{ $t('auth.or') }}</span>
       <span class="bg-hair h-px flex-1" />
     </div>
 
@@ -67,17 +67,17 @@ async function signInWithGoogle() {
       <BaseInput
         v-model="email"
         v-bind="emailAttrs"
-        label="Email"
+        :label="$t('auth.email')"
         type="email"
         autocomplete="email"
-        placeholder="you@example.com"
+        :placeholder="$t('auth.emailPlaceholder')"
         :error="errors.email"
       />
 
       <BaseInput
         v-model="password"
         v-bind="passwordAttrs"
-        label="Password"
+        :label="$t('auth.password')"
         type="password"
         autocomplete="current-password"
         :error="errors.password"
@@ -85,19 +85,19 @@ async function signInWithGoogle() {
 
       <label class="text-ink-soft flex items-center gap-2 text-sm">
         <input v-model="rememberMe" type="checkbox" class="accent-sea size-4" />
-        Keep me signed in on this device
+        {{ $t('auth.rememberMe') }}
       </label>
 
-      <p v-if="serverError" role="alert" class="text-alert text-sm">{{ serverError }}</p>
+      <p v-if="serverError" role="alert" class="text-alert text-sm">{{ $t(serverError) }}</p>
 
       <BaseButton type="submit" :loading="isSubmitting">
-        {{ isSubmitting ? 'Signing in...' : 'Sign in' }}
+        {{ isSubmitting ? $t('auth.signingIn') : $t('auth.signIn') }}
       </BaseButton>
     </form>
 
     <p class="text-ink-soft text-center text-sm">
-      No account yet?
-      <RouterLink to="/signup" class="text-sea font-medium">Create one</RouterLink>
+      {{ $t('auth.noAccount') }}
+      <RouterLink to="/signup" class="text-sea font-medium">{{ $t('auth.createOne') }}</RouterLink>
     </p>
   </div>
 </template>

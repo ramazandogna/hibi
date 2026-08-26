@@ -12,6 +12,7 @@ import {
   useUnarchiveHabit,
 } from '../habits.queries'
 import type { Habit } from '../habit.types'
+import { t } from '@/shared/i18n'
 import { groupByKind, KIND_META } from '@/shared/lib/kind'
 import BaseButton from '@/shared/ui/BaseButton.vue'
 import BaseSheet from '@/shared/ui/BaseSheet.vue'
@@ -61,6 +62,23 @@ const confirmOpen = ref(false)
 const pendingDelete = ref<Habit | undefined>(undefined)
 const entryCount = ref<number | null>(null)
 
+/**
+ * The confirmation sentence, chosen once the entry count is known.
+ *
+ * Four wordings instead of string concatenation: languages disagree about where
+ * a number goes in a sentence, and "1 entries" is wrong in all of them.
+ */
+const deletePrompt = computed(() => {
+  const name = pendingDelete.value?.name ?? ''
+  const count = entryCount.value
+
+  if (count === null) return t('habit.deleteUnknown', { name })
+  if (count === 0) return t('habit.deleteWithNone', { name })
+  if (count === 1) return t('habit.deleteWithOne', { name })
+
+  return t('habit.deleteWithCount', { name, count })
+})
+
 async function askDelete(habit: Habit) {
   pendingDelete.value = habit
   entryCount.value = null
@@ -80,10 +98,10 @@ async function confirmDelete() {
 
 <template>
   <div class="flex flex-col gap-6">
-    <p v-if="isPending" class="text-ink-soft text-sm">Loading…</p>
+    <p v-if="isPending" class="text-ink-soft text-sm">{{ $t('common.loading') }}</p>
 
     <section v-for="group in habitGroups" v-else :key="group.kind" class="flex flex-col gap-2">
-      <SectionHeading :kind="group.kind" :label="group.label" :count="group.items.length" />
+      <SectionHeading :kind="group.kind" :label="$t(`kind.${group.kind}.group`)" :count="group.items.length" />
 
       <ul class="flex flex-col gap-1">
         <li
@@ -99,7 +117,7 @@ async function confirmDelete() {
             type="button"
             class="text-ink-soft hover:text-ink p-1 disabled:opacity-30"
             :disabled="index === 0"
-            :aria-label="`Move ${habit.name} up`"
+            :aria-label="$t('common.moveUp', { name: habit.name })"
             @click="move(group.items, index, -1)"
           >
             <ArrowUp class="size-4" />
@@ -108,7 +126,7 @@ async function confirmDelete() {
             type="button"
             class="text-ink-soft hover:text-ink p-1 disabled:opacity-30"
             :disabled="index === group.items.length - 1"
-            :aria-label="`Move ${habit.name} down`"
+            :aria-label="$t('common.moveDown', { name: habit.name })"
             @click="move(group.items, index, 1)"
           >
             <ArrowDown class="size-4" />
@@ -116,7 +134,7 @@ async function confirmDelete() {
           <button
             type="button"
             class="text-ink-soft hover:text-ink p-1"
-            :aria-label="`Edit ${habit.name}`"
+            :aria-label="$t('common.openItem', { name: habit.name })"
             @click="emit('edit', habit)"
           >
             <Pencil class="size-4" />
@@ -124,7 +142,7 @@ async function confirmDelete() {
           <button
             type="button"
             class="text-ink-soft hover:text-ink p-1"
-            :aria-label="`Archive ${habit.name}`"
+            :aria-label="$t('common.archive')"
             @click="archive.mutate(habit.id)"
           >
             <Archive class="size-4" />
@@ -134,7 +152,7 @@ async function confirmDelete() {
     </section>
 
     <section v-if="(archivedHabits?.length ?? 0) > 0" class="flex flex-col gap-2">
-      <h2 class="text-ink-soft text-xs font-semibold tracking-wide uppercase">Archive</h2>
+      <h2 class="text-ink-soft text-xs font-semibold tracking-wide uppercase">{{ $t('habit.archiveSection') }}</h2>
 
       <ul class="flex flex-col gap-1">
         <li
@@ -148,7 +166,7 @@ async function confirmDelete() {
           <button
             type="button"
             class="text-ink-soft hover:text-ink p-1"
-            :aria-label="`Restore ${habit.name}`"
+            :aria-label="$t('common.restore')"
             @click="unarchive.mutate(habit.id)"
           >
             <RotateCcw class="size-4" />
@@ -156,7 +174,7 @@ async function confirmDelete() {
           <button
             type="button"
             class="text-alert p-1"
-            :aria-label="`Delete ${habit.name}`"
+            :aria-label="$t('common.delete')"
             @click="askDelete(habit)"
           >
             <Trash2 class="size-4" />
@@ -165,22 +183,17 @@ async function confirmDelete() {
       </ul>
     </section>
 
-    <BaseSheet v-model="confirmOpen" title="Delete habit">
+    <BaseSheet v-model="confirmOpen" :title="$t('habit.deleteTitle')">
       <div class="flex flex-col gap-4">
-        <p class="text-ink text-sm">
-          Delete <strong>{{ pendingDelete?.name }}</strong>
-          <template v-if="entryCount === null"> and its history?</template>
-          <template v-else-if="entryCount === 0"> ? It has no entries yet.</template>
-          <template v-else>
-            and its <strong>{{ entryCount }}</strong> {{ entryCount === 1 ? 'entry' : 'entries' }}?
-          </template>
-        </p>
-        <p class="text-ink-soft text-xs">This cannot be undone.</p>
+        <p class="text-ink text-sm">{{ deletePrompt }}</p>
+        <p class="text-ink-soft text-xs">{{ $t('habit.deleteWarning') }}</p>
 
         <BaseButton variant="danger" :loading="remove.isPending.value" @click="confirmDelete">
-          Delete permanently
+          {{ $t('common.deletePermanently') }}
         </BaseButton>
-        <BaseButton variant="ghost" @click="confirmOpen = false">Cancel</BaseButton>
+        <BaseButton variant="ghost" @click="confirmOpen = false">
+          {{ $t('common.cancel') }}
+        </BaseButton>
       </div>
     </BaseSheet>
   </div>

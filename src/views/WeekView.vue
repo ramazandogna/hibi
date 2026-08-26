@@ -10,6 +10,7 @@ import { useHabits } from '@/features/habits/habits.queries'
 import DayNoteField from '@/features/notes/components/DayNoteField.vue'
 import { useNotesInRange } from '@/features/notes/notes.queries'
 import { addDays, fromDateKey, startOfWeek, todayKey } from '@/shared/lib/date'
+import { formatDate } from '@/shared/lib/format'
 import { dayCellClass, groupByKind, KIND_META } from '@/shared/lib/kind'
 import type { HabitKind } from '@/shared/lib/kind'
 import BaseSheet from '@/shared/ui/BaseSheet.vue'
@@ -125,12 +126,15 @@ const weekNotes = computed(() => (notes.value ?? []).slice(0, 3))
 
 const habitGroups = computed(() => groupByKind(habits.value ?? [], (habit) => habit.kind))
 
-const weekdayFormatter = new Intl.DateTimeFormat('en', { weekday: 'narrow' })
-const rangeFormatter = new Intl.DateTimeFormat('en', { month: 'short', day: 'numeric' })
+const RANGE_OPTIONS = { month: 'short', day: 'numeric' } as const
+
+function weekdayLabel(dateKey: string) {
+  return formatDate(fromDateKey(dateKey), { weekday: 'narrow' })
+}
 
 const title = computed(
   () =>
-    `${rangeFormatter.format(fromDateKey(weekStart.value))} – ${rangeFormatter.format(fromDateKey(weekEnd.value))}`,
+    `${formatDate(fromDateKey(weekStart.value), RANGE_OPTIONS)} – ${formatDate(fromDateKey(weekEnd.value), RANGE_OPTIONS)}`,
 )
 
 const { toggle } = useToggleEntry()
@@ -154,14 +158,14 @@ const dayPanelOpen = computed({
   },
 })
 
-const dayTitleFormatter = new Intl.DateTimeFormat('en', {
-  weekday: 'long',
-  day: 'numeric',
-  month: 'long',
-})
-
 const selectedDayTitle = computed(() =>
-  selectedDay.value ? dayTitleFormatter.format(fromDateKey(selectedDay.value)) : '',
+  selectedDay.value
+    ? formatDate(fromDateKey(selectedDay.value), {
+        weekday: 'long',
+        day: 'numeric',
+        month: 'long',
+      })
+    : '',
 )
 
 function openDay(dateKey: string) {
@@ -233,7 +237,7 @@ function score(habitId: string, target: number): string {
         <button
           type="button"
           class="header-action"
-          :aria-label="`Open ${title}`"
+          :aria-label="$t('common.openItem', { name: title })"
           @click="openDay(today)"
         >
           <span class="truncate">{{ title }}</span>
@@ -244,7 +248,7 @@ function score(habitId: string, target: number): string {
         <button
           type="button"
           class="text-ink-soft hover:text-ink p-2"
-          aria-label="Previous week"
+          :aria-label="$t('week.previous')"
           @click="weekStart = addDays(weekStart, -7)"
         >
           ‹
@@ -254,7 +258,7 @@ function score(habitId: string, target: number): string {
         <button
           type="button"
           class="text-ink-soft hover:text-ink p-2 disabled:opacity-30"
-          aria-label="Next week"
+          :aria-label="$t('week.next')"
           :disabled="weekEnd >= today"
           @click="weekStart = addDays(weekStart, 7)"
         >
@@ -263,7 +267,7 @@ function score(habitId: string, target: number): string {
       </template>
     </PageHeader>
 
-    <SkeletonList v-if="isPending" row-height="h-8" label="Loading habits…" />
+    <SkeletonList v-if="isPending" row-height="h-8" :label="$t('today.loadingHabits')" />
 
     <template v-else>
       <!-- Day headers sit once, above the cards; every grid below uses the same
@@ -277,16 +281,16 @@ function score(habitId: string, target: number): string {
           class="text-ink-soft rounded-cell py-1 text-center text-[10px] disabled:opacity-40"
           :class="day === today ? 'text-sea font-bold' : ''"
           :disabled="day > today"
-          :aria-label="`Open ${day}`"
+          :aria-label="$t('common.openItem', { name: day })"
           @click="openDay(day)"
         >
-          {{ weekdayFormatter.format(fromDateKey(day)) }}
+          {{ weekdayLabel(day) }}
         </button>
         <span />
       </div>
 
       <section v-for="group in habitGroups" :key="group.kind" class="flex flex-col gap-2">
-        <SectionHeading :kind="group.kind" :label="group.label" :count="group.items.length" />
+        <SectionHeading :kind="group.kind" :label="$t(`kind.${group.kind}.group`)" :count="group.items.length" />
 
         <div class="rounded-card border p-3" :class="KIND_META[group.kind].card">
           <div class="grid grid-cols-[1fr_repeat(7,1.75rem)_2.5rem] items-center gap-1">
@@ -318,12 +322,17 @@ function score(habitId: string, target: number): string {
             </template>
           </div>
 
-          <p v-if="reviewByKind.get(group.kind)" class="text-ink-soft mt-3 text-[11px]">
-            <span class="tabular-nums">{{ reviewByKind.get(group.kind)?.completed }}</span> of
-            <span class="tabular-nums">{{ reviewByKind.get(group.kind)?.planned }}</span> days ·
-            <span class="tabular-nums">{{ reviewByKind.get(group.kind)?.percent }}%</span>
+          <p v-if="reviewByKind.get(group.kind)" class="text-ink-soft mt-3 text-[11px] tabular-nums">
+            {{
+              $t('week.review', {
+                completed: reviewByKind.get(group.kind)?.completed,
+                planned: reviewByKind.get(group.kind)?.planned,
+                percent: reviewByKind.get(group.kind)?.percent,
+              })
+            }}
             <template v-if="reviewByKind.get(group.kind)?.best">
-              · strongest {{ reviewByKind.get(group.kind)?.best?.habit.name }}
+              ·
+              {{ $t('week.strongest', { name: reviewByKind.get(group.kind)?.best?.habit.name }) }}
             </template>
           </p>
         </div>
@@ -334,7 +343,7 @@ function score(habitId: string, target: number): string {
       v-if="weekNotes.length > 0"
       class="border-hair rounded-card flex flex-col gap-2 border p-3"
     >
-      <h2 class="text-ink-soft text-xs font-semibold tracking-wide uppercase">Notes this week</h2>
+      <h2 class="text-ink-soft text-xs font-semibold tracking-wide uppercase">{{ $t('week.notesThisWeek') }}</h2>
 
       <ul class="flex flex-col gap-1">
         <li v-for="note in weekNotes" :key="note.id" class="text-ink-soft truncate text-xs">
@@ -344,10 +353,10 @@ function score(habitId: string, target: number): string {
     </section>
 
     <p v-if="!isPending && habitGroups.length === 0" class="text-ink-soft text-sm">
-      No data for this week.
+      {{ $t('week.noData') }}
     </p>
 
-    <BaseSheet v-model="dayPanelOpen" :title="scalingHabitId ? 'How was it?' : selectedDayTitle">
+    <BaseSheet v-model="dayPanelOpen" :title="scalingHabitId ? $t('today.howWasIt') : selectedDayTitle">
       <ScalePicker
         v-if="scalingHabitId && selectedDay"
         :key="`${scalingHabitId}-${selectedDay}`"

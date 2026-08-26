@@ -18,20 +18,26 @@ const name = useId()
 
 <template>
   <fieldset class="flex w-full flex-col gap-1.5" :disabled="disabled">
-    <legend class="text-ink text-sm font-medium">Mode</legend>
+    <legend class="text-ink text-sm font-medium">{{ $t('habit.mode') }}</legend>
 
     <div class="bg-mist rounded-card flex gap-1 p-1" :class="disabled ? 'opacity-60' : ''">
       <label v-for="kind in kinds" :key="kind" class="flex-1 cursor-pointer">
         <input v-model="model" type="radio" :value="kind" :name="name" class="sr-only" />
         <span
-          class="flex h-10 items-center justify-center rounded-xl text-sm font-medium transition-colors select-none"
+          class="flex h-11 items-center justify-center rounded-xl text-sm font-medium transition-colors select-none"
           :class="model === kind ? [KIND_META[kind].fill, 'text-white'] : 'text-ink-soft'"
         >
-          {{ KIND_META[kind].label }}
+          {{ $t(`kind.${kind}.label`) }}
         </span>
       </label>
     </div>
 
-    <p v-if="hint" class="text-ink-soft text-xs">{{ hint }}</p>
+    <!-- The mode is the one decision a user cannot undo later, so the sheet has
+         to say what each one means rather than assume the words are obvious. -->
+    <p v-if="model" class="text-ink-soft text-xs leading-snug">
+      {{ $t(`kind.${model}.hint`) }}
+    </p>
+
+    <p v-if="hint" class="text-amber text-xs leading-snug">{{ hint }}</p>
   </fieldset>
 </template>

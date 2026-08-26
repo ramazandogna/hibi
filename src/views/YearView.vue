@@ -13,6 +13,7 @@ import { useWeekStart } from '@/features/profile/profile.queries'
 import YearHabitHeader from '@/features/stats/components/YearHabitHeader.vue'
 import YearHeatmap from '@/features/stats/components/YearHeatmap.vue'
 import { eachDayOfYear, fromDateKey, todayKey } from '@/shared/lib/date'
+import { formatDate } from '@/shared/lib/format'
 import { groupByKind, KIND_META } from '@/shared/lib/kind'
 import BaseSheet from '@/shared/ui/BaseSheet.vue'
 import PageHeader from '@/shared/ui/PageHeader.vue'
@@ -115,12 +116,12 @@ const habitGroups = computed(() => groupByKind(habits.value ?? [], (habit) => ha
 const selectedDay = ref<string | null>(null)
 const selectedHabitId = ref<string | null>(null)
 
-const noteTitleFormatter = new Intl.DateTimeFormat('en', {
+const DAY_TITLE_OPTIONS = {
   weekday: 'long',
   day: 'numeric',
   month: 'long',
   year: 'numeric',
-})
+} as const
 
 const daySheetOpen = computed({
   get: () => selectedDay.value !== null,
@@ -147,7 +148,7 @@ const selectedHabitName = computed(
 )
 
 const selectedDayTitle = computed(() =>
-  selectedDay.value ? noteTitleFormatter.format(fromDateKey(selectedDay.value)) : '',
+  selectedDay.value ? formatDate(fromDateKey(selectedDay.value), DAY_TITLE_OPTIONS) : '',
 )
 
 const { toggle } = useToggleEntry()
@@ -168,7 +169,7 @@ const dayPanelOpen = computed({
 })
 
 const dayPanelTitle = computed(() =>
-  dayPanelDate.value ? noteTitleFormatter.format(fromDateKey(dayPanelDate.value)) : '',
+  dayPanelDate.value ? formatDate(fromDateKey(dayPanelDate.value), DAY_TITLE_OPTIONS) : '',
 )
 
 function onPanelToggle(habitId: string) {
@@ -210,7 +211,7 @@ function onSelectDay(habitId: string, dateKey: string) {
         <button
           type="button"
           class="header-action"
-          :aria-label="`Open today`"
+          :aria-label="$t('common.openItem', { name: $t('today.todayLabel') })"
           @click="dayPanelDate = todayKey()"
         >
           <span class="truncate">{{ year }}</span>
@@ -221,7 +222,7 @@ function onSelectDay(habitId: string, dateKey: string) {
         <button
           type="button"
           class="text-ink-soft hover:text-ink p-2"
-          aria-label="Previous year"
+          :aria-label="$t('year.previous')"
           @click="year -= 1"
         >
           ‹
@@ -231,7 +232,7 @@ function onSelectDay(habitId: string, dateKey: string) {
         <button
           type="button"
           class="text-ink-soft hover:text-ink p-2 disabled:opacity-30"
-          aria-label="Next year"
+          :aria-label="$t('year.next')"
           :disabled="year >= currentYear"
           @click="year += 1"
         >
@@ -240,14 +241,14 @@ function onSelectDay(habitId: string, dateKey: string) {
       </template>
     </PageHeader>
 
-    <SkeletonList v-if="isPending" row-height="h-28" label="Loading habits…" />
+    <SkeletonList v-if="isPending" row-height="h-28" :label="$t('today.loadingHabits')" />
 
     <section
       v-for="group in isPending ? [] : habitGroups"
       :key="group.kind"
       class="flex flex-col gap-2"
     >
-      <SectionHeading :kind="group.kind" :label="group.label" :count="group.items.length" />
+      <SectionHeading :kind="group.kind" :label="$t(`kind.${group.kind}.group`)" :count="group.items.length" />
 
       <ul class="flex flex-col gap-3">
         <li
@@ -275,7 +276,7 @@ function onSelectDay(habitId: string, dateKey: string) {
       </ul>
     </section>
 
-    <BaseSheet v-model="dayPanelOpen" :title="scalingHabitId ? 'How was it?' : dayPanelTitle">
+    <BaseSheet v-model="dayPanelOpen" :title="scalingHabitId ? $t('today.howWasIt') : dayPanelTitle">
       <ScalePicker
         v-if="scalingHabitId && dayPanelDate"
         :key="`${scalingHabitId}-${dayPanelDate}`"
@@ -313,7 +314,7 @@ function onSelectDay(habitId: string, dateKey: string) {
         </section>
 
         <section v-if="selectedDayNote" class="flex flex-col gap-1">
-          <h3 class="text-ink-soft text-xs font-semibold tracking-wide uppercase">That day</h3>
+          <h3 class="text-ink-soft text-xs font-semibold tracking-wide uppercase">{{ $t('year.thatDay') }}</h3>
           <p class="text-ink text-sm whitespace-pre-wrap">{{ selectedDayNote }}</p>
         </section>
       </div>

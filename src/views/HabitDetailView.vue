@@ -8,7 +8,8 @@ import HabitForm from '@/features/habits/components/HabitForm.vue'
 import { useArchiveHabit, useHabit } from '@/features/habits/habits.queries'
 import { useHabitStats } from '@/features/stats/use-habit-stats'
 import { fromDateKey, lastNDays, toDateKey, todayKey } from '@/shared/lib/date'
-import { KIND_META } from '@/shared/lib/kind'
+import { formatDate } from '@/shared/lib/format'
+import { t } from '@/shared/i18n'
 import BaseButton from '@/shared/ui/BaseButton.vue'
 import BaseSheet from '@/shared/ui/BaseSheet.vue'
 import SkeletonList from '@/shared/ui/SkeletonList.vue'
@@ -58,24 +59,20 @@ const cards = computed(() => {
 
   if (kind === 'scale') {
     return [
-      { value: average7.value?.toFixed(1) ?? '—', label: 'avg this week', trend: trend.value },
-      { value: averagePrevious7.value?.toFixed(1) ?? '—', label: 'avg last week', trend: null },
-      { value: String(markedDays.value.size), label: 'days tracked', trend: null },
+      { value: average7.value?.toFixed(1) ?? '—', label: t('stats.avgThisWeek'), trend: trend.value },
+      { value: averagePrevious7.value?.toFixed(1) ?? '—', label: t('stats.avgLastWeek'), trend: null },
+      { value: String(markedDays.value.size), label: t('stats.daysTracked'), trend: null },
     ]
   }
 
   return [
-    { value: String(streak.value), label: KIND_META[kind].streakLabel, trend: null },
-    { value: String(longest.value), label: 'best run', trend: null },
-    { value: `${Math.round(completion30.value * 100)}%`, label: 'last 30 days', trend: null },
+    { value: String(streak.value), label: t(`kind.${kind}.streak`), trend: null },
+    { value: String(longest.value), label: t('stats.bestRun'), trend: null },
+    { value: `${Math.round(completion30.value * 100)}%`, label: t('stats.last30'), trend: null },
   ]
 })
 
-const noteFormatter = new Intl.DateTimeFormat('en', {
-  day: 'numeric',
-  month: 'long',
-  year: 'numeric',
-})
+
 
 /**
  * Every entry that carries a note, newest first.
@@ -89,7 +86,7 @@ const notes = computed(() =>
     .sort((a, b) => b.entry_date.localeCompare(a.entry_date))
     .map((entry) => ({
       id: entry.id,
-      date: noteFormatter.format(fromDateKey(entry.entry_date)),
+      date: formatDate(fromDateKey(entry.entry_date), { day: 'numeric', month: 'long', year: 'numeric' }),
       body: entry.note ?? '',
     })),
 )
@@ -109,7 +106,7 @@ async function archiveAndLeave() {
       <button
         type="button"
         class="text-ink-soft hover:text-ink p-1"
-        aria-label="Back"
+        :aria-label="$t('common.back')"
         @click="router.back()"
       >
         <ArrowLeft class="size-5" />
@@ -119,15 +116,15 @@ async function archiveAndLeave() {
         v-if="habit"
         type="button"
         class="text-ink-soft hover:text-ink p-1"
-        aria-label="Edit habit"
+        :aria-label="$t('habit.edit')"
         @click="editOpen = true"
       >
         <Pencil class="size-5" />
       </button>
     </header>
 
-    <SkeletonList v-if="isPending" :rows="1" row-height="h-20" label="Loading habit…" />
-    <p v-else-if="isError" class="text-ink-soft text-sm">This habit no longer exists.</p>
+    <SkeletonList v-if="isPending" :rows="1" row-height="h-20" :label="$t('habit.loadingHabit')" />
+    <p v-else-if="isError" class="text-ink-soft text-sm">{{ $t('habit.missing') }}</p>
 
     <template v-else-if="habit">
       <p class="text-ink-soft text-sm">{{ summary }}</p>
@@ -143,16 +140,16 @@ async function archiveAndLeave() {
       </div>
 
       <BaseButton variant="ghost" :loading="archive.isPending.value" @click="archiveAndLeave">
-        Archive habit
+        {{ $t('habit.archiveHabit') }}
       </BaseButton>
 
       <section class="flex flex-col gap-2">
         <h2 class="text-ink-soft text-xs font-semibold tracking-wide uppercase">
-          Notes<span v-if="notes.length > 0"> · {{ notes.length }}</span>
+          {{ $t('habit.notes') }}<span v-if="notes.length > 0"> · {{ notes.length }}</span>
         </h2>
 
         <p v-if="notes.length === 0" class="text-ink-soft text-sm">
-          No notes yet. Add one when you check this habit off.
+          {{ $t('habit.noNotes') }}
         </p>
 
         <ul v-else class="flex flex-col gap-2">
@@ -167,7 +164,7 @@ async function archiveAndLeave() {
         </ul>
       </section>
 
-      <BaseSheet v-model="editOpen" title="Edit habit">
+      <BaseSheet v-model="editOpen" :title="$t('habit.edit')">
         <HabitForm :key="habit.id" :habit="habit" @saved="editOpen = false" />
       </BaseSheet>
     </template>
