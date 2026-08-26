@@ -73,6 +73,16 @@
   padding-bottom: env(safe-area-inset-bottom, 0px);
 }
 
+/* Scrolling stays, the bar goes. A visible track cuts across the year grid and
+   reads as a stray line among the cells. */
+@utility no-scrollbar {
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
 @layer components {
   /* One visible focus ring everywhere, so no component can quietly lose it. */
   :focus-visible {
@@ -92,7 +102,9 @@
      that owns the scroll box, the side gutter and the room the floating tab bar
      needs at the bottom. Views only decide their own inner layout. */
   .page-slide {
-    @apply h-full w-full overflow-y-auto px-4 pb-24;
+    /* pb clears both the floating tab bar and the action button above it, so
+       the last row of any list stays reachable. */
+    @apply h-full w-full overflow-y-auto px-4 pb-52;
   }
 
   .slide-forward-enter-active,

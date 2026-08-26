@@ -1,9 +1,14 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 
+import { Plus } from 'lucide-vue-next'
+
+import HabitForm from '@/features/habits/components/HabitForm.vue'
+import BaseSheet from '@/shared/ui/BaseSheet.vue'
+import TipBanner from '@/shared/ui/TipBanner.vue'
 import AppNavbar from '@/layouts/components/app/AppNavbar.vue'
-import AppFooter from './components/app/AppFooter.vue'
+import AppTopBar from '@/layouts/components/app/AppTopBar.vue'
 import { TAB_PATH, tabAtOffset } from '@/shared/lib/tabs'
 import { forceSlideDirection } from '@/shared/lib/tab-transition'
 import { useOnline } from '@/shared/lib/use-online.ts'
@@ -51,6 +56,9 @@ function onPointerUp(event: PointerEvent) {
 
 const isOnline = useOnline()
 
+/** Creating a habit is reachable from every screen, not just Profile. */
+const createOpen = ref(false)
+
 function stopTracking() {
   tracking = false
 }
@@ -58,9 +66,12 @@ function stopTracking() {
 
 <template>
   <div class="app-layout global-wrapper">
-    <!--
-    Navbar
-    -->
+    <AppTopBar />
+
+    <div class="tip-slot">
+      <TipBanner />
+    </div>
+
     <AppNavbar />
 
     <!--
@@ -86,10 +97,13 @@ function stopTracking() {
       <slot />
     </main>
 
-    <!--
-    Footer
-    -->
-    <AppFooter />
+    <button type="button" class="fab" aria-label="New habit" @click="createOpen = true">
+      <Plus class="size-6" />
+    </button>
+
+    <BaseSheet v-model="createOpen" title="New habit">
+      <HabitForm @saved="createOpen = false" />
+    </BaseSheet>
   </div>
 </template>
 
@@ -107,9 +121,24 @@ function stopTracking() {
 }
 
 .page-content {
-  @apply relative mt-8 min-h-0 w-full grow overflow-hidden;
+  @apply relative mt-2 min-h-0 w-full grow overflow-hidden;
   /* Let the browser own vertical scrolling and leave horizontal drags to us. */
   touch-action: pan-y;
+}
+
+/* Floats just above the tab bar, inside the shell, and lets clicks through
+   everywhere the banner itself is not. */
+.tip-slot {
+  @apply pointer-events-none absolute left-1/2 z-30 w-full max-w-[360px] -translate-x-1/2 px-4;
+  bottom: calc(5.25rem + env(safe-area-inset-bottom, 0px));
+}
+
+/* Sits just above the tab bar, on the shell's right edge — thumb reach on a
+   phone, and clear of the centred navigation. */
+.fab {
+  @apply bg-sea absolute right-4 z-40 flex size-14 items-center justify-center text-white shadow-lg transition-transform duration-100 active:scale-95;
+  border-radius: var(--radius-shell);
+  bottom: calc(9.5rem + env(safe-area-inset-bottom, 0px));
 }
 
 .global-wrapper {

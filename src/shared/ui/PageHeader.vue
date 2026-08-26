@@ -3,11 +3,11 @@ const { title } = defineProps<{ title: string }>()
 </script>
 
 <template>
-  <header class="grid grid-cols-[2.5rem_1fr_2.5rem] items-center">
+  <header class="grid h-12 shrink-0 grid-cols-[2.5rem_1fr_2.5rem] items-center">
     <div class="justify-self-start"><slot name="left" /></div>
 
     <h1 class="text-ink truncate text-center text-base font-semibold tabular-nums">
-      {{ title }}
+      <slot name="title">{{ title }}</slot>
     </h1>
 
     <div class="justify-self-end"><slot name="right" /></div>
