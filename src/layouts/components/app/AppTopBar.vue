@@ -38,13 +38,19 @@ const showPremiumHint = ref(false)
           <Crown class="size-[18px]" />
         </button>
 
-        <p
+        <div
           v-if="showPremiumHint"
           role="status"
-          class="bg-ink text-canvas rounded-card absolute top-10 right-0 z-50 w-max px-3 py-1.5 text-xs shadow-lg"
+          class="border-hair bg-surface rounded-card absolute top-11 right-0 z-50 flex w-56 flex-col gap-1 border p-3 text-left shadow-xl"
         >
-          Premium — coming soon
-        </p>
+          <span class="text-amber flex items-center gap-1.5 text-xs font-semibold">
+            <Crown class="size-3.5" />
+            Hibi Premium
+          </span>
+          <p class="text-ink-soft text-xs leading-snug">
+            Reminders, yearly recaps and data insights. Coming soon.
+          </p>
+        </div>
       </div>
     </div>
   </header>
