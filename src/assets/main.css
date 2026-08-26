@@ -69,6 +69,13 @@
 
 /* Declared with @utility (not @layer utilities) so it can also be used from
    @apply inside component styles. */
+/* The wordmark's gradient, reused as the app's primary surface so the logo and
+   the main actions read as the same brand. Declared with @utility so component
+   styles can @apply it. */
+@utility brand-gradient {
+  @apply from-leaf via-sea to-deep bg-gradient-to-r;
+}
+
 @utility safe-b {
   padding-bottom: env(safe-area-inset-bottom, 0px);
 }
@@ -84,6 +91,7 @@
 }
 
 @layer components {
+
   /* One visible focus ring everywhere, so no component can quietly lose it. */
   :focus-visible {
     outline: 2px solid var(--color-sea);

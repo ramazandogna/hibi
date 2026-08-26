@@ -48,20 +48,22 @@ const THEME_OPTIONS = [
 </script>
 
 <template>
-  <section class="flex flex-col gap-4">
+  <section class="flex flex-col gap-5">
     <h2 class="text-ink-soft text-xs font-semibold tracking-wide uppercase">Settings</h2>
 
     <BaseInput v-model="displayName" label="Display name" placeholder="Your name" />
 
     <fieldset class="flex w-full flex-col gap-1.5">
       <legend class="text-ink text-sm font-medium">Week starts on</legend>
-      <div class="bg-mist rounded-card flex gap-1 p-1">
+      <div class="bg-mist rounded-card flex w-fit gap-1 p-1">
         <button
           v-for="option in WEEK_OPTIONS"
           :key="option.value"
           type="button"
-          class="flex h-10 flex-1 items-center justify-center rounded-xl text-sm font-medium transition-colors select-none"
-          :class="profile?.week_starts_on === option.value ? 'bg-sea text-white' : 'text-ink-soft'"
+          class="flex h-10 items-center justify-center rounded-xl px-4 text-sm font-medium transition-colors select-none"
+          :class="
+            profile?.week_starts_on === option.value ? 'brand-gradient text-white' : 'text-ink-soft'
+          "
           :aria-pressed="profile?.week_starts_on === option.value"
           @click="update.mutate({ week_starts_on: option.value })"
         >
@@ -72,13 +74,13 @@ const THEME_OPTIONS = [
 
     <fieldset class="flex w-full flex-col gap-1.5">
       <legend class="text-ink text-sm font-medium">Theme</legend>
-      <div class="bg-mist rounded-card flex gap-1 p-1">
+      <div class="bg-mist rounded-card flex w-fit gap-1 p-1">
         <button
           v-for="option in THEME_OPTIONS"
           :key="option.value"
           type="button"
-          class="flex h-10 flex-1 items-center justify-center rounded-xl text-sm font-medium transition-colors select-none"
-          :class="theme === option.value ? 'bg-sea text-white' : 'text-ink-soft'"
+          class="flex h-10 items-center justify-center rounded-xl px-4 text-sm font-medium transition-colors select-none"
+          :class="theme === option.value ? 'brand-gradient text-white' : 'text-ink-soft'"
           :aria-pressed="theme === option.value"
           @click="selectTheme(option.value)"
         >

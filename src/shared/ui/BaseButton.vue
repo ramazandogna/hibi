@@ -14,7 +14,7 @@ const {
 }>()
 
 const VARIANT_CLASS = {
-  primary: 'bg-sea text-white hover:bg-sea/90',
+  primary: 'brand-gradient text-white hover:brightness-110',
   ghost: 'bg-transparent text-ink hover:bg-mist',
   danger: 'bg-alert text-white hover:bg-alert/90',
 } as const
