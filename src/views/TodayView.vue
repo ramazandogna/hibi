@@ -15,6 +15,7 @@ import { fromDateKey, lastNDays, todayKey } from '@/shared/lib/date'
 import { useEntriesInRange, useSetEntry, useToggleEntry } from '@/features/entries/entries.queries'
 import DayPanel from '@/features/entries/components/DayPanel.vue'
 import EntryNoteSheet from '@/features/entries/components/EntryNoteSheet.vue'
+import MarkedDayActions from '@/features/entries/components/MarkedDayActions.vue'
 import ScaleCheckIn from '@/features/entries/components/ScaleCheckIn.vue'
 import ScalePicker from '@/features/entries/components/ScalePicker.vue'
 import HabitRow from '@/features/habits/components/HabitRow.vue'
@@ -94,19 +95,55 @@ const noteByHabitDay = computed(
  * Only today, only when checking on, and only for binary kinds — scale habits
  * already collect a note inside the picker.
  */
+/**
+ * Marking on is one tap; unmarking never is.
+ *
+ * A mistap on an already-marked day used to wipe it — along with any note
+ * attached to it — with no confirmation. Now it opens a sheet where removing is
+ * a deliberate second action.
+ */
 function onToggle(habitId: string, dateKey: string) {
   const wasMarked = markedByHabit.value.get(habitId)?.has(dateKey) ?? false
-
-  toggle({ habitId, dateKey }, wasMarked)
-
-  // Only when checking on, and only for binary kinds — scale habits collect a
-  // note inside the picker.
-  if (wasMarked) return
-
   const habit = (habits.value ?? []).find((item) => item.id === habitId)
-  if (!habit || !KIND_META[habit.kind].isBinary) return
+  if (!habit) return
 
-  noteTarget.value = { habitId, name: habit.name, dateKey }
+  if (wasMarked) {
+    markedTarget.value = { habitId, name: habit.name, dateKey }
+    return
+  }
+
+  toggle({ habitId, dateKey }, false)
+
+  // Scale habits collect a note inside the picker, so only binary kinds ask.
+  if (KIND_META[habit.kind].isBinary) {
+    noteTarget.value = { habitId, name: habit.name, dateKey }
+  }
+}
+
+/** Habit + day the user tapped while it was already marked. */
+const markedTarget = ref<{ habitId: string; name: string; dateKey: string } | null>(null)
+
+const markedSheetOpen = computed({
+  get: () => markedTarget.value !== null,
+  set: (open: boolean) => {
+    if (!open) markedTarget.value = null
+  },
+})
+
+function saveMarkedNote(note: string | null) {
+  const target = markedTarget.value
+  if (!target) return
+
+  setEntry.mutate({ habitId: target.habitId, dateKey: target.dateKey, value: 1, note })
+  markedTarget.value = null
+}
+
+function removeMark() {
+  const target = markedTarget.value
+  if (!target) return
+
+  toggle({ habitId: target.habitId, dateKey: target.dateKey }, true)
+  markedTarget.value = null
 }
 
 function saveEntryNote(note: string | null) {
@@ -127,7 +164,7 @@ const createHabit = useCreateHabit()
 const SUGGESTIONS = [
   { name: 'Write code', kind: 'build' },
   { name: 'Late-night scrolling', kind: 'quit' },
-  { name: 'Stress level', kind: 'scale' },
+  { name: 'How I feel', kind: 'scale' },
 ] as const satisfies readonly { name: string; kind: HabitKind }[]
 
 type Suggestion = (typeof SUGGESTIONS)[number]
@@ -269,6 +306,17 @@ function openHabit(habitId: string) {
         />
       </ul>
     </section>
+
+    <BaseSheet v-model="markedSheetOpen" title="This day">
+      <MarkedDayActions
+        v-if="markedTarget"
+        :key="`${markedTarget.habitId}-${markedTarget.dateKey}`"
+        :habit-name="markedTarget.name"
+        :initial-note="noteByHabitDay.get(`${markedTarget.habitId}:${markedTarget.dateKey}`) ?? ''"
+        @save="saveMarkedNote"
+        @remove="removeMark"
+      />
+    </BaseSheet>
 
     <BaseSheet v-model="noteSheetOpen" title="Add a note">
       <EntryNoteSheet
