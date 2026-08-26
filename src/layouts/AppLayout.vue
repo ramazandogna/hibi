@@ -136,8 +136,8 @@ function stopTracking() {
 /* Sits just above the tab bar, on the shell's right edge — thumb reach on a
    phone, and clear of the centred navigation. */
 .fab {
-  @apply brand-gradient absolute right-4 z-40 flex size-14 items-center justify-center text-white shadow-lg transition-transform duration-100 active:scale-95;
-  border-radius: var(--radius-shell);
+  @apply bg-sea absolute right-4 z-40 flex size-14 items-center justify-center text-white shadow-lg transition-transform duration-100 active:scale-95;
+  border-radius: var(--radius-card);
   bottom: calc(9.5rem + env(safe-area-inset-bottom, 0px));
 }
 

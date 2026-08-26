@@ -61,9 +61,7 @@ const THEME_OPTIONS = [
           :key="option.value"
           type="button"
           class="flex h-10 items-center justify-center rounded-xl px-4 text-sm font-medium transition-colors select-none"
-          :class="
-            profile?.week_starts_on === option.value ? 'brand-gradient text-white' : 'text-ink-soft'
-          "
+          :class="profile?.week_starts_on === option.value ? 'bg-sea text-white' : 'text-ink-soft'"
           :aria-pressed="profile?.week_starts_on === option.value"
           @click="update.mutate({ week_starts_on: option.value })"
         >
@@ -80,7 +78,7 @@ const THEME_OPTIONS = [
           :key="option.value"
           type="button"
           class="flex h-10 items-center justify-center rounded-xl px-4 text-sm font-medium transition-colors select-none"
-          :class="theme === option.value ? 'brand-gradient text-white' : 'text-ink-soft'"
+          :class="theme === option.value ? 'bg-sea text-white' : 'text-ink-soft'"
           :aria-pressed="theme === option.value"
           @click="selectTheme(option.value)"
         >

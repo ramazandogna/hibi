@@ -116,7 +116,7 @@ onMounted(() => {
 
     <p
       v-if="noteDays && noteDays.size > 0"
-      class="text-ink-soft mt-2 flex items-center gap-1.5 text-[10px]"
+      class="text-ink-soft mt-2 flex items-center justify-end gap-1.5 text-[10px]"
     >
       <span class="rounded-cell relative inline-block size-2.5" :class="KIND_META[kind].empty">
         <span
