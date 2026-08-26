@@ -173,7 +173,22 @@ const errorMessage = computed(() => (error.value ? toAppError(error.value).messa
 const isEmpty = computed(() => (habits.value?.length ?? 0) === 0)
 
 /** Rows read as three labelled blocks instead of one mixed list. */
-const habitGroups = computed(() => groupByKind(habits.value ?? [], (habit) => habit.kind))
+/**
+ * Groups, with today's finished habits pushed to the bottom.
+ *
+ * What is left to do belongs at the top: the screen answers "what now" before
+ * it answers "what did I already do". Order is stable within each half, so a
+ * row never jumps past its neighbours.
+ */
+const habitGroups = computed(() =>
+  groupByKind(habits.value ?? [], (habit) => habit.kind).map((group) => ({
+    ...group,
+    items: [
+      ...group.items.filter((habit) => !markedByHabit.value.get(habit.id)?.has(rangeTo.value)),
+      ...group.items.filter((habit) => markedByHabit.value.get(habit.id)?.has(rangeTo.value)),
+    ],
+  })),
+)
 
 function addSuggestion(suggestion: Suggestion) {
   createHabit.mutate({ name: suggestion.name, kind: suggestion.kind })
@@ -219,6 +234,14 @@ const pendingCheckIns = computed(() =>
 
 function checkIn(habitId: string, value: number) {
   setEntry.mutate({ habitId, dateKey: rangeTo.value, value })
+}
+
+function clearScale() {
+  const target = scaleTarget.value
+  if (!target) return
+
+  toggle(target, true)
+  scaleTarget.value = null
 }
 
 function saveScale(payload: { value: number; note: string | null }) {
@@ -355,6 +378,7 @@ function openHabit(habitId: string) {
         :key="`${scaleTarget.habitId}-${scaleTarget.dateKey}`"
         :initial-value="valuesByHabit.get(scaleTarget.habitId)?.get(scaleTarget.dateKey) ?? null"
         @submit="saveScale"
+        @remove="clearScale"
       />
     </BaseSheet>
   </div>

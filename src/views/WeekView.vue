@@ -175,6 +175,15 @@ function onPanelToggle(habitId: string) {
   if (selectedDay.value) onToggle(habitId, selectedDay.value)
 }
 
+function onScaleRemove() {
+  const dateKey = selectedDay.value
+  const habitId = scalingHabitId.value
+  if (!dateKey || !habitId) return
+
+  toggle({ habitId, dateKey }, true)
+  scalingHabitId.value = null
+}
+
 function onScaleSubmit(payload: { value: number; note: string | null }) {
   const dateKey = selectedDay.value
   const habitId = scalingHabitId.value
@@ -344,6 +353,7 @@ function score(habitId: string, target: number): string {
         :key="`${scalingHabitId}-${selectedDay}`"
         :initial-value="valuesByHabit.get(scalingHabitId)?.get(selectedDay) ?? null"
         @submit="onScaleSubmit"
+        @remove="onScaleRemove"
       />
 
       <DayPanel
