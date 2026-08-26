@@ -15,7 +15,10 @@ const LEVELS = [
 
 <template>
   <section class="border-hair rounded-card flex flex-col gap-3 border p-3">
-    <p class="text-ink text-sm font-medium">How's your {{ habitName.toLowerCase() }} today?</p>
+    <div class="flex flex-col gap-0.5">
+      <p class="text-ink text-sm font-medium">How's your {{ habitName.toLowerCase() }} today?</p>
+      <p class="text-ink-soft text-xs">Pick a level, then write a line about why.</p>
+    </div>
 
     <div class="flex justify-between gap-1">
       <button

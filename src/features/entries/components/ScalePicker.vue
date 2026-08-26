@@ -56,7 +56,7 @@ function submit() {
       v-model="note"
       maxlength="280"
       rows="3"
-      placeholder="Anything worth remembering?"
+      placeholder="Why does today feel like this?"
       class="border-hair bg-surface text-ink rounded-card border p-3 text-sm"
     />
 
