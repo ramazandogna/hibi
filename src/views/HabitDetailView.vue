@@ -7,7 +7,7 @@ import { useEntriesInRange } from '@/features/entries/entries.queries'
 import HabitForm from '@/features/habits/components/HabitForm.vue'
 import { useArchiveHabit, useHabit } from '@/features/habits/habits.queries'
 import { useHabitStats } from '@/features/stats/use-habit-stats'
-import { lastNDays, toDateKey, todayKey } from '@/shared/lib/date'
+import { fromDateKey, lastNDays, toDateKey, todayKey } from '@/shared/lib/date'
 import { KIND_META } from '@/shared/lib/kind'
 import BaseButton from '@/shared/ui/BaseButton.vue'
 import BaseSheet from '@/shared/ui/BaseSheet.vue'
@@ -71,6 +71,29 @@ const cards = computed(() => {
   ]
 })
 
+const noteFormatter = new Intl.DateTimeFormat('en', {
+  day: 'numeric',
+  month: 'long',
+  year: 'numeric',
+})
+
+/**
+ * Every entry that carries a note, newest first.
+ *
+ * The stat cards say how often; these say why. Reading them back is the point
+ * of writing them, so they get a place on the habit's own page.
+ */
+const notes = computed(() =>
+  ownEntries.value
+    .filter((entry) => (entry.note ?? '').trim().length > 0)
+    .sort((a, b) => b.entry_date.localeCompare(a.entry_date))
+    .map((entry) => ({
+      id: entry.id,
+      date: noteFormatter.format(fromDateKey(entry.entry_date)),
+      body: entry.note ?? '',
+    })),
+)
+
 const editOpen = ref(false)
 const archive = useArchiveHabit()
 
@@ -122,6 +145,27 @@ async function archiveAndLeave() {
       <BaseButton variant="ghost" :loading="archive.isPending.value" @click="archiveAndLeave">
         Archive habit
       </BaseButton>
+
+      <section class="flex flex-col gap-2">
+        <h2 class="text-ink-soft text-xs font-semibold tracking-wide uppercase">
+          Notes<span v-if="notes.length > 0"> · {{ notes.length }}</span>
+        </h2>
+
+        <p v-if="notes.length === 0" class="text-ink-soft text-sm">
+          No notes yet. Add one when you check this habit off.
+        </p>
+
+        <ul v-else class="flex flex-col gap-2">
+          <li
+            v-for="note in notes"
+            :key="note.id"
+            class="border-hair rounded-card flex flex-col gap-1 border p-3"
+          >
+            <p class="text-ink-soft text-xs tabular-nums">{{ note.date }}</p>
+            <p class="text-ink text-sm whitespace-pre-wrap">{{ note.body }}</p>
+          </li>
+        </ul>
+      </section>
 
       <BaseSheet v-model="editOpen" title="Edit habit">
         <HabitForm :key="habit.id" :habit="habit" @saved="editOpen = false" />

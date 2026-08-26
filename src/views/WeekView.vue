@@ -1,13 +1,19 @@
 <script lang="ts" setup>
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 
-import { useEntriesInRange, useToggleEntry } from '@/features/entries/entries.queries'
+import DayPanel from '@/features/entries/components/DayPanel.vue'
+import ScalePicker from '@/features/entries/components/ScalePicker.vue'
+import { useEntriesInRange, useSetEntry, useToggleEntry } from '@/features/entries/entries.queries'
 import { useHabits } from '@/features/habits/habits.queries'
+import DayNoteField from '@/features/notes/components/DayNoteField.vue'
 import { useNotesInRange } from '@/features/notes/notes.queries'
 import { addDays, fromDateKey, startOfWeek, todayKey } from '@/shared/lib/date'
-import { dayCellClass } from '@/shared/lib/kind'
+import { dayCellClass, groupByKind, KIND_META } from '@/shared/lib/kind'
+import type { HabitKind } from '@/shared/lib/kind'
+import BaseSheet from '@/shared/ui/BaseSheet.vue'
 import PageHeader from '@/shared/ui/PageHeader.vue'
+import SectionHeading from '@/shared/ui/SectionHeading.vue'
 import SkeletonList from '@/shared/ui/SkeletonList.vue'
 
 import { useWeekStart } from '@/features/profile/profile.queries'
@@ -79,32 +85,44 @@ const { data: notes } = useNotesInRange(weekStart, weekEnd)
  * Deliberately neutral wording: habit apps that shame people get deleted. The
  * numbers are shown, the judgement is left to the user.
  */
-const review = computed(() => {
-  const list = habits.value ?? []
-  if (list.length === 0) return null
+/**
+ * A summary per group instead of one for the whole week.
+ *
+ * "You completed 24 of 35" mixes building a habit with quitting one and with
+ * rating a mood — three different things whose numbers do not add up to
+ * anything meaningful together.
+ */
+const groupReviews = computed(() =>
+  habitGroups.value.map((group) => {
+    const rows = group.items.map((habit) => {
+      const marked = markedByHabit.value.get(habit.id)
+      const done = days.value.filter((day) => marked?.has(day)).length
 
-  const rows = list.map((habit) => {
-    const marked = markedByHabit.value.get(habit.id)
-    const done = days.value.filter((day) => marked?.has(day)).length
+      return { habit, done, target: habit.target_per_week }
+    })
 
-    return { habit, done, target: habit.target_per_week }
-  })
+    const planned = rows.reduce((total, row) => total + row.target, 0)
+    const completed = rows.reduce((total, row) => total + Math.min(row.done, row.target), 0)
+    const sorted = [...rows].sort((a, b) => b.done / b.target - a.done / a.target)
 
-  const planned = rows.reduce((total, row) => total + row.target, 0)
-  const completed = rows.reduce((total, row) => total + Math.min(row.done, row.target), 0)
+    return {
+      kind: group.kind,
+      completed,
+      planned,
+      percent: planned === 0 ? 0 : Math.round((completed / planned) * 100),
+      best: sorted[0] ?? null,
+      behind: sorted.length > 1 ? (sorted.at(-1) ?? null) : null,
+    }
+  }),
+)
 
-  const sorted = [...rows].sort((a, b) => b.done / b.target - a.done / a.target)
-
-  return {
-    completed,
-    planned,
-    percent: planned === 0 ? 0 : Math.round((completed / planned) * 100),
-    best: sorted[0] ?? null,
-    behind: sorted.at(-1) ?? null,
-  }
-})
+const reviewByKind = computed(
+  () => new Map(groupReviews.value.map((review) => [review.kind, review])),
+)
 
 const weekNotes = computed(() => (notes.value ?? []).slice(0, 3))
+
+const habitGroups = computed(() => groupByKind(habits.value ?? [], (habit) => habit.kind))
 
 const weekdayFormatter = new Intl.DateTimeFormat('en', { weekday: 'narrow' })
 const rangeFormatter = new Intl.DateTimeFormat('en', { month: 'short', day: 'numeric' })
@@ -115,6 +133,73 @@ const title = computed(
 )
 
 const { toggle } = useToggleEntry()
+const setEntry = useSetEntry()
+
+const noteBodyByDay = computed(
+  () => new Map((notes.value ?? []).map((note) => [note.entry_date, note.body])),
+)
+
+/** Column headers open a day: the panel is where notes and values are written. */
+const selectedDay = ref<string | null>(null)
+const scalingHabitId = ref<string | null>(null)
+
+const dayPanelOpen = computed({
+  get: () => selectedDay.value !== null,
+  set: (open: boolean) => {
+    if (!open) {
+      selectedDay.value = null
+      scalingHabitId.value = null
+    }
+  },
+})
+
+const dayTitleFormatter = new Intl.DateTimeFormat('en', {
+  weekday: 'long',
+  day: 'numeric',
+  month: 'long',
+})
+
+const selectedDayTitle = computed(() =>
+  selectedDay.value ? dayTitleFormatter.format(fromDateKey(selectedDay.value)) : '',
+)
+
+function openDay(dateKey: string) {
+  if (dateKey > today) return
+
+  scalingHabitId.value = null
+  selectedDay.value = dateKey
+}
+
+function onPanelToggle(habitId: string) {
+  if (selectedDay.value) onToggle(habitId, selectedDay.value)
+}
+
+function onScaleSubmit(payload: { value: number; note: string | null }) {
+  const dateKey = selectedDay.value
+  const habitId = scalingHabitId.value
+  if (!dateKey || !habitId) return
+
+  setEntry.mutate({ habitId, dateKey, ...payload })
+  scalingHabitId.value = null
+}
+
+/**
+ * Binary kinds toggle; scale kinds open the picker, past days included.
+ *
+ * Without the branch a mood cell would silently flip to a value of 1, which is
+ * a number the user never chose.
+ */
+function onCellTap(habit: { id: string; kind: HabitKind }, dateKey: string) {
+  if (dateKey > today) return
+
+  if (!KIND_META[habit.kind].isBinary) {
+    selectedDay.value = dateKey
+    scalingHabitId.value = habit.id
+    return
+  }
+
+  toggle({ habitId: habit.id, dateKey }, markedByHabit.value.get(habit.id)?.has(dateKey) ?? false)
+}
 
 function onToggle(habitId: string, dateKey: string) {
   if (dateKey > today) return
@@ -161,69 +246,108 @@ function score(habitId: string, target: number): string {
 
     <div v-else class="grid grid-cols-[1fr_repeat(7,1.75rem)_2.5rem] items-center gap-1">
       <span />
-      <span
+      <button
         v-for="day in days"
         :key="`head-${day}`"
-        class="text-ink-soft text-center text-[10px]"
+        type="button"
+        class="text-ink-soft rounded-cell py-1 text-center text-[10px] disabled:opacity-40"
         :class="day === today ? 'text-sea font-bold' : ''"
+        :disabled="day > today"
+        :aria-label="`Open ${day}`"
+        @click="openDay(day)"
       >
         {{ weekdayFormatter.format(fromDateKey(day)) }}
-      </span>
+      </button>
       <span />
 
-      <template v-for="habit in habits ?? []" :key="habit.id">
-        <span class="text-ink truncate text-xs font-medium">{{ habit.name }}</span>
+      <template v-for="group in habitGroups" :key="group.kind">
+        <div class="col-span-9 mt-3 flex">
+          <SectionHeading :kind="group.kind" :label="group.label" :count="group.items.length" />
+        </div>
 
-        <button
-          v-for="day in days"
-          :key="`${habit.id}-${day}`"
-          type="button"
-          :disabled="day > today"
-          class="rounded-cell mx-auto size-6 transition-transform duration-100 active:scale-90"
-          :class="
-            dayCellClass({
-              kind: habit.kind,
-              isMarked: markedByHabit.get(habit.id)?.has(day) ?? false,
-              value: valuesByHabit.get(habit.id)?.get(day),
-              isFuture: day > today,
-            })
-          "
-          :aria-pressed="markedByHabit.get(habit.id)?.has(day) ?? false"
-          :aria-label="`${habit.name}, ${day}`"
-          @click="onToggle(habit.id, day)"
-        />
+        <template v-for="habit in group.items" :key="habit.id">
+          <span class="text-ink truncate text-xs font-medium">{{ habit.name }}</span>
 
-        <span class="text-ink-soft text-right text-[10px] tabular-nums">
-          {{ score(habit.id, habit.target_per_week) }}
-        </span>
+          <button
+            v-for="day in days"
+            :key="`${habit.id}-${day}`"
+            type="button"
+            :disabled="day > today"
+            class="rounded-cell mx-auto size-6 transition-transform duration-100 active:scale-90"
+            :class="
+              dayCellClass({
+                kind: habit.kind,
+                isMarked: markedByHabit.get(habit.id)?.has(day) ?? false,
+                value: valuesByHabit.get(habit.id)?.get(day),
+                isFuture: day > today,
+              })
+            "
+            :aria-pressed="markedByHabit.get(habit.id)?.has(day) ?? false"
+            :aria-label="`${habit.name}, ${day}`"
+            @click="onCellTap(habit, day)"
+          />
+
+          <span class="text-ink-soft text-right text-[10px] tabular-nums">
+            {{ score(habit.id, habit.target_per_week) }}
+          </span>
+        </template>
+
+        <p
+          v-if="reviewByKind.get(group.kind)"
+          class="text-ink-soft col-span-9 mt-1 mb-1 text-[11px]"
+        >
+          <span class="tabular-nums">{{ reviewByKind.get(group.kind)?.completed }}</span> of
+          <span class="tabular-nums">{{ reviewByKind.get(group.kind)?.planned }}</span> days ·
+          <span class="tabular-nums">{{ reviewByKind.get(group.kind)?.percent }}%</span>
+          <template v-if="reviewByKind.get(group.kind)?.best">
+            · strongest {{ reviewByKind.get(group.kind)?.best?.habit.name }}
+          </template>
+        </p>
       </template>
     </div>
 
-    <section v-if="review" class="border-hair rounded-card flex flex-col gap-2 border p-3">
-      <h2 class="text-ink-soft text-xs font-semibold tracking-wide uppercase">Week in review</h2>
+    <section
+      v-if="weekNotes.length > 0"
+      class="border-hair rounded-card flex flex-col gap-2 border p-3"
+    >
+      <h2 class="text-ink-soft text-xs font-semibold tracking-wide uppercase">Notes this week</h2>
 
-      <p class="text-ink text-sm">
-        You completed <strong class="tabular-nums">{{ review.completed }}</strong> of
-        <strong class="tabular-nums">{{ review.planned }}</strong> planned days ·
-        <span class="tabular-nums">{{ review.percent }}%</span>
-      </p>
-
-      <p v-if="review.best" class="text-ink-soft text-xs">
-        Strongest: {{ review.best.habit.name }} — {{ review.best.done }} of
-        {{ review.best.target }}
-      </p>
-      <p v-if="review.behind && review.behind !== review.best" class="text-ink-soft text-xs">
-        Least tracked: {{ review.behind.habit.name }} — {{ review.behind.done }} of
-        {{ review.behind.target }}
-      </p>
-
-      <ul v-if="weekNotes.length > 0" class="mt-1 flex flex-col gap-1">
+      <ul class="flex flex-col gap-1">
         <li v-for="note in weekNotes" :key="note.id" class="text-ink-soft truncate text-xs">
           {{ note.entry_date }} — {{ note.body }}
         </li>
       </ul>
     </section>
 
-    <p v-else-if="!isPending" class="text-ink-soft text-sm">No data for this week.</p>
+    <p v-if="!isPending && habitGroups.length === 0" class="text-ink-soft text-sm">
+      No data for this week.
+    </p>
+
+    <BaseSheet v-model="dayPanelOpen" :title="scalingHabitId ? 'How was it?' : selectedDayTitle">
+      <ScalePicker
+        v-if="scalingHabitId && selectedDay"
+        :key="`${scalingHabitId}-${selectedDay}`"
+        :initial-value="valuesByHabit.get(scalingHabitId)?.get(selectedDay) ?? null"
+        @submit="onScaleSubmit"
+      />
+
+      <DayPanel
+        v-else-if="selectedDay"
+        :date-key="selectedDay"
+        :habits="habits ?? []"
+        :marked-by-habit="markedByHabit"
+        :values-by-habit="valuesByHabit"
+        @toggle="onPanelToggle"
+        @scale="(habitId) => (scalingHabitId = habitId)"
+      >
+        <template #note>
+          <DayNoteField
+            :key="selectedDay"
+            :date-key="selectedDay"
+            :initial-body="noteBodyByDay.get(selectedDay) ?? ''"
+          />
+        </template>
+      </DayPanel>
+    </BaseSheet>
   </div>
 </template>

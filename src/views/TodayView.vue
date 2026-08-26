@@ -4,16 +4,22 @@ import { Sparkles } from 'lucide-vue-next'
 
 import { useCreateHabit, useHabits } from '@/features/habits/habits.queries'
 import { toAppError } from '@/shared/lib/app-error'
+import { groupByKind, KIND_META } from '@/shared/lib/kind'
 import type { HabitKind } from '@/shared/lib/kind'
 import BaseButton from '@/shared/ui/BaseButton.vue'
 import EmptyState from '@/shared/ui/EmptyState.vue'
 import PageHeader from '@/shared/ui/PageHeader.vue'
+import SectionHeading from '@/shared/ui/SectionHeading.vue'
 import SkeletonList from '@/shared/ui/SkeletonList.vue'
 import { fromDateKey, lastNDays, todayKey } from '@/shared/lib/date'
 import { useEntriesInRange, useSetEntry, useToggleEntry } from '@/features/entries/entries.queries'
+import DayPanel from '@/features/entries/components/DayPanel.vue'
+import EntryNoteSheet from '@/features/entries/components/EntryNoteSheet.vue'
 import ScaleCheckIn from '@/features/entries/components/ScaleCheckIn.vue'
 import ScalePicker from '@/features/entries/components/ScalePicker.vue'
 import HabitRow from '@/features/habits/components/HabitRow.vue'
+import DayNoteField from '@/features/notes/components/DayNoteField.vue'
+import { useNotesInRange } from '@/features/notes/notes.queries'
 import BaseSheet from '@/shared/ui/BaseSheet.vue'
 import { useRouter } from 'vue-router'
 
@@ -53,10 +59,65 @@ const todayFormatter = new Intl.DateTimeFormat('en', {
 })
 const todayTitle = computed(() => todayFormatter.format(fromDateKey(rangeTo.value)))
 
+const { data: notes } = useNotesInRange(rangeFrom, rangeTo)
+
+const noteBodyByDay = computed(
+  () => new Map((notes.value ?? []).map((note) => [note.entry_date, note.body])),
+)
+
+/** The header date opens the day panel, the only place a day note is written. */
+const dayPanelOpen = ref(false)
+
 const { toggle } = useToggleEntry()
 
+/** Habit the user just marked today, waiting to be offered a note. */
+const noteTarget = ref<{ habitId: string; name: string; dateKey: string } | null>(null)
+
+const noteSheetOpen = computed({
+  get: () => noteTarget.value !== null,
+  set: (open: boolean) => {
+    if (!open) noteTarget.value = null
+  },
+})
+
+const noteByHabitDay = computed(
+  () =>
+    new Map(
+      (entries.value ?? []).map((entry) => [`${entry.habit_id}:${entry.entry_date}`, entry.note]),
+    ),
+)
+
+/**
+ * Marking stays one tap; the note is offered afterwards.
+ *
+ * Asking first would put a form in front of the app's most frequent action.
+ * Only today, only when checking on, and only for binary kinds — scale habits
+ * already collect a note inside the picker.
+ */
 function onToggle(habitId: string, dateKey: string) {
-  toggle({ habitId, dateKey }, markedByHabit.value.get(habitId)?.has(dateKey) ?? false)
+  const wasMarked = markedByHabit.value.get(habitId)?.has(dateKey) ?? false
+
+  toggle({ habitId, dateKey }, wasMarked)
+
+  // Only when checking on, and only for binary kinds — scale habits collect a
+  // note inside the picker.
+  if (wasMarked) return
+
+  const habit = (habits.value ?? []).find((item) => item.id === habitId)
+  if (!habit || !KIND_META[habit.kind].isBinary) return
+
+  noteTarget.value = { habitId, name: habit.name, dateKey }
+}
+
+function saveEntryNote(note: string | null) {
+  const target = noteTarget.value
+  if (!target) return
+
+  if (note !== null) {
+    setEntry.mutate({ habitId: target.habitId, dateKey: target.dateKey, value: 1, note })
+  }
+
+  noteTarget.value = null
 }
 
 const { data: habits, isPending, isError, error, refetch } = useHabits()
@@ -73,6 +134,9 @@ type Suggestion = (typeof SUGGESTIONS)[number]
 
 const errorMessage = computed(() => (error.value ? toAppError(error.value).message : ''))
 const isEmpty = computed(() => (habits.value?.length ?? 0) === 0)
+
+/** Rows read as three labelled blocks instead of one mixed list. */
+const habitGroups = computed(() => groupByKind(habits.value ?? [], (habit) => habit.kind))
 
 function addSuggestion(suggestion: Suggestion) {
   createHabit.mutate({ name: suggestion.name, kind: suggestion.kind })
@@ -135,7 +199,18 @@ function openHabit(habitId: string) {
 
 <template>
   <div class="flex w-full flex-col gap-4">
-    <PageHeader :title="todayTitle" />
+    <PageHeader :title="todayTitle">
+      <template #title>
+        <button
+          type="button"
+          class="hover:text-sea transition-colors"
+          :aria-label="`Open ${todayTitle}`"
+          @click="dayPanelOpen = true"
+        >
+          {{ todayTitle }}
+        </button>
+      </template>
+    </PageHeader>
 
     <SkeletonList v-if="isPending" row-height="h-14" label="Loading habits…" />
 
@@ -172,20 +247,58 @@ function openHabit(habitId: string) {
       />
     </template>
 
-    <ul v-if="!isPending && !isError && !isEmpty" class="flex flex-col gap-2">
-      <HabitRow
-        v-for="habit in habits ?? []"
-        :key="habit.id"
-        :values="valuesByHabit.get(habit.id)"
-        :habit="habit"
-        :days="days"
-        :today="rangeTo"
-        :marked-days="markedByHabit.get(habit.id) ?? new Set()"
-        @toggle="(day) => onToggle(habit.id, day)"
-        @scale="(day) => openScale(habit.id, day)"
-        @open="openHabit"
+    <section
+      v-for="group in !isPending && !isError && !isEmpty ? habitGroups : []"
+      :key="group.kind"
+      class="flex flex-col gap-2"
+    >
+      <SectionHeading :kind="group.kind" :label="group.label" :count="group.items.length" />
+
+      <ul class="flex flex-col gap-2">
+        <HabitRow
+          v-for="habit in group.items"
+          :key="habit.id"
+          :values="valuesByHabit.get(habit.id)"
+          :habit="habit"
+          :days="days"
+          :today="rangeTo"
+          :marked-days="markedByHabit.get(habit.id) ?? new Set()"
+          @toggle="(day) => onToggle(habit.id, day)"
+          @scale="(day) => openScale(habit.id, day)"
+          @open="openHabit"
+        />
+      </ul>
+    </section>
+
+    <BaseSheet v-model="noteSheetOpen" title="Add a note">
+      <EntryNoteSheet
+        v-if="noteTarget"
+        :key="`${noteTarget.habitId}-${noteTarget.dateKey}`"
+        :habit-name="noteTarget.name"
+        :initial-note="noteByHabitDay.get(`${noteTarget.habitId}:${noteTarget.dateKey}`) ?? ''"
+        @save="saveEntryNote"
+        @skip="noteTarget = null"
       />
-    </ul>
+    </BaseSheet>
+
+    <BaseSheet v-model="dayPanelOpen" :title="todayTitle">
+      <DayPanel
+        :date-key="rangeTo"
+        :habits="habits ?? []"
+        :marked-by-habit="markedByHabit"
+        :values-by-habit="valuesByHabit"
+        @toggle="(habitId) => onToggle(habitId, rangeTo)"
+        @scale="(habitId) => openScale(habitId, rangeTo)"
+      >
+        <template #note>
+          <DayNoteField
+            :key="rangeTo"
+            :date-key="rangeTo"
+            :initial-body="noteBodyByDay.get(rangeTo) ?? ''"
+          />
+        </template>
+      </DayPanel>
+    </BaseSheet>
 
     <BaseSheet v-model="scaleOpen" title="How was it?">
       <ScalePicker
