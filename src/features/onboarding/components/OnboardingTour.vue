@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { nextTick, onUnmounted, ref, watch } from 'vue'
 
 import { ONBOARDING_STEPS, useOnboarding } from '../onboarding'
 import BaseButton from '@/shared/ui/BaseButton.vue'
@@ -21,6 +21,23 @@ watch(tour.index, (next, previous) => {
   transitionName.value = next >= previous ? 'tour-forward' : 'tour-backward'
 })
 
+const dialog = ref<HTMLElement | null>(null)
+
+/**
+ * Same trick the sheets use: `inert` takes the app behind the guide out of tab
+ * order and pointer events, so Tab cannot walk into a screen the user cannot
+ * see. Focusing the dialog is what makes the arrow keys work at all.
+ */
+watch(tour.isOpen, async (open) => {
+  document.getElementById('app')?.toggleAttribute('inert', open)
+  if (!open) return
+
+  await nextTick()
+  dialog.value?.focus()
+})
+
+onUnmounted(() => document.getElementById('app')?.removeAttribute('inert'))
+
 function onKeydown(event: KeyboardEvent) {
   if (event.key === 'ArrowRight') tour.next()
   if (event.key === 'ArrowLeft') tour.goTo(tour.index.value - 1)
@@ -34,7 +51,8 @@ function onKeydown(event: KeyboardEvent) {
     <Transition name="tour">
       <div
         v-if="tour.isOpen.value"
-        class="fixed inset-0 z-[60] flex items-center justify-center"
+        ref="dialog"
+        class="fixed inset-0 z-[60] flex items-center justify-center outline-none"
         role="dialog"
         aria-modal="true"
         :aria-label="$t('settings.guide')"

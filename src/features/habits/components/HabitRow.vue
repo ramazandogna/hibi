@@ -69,7 +69,16 @@ function onTodayTap() {
     </div>
 
     <div class="min-w-0 flex-1">
-      <p class="text-ink truncate text-sm font-medium">{{ habit.name }}</p>
+      <!-- The whole row stays tappable as a convenience, but the name is the
+           real control: a bare <li> with a click handler is unreachable by
+           keyboard and announces nothing to a screen reader. -->
+      <button
+        type="button"
+        class="text-ink block max-w-full truncate rounded text-left text-sm font-medium"
+        @click.stop="emit('open', habit.id)"
+      >
+        {{ habit.name }}
+      </button>
       <p v-if="!meta.isBinary" class="text-ink-soft text-xs">{{ summary }}</p>
       <StreakBadge v-else :streak="streak" :longest="longest" :kind="habit.kind" />
     </div>
