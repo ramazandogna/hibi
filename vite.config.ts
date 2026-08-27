@@ -3,10 +3,59 @@ import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import vueDevTools from 'vite-plugin-vue-devtools'
 import tailwindcss from '@tailwindcss/vite'
+import { VitePWA } from 'vite-plugin-pwa'
 
 // https://vite.dev/config/
 export default defineConfig({
-  plugins: [vue(), vueDevTools(), tailwindcss()],
+  plugins: [
+    vue(),
+    vueDevTools(),
+    tailwindcss(),
+    VitePWA({
+      // 'prompt', not 'autoUpdate': swapping the app out from under someone
+      // mid-entry is how you lose the note they were writing.
+      registerType: 'prompt',
+      includeAssets: ['favicon.ico', 'favicon.svg', 'apple-touch-icon.png'],
+      manifest: {
+        name: 'Hibi — habit & mood tracker',
+        short_name: 'Hibi',
+        description: 'Build habits, quit what drains you, and notice how you feel.',
+        lang: 'en',
+        theme_color: '#26667F',
+        background_color: '#F4FAF8',
+        display: 'standalone',
+        orientation: 'portrait',
+        start_url: '/',
+        scope: '/',
+        icons: [
+          { src: 'pwa-192.png', sizes: '192x192', type: 'image/png' },
+          { src: 'pwa-512.png', sizes: '512x512', type: 'image/png' },
+          {
+            src: 'pwa-maskable-512.png',
+            sizes: '512x512',
+            type: 'image/png',
+            purpose: 'maskable',
+          },
+        ],
+      },
+      workbox: {
+        globPatterns: ['**/*.{js,css,html,svg,png,ico,woff2}'],
+        // Every route is client-side, so a cold navigation to /week must be
+        // answered with the shell — the same rule vercel.json applies on the
+        // server, restated for the service worker.
+        navigateFallback: 'index.html',
+        // Supabase responses are per-user and change constantly. Caching them
+        // would show one account's data to the next person on a shared device.
+        navigateFallbackDenylist: [/^\/api/],
+        runtimeCaching: [],
+      },
+      devOptions: {
+        // Off by default: a service worker in dev caches the very files you are
+        // editing. Flip it on deliberately when testing install behaviour.
+        enabled: false,
+      },
+    }),
+  ],
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url)),
