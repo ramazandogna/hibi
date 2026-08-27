@@ -22,12 +22,16 @@ const router = useRouter()
 const currentTab = computed(() => route.meta.tab)
 
 /** Minimum horizontal travel before a drag counts as a swipe. */
-const SWIPE_MIN_PX = 60
+const SWIPE_MIN_PX = 44
+/** A flick this short in time counts on half the distance. */
+const FLICK_MS = 250
+const FLICK_MIN_PX = 24
 /** How much more horizontal than vertical the drag must be, so scrolling wins. */
-const HORIZONTAL_RATIO = 1.5
+const HORIZONTAL_RATIO = 1.2
 
 let startX = 0
 let startY = 0
+let startTime = 0
 let tracking = false
 
 function onPointerDown(event: PointerEvent) {
@@ -40,6 +44,7 @@ function onPointerDown(event: PointerEvent) {
 
   startX = event.clientX
   startY = event.clientY
+  startTime = event.timeStamp
   tracking = true
 }
 
@@ -52,8 +57,13 @@ function onPointerUp(event: PointerEvent) {
 
   const dx = event.clientX - startX
   const dy = event.clientY - startY
+  const elapsed = event.timeStamp - startTime
 
-  if (Math.abs(dx) < SWIPE_MIN_PX) return
+  // A quick flick and a long deliberate drag are both swipes; only a slow,
+  // short movement is ambiguous enough to ignore.
+  const threshold = elapsed < FLICK_MS ? FLICK_MIN_PX : SWIPE_MIN_PX
+
+  if (Math.abs(dx) < threshold) return
   if (Math.abs(dx) < Math.abs(dy) * HORIZONTAL_RATIO) return
 
   const offset = dx < 0 ? 1 : -1
@@ -144,12 +154,13 @@ function stopTracking() {
 
 .page-content {
   @apply relative mt-2 min-h-0 w-full grow overflow-hidden;
-  /* `pan-y` here used to disable horizontal touch panning for every descendant,
-     which meant the year heatmap could not be scrolled by finger at all — a
-     child cannot re-enable a direction an ancestor has taken away. The swipe
-     gesture is pointer-driven anyway, so the browser keeps its defaults and
-     onPointerDown skips drags that start in a horizontally scrolling area. */
-  touch-action: auto;
+  /* Vertical panning belongs to the browser; horizontal belongs to the swipe
+     gesture. This is not only about who scrolls: with `auto`, the browser
+     claims a diagonal drag and fires pointercancel, which killed the swipe
+     anywhere there was content to scroll. The one element that genuinely needs
+     horizontal panning — the year heatmap — drives its own scrolling instead,
+     since a descendant cannot re-enable a direction an ancestor removed. */
+  touch-action: pan-y;
 }
 
 /* Floats just above the tab bar, inside the shell, and lets clicks through

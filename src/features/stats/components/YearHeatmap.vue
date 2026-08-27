@@ -2,6 +2,7 @@
 import { computed, onMounted, ref } from 'vue'
 
 import { fromDateKey, leadingBlanks } from '@/shared/lib/date'
+import { useDragScroll } from '@/shared/lib/use-drag-scroll'
 import { useToday } from '@/shared/lib/today'
 import { formatDate } from '@/shared/lib/format'
 import type { WeekStart } from '@/shared/lib/date'
@@ -29,6 +30,7 @@ const emit = defineEmits<{ select: [dateKey: string] }>()
 type MonthBlock = { key: string; label: string; blanks: number; days: string[] }
 
 const scroller = ref<HTMLElement | null>(null)
+const { didDrag } = useDragScroll(scroller)
 const today = useToday()
 /**
  * The year split into month blocks.
@@ -67,6 +69,9 @@ const months = computed<MonthBlock[]>(() => {
  * where a mistap is obvious. Here a cell is only a door to what was written.
  */
 function onGridClick(event: MouseEvent) {
+  // A press that scrolled the grid is not a tap on the cell it started over.
+  if (didDrag()) return
+
   const cell = (event.target as HTMLElement).closest('[data-date]')
   const date = cell?.getAttribute('data-date')
 
