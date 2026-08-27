@@ -2,6 +2,8 @@
 import { nextTick, onUnmounted, ref, watch } from 'vue'
 
 import { ONBOARDING_STEPS, useOnboarding } from '../onboarding'
+import type { TourAccent } from '../onboarding'
+import TourFigure from './visuals/TourFigure.vue'
 import BaseButton from '@/shared/ui/BaseButton.vue'
 import BrandMark from '@/shared/ui/BrandMark.vue'
 
@@ -10,18 +12,25 @@ const tour = useOnboarding()
 const total = ONBOARDING_STEPS.length
 
 /**
- * Slide direction, derived from which way the index moved.
- *
- * The dots allow jumping backwards, so a fixed direction would animate a jump
- * to step 2 as if it were progress.
+ * Ambient wash per slide. Full class strings, because Tailwind reads source
+ * files as text and never sees a name assembled at runtime.
  */
+const WASH: Record<TourAccent, string> = {
+  sea: 'from-sea/18',
+  leaf: 'from-leaf/18',
+  ember: 'from-ember/18',
+  amber: 'from-amber/18',
+  deep: 'from-deep/18',
+}
+
+const dialog = ref<HTMLElement | null>(null)
+
+/** Direction, so the dots can jump backwards and still animate backwards. */
 const transitionName = ref('tour-forward')
 
 watch(tour.index, (next, previous) => {
   transitionName.value = next >= previous ? 'tour-forward' : 'tour-backward'
 })
-
-const dialog = ref<HTMLElement | null>(null)
 
 /**
  * Same trick the sheets use: `inert` takes the app behind the guide out of tab
@@ -40,7 +49,7 @@ onUnmounted(() => document.getElementById('app')?.removeAttribute('inert'))
 
 function onKeydown(event: KeyboardEvent) {
   if (event.key === 'ArrowRight') tour.next()
-  if (event.key === 'ArrowLeft') tour.goTo(tour.index.value - 1)
+  if (event.key === 'ArrowLeft') tour.back()
 }
 </script>
 
@@ -60,8 +69,21 @@ function onKeydown(event: KeyboardEvent) {
         @keydown="onKeydown"
       >
         <div class="shell-frame md:rounded-shell bg-canvas relative flex flex-col overflow-hidden">
-          <header class="flex shrink-0 items-center justify-between px-6 pt-6 pb-1">
-            <BrandMark size="sm" />
+          <!-- The wash is the only thing that changes colour between slides, so
+               the guide has a mood without the copy having to carry it. -->
+          <Transition name="wash">
+            <div
+              :key="tour.step.value.accent"
+              class="pointer-events-none absolute inset-x-0 top-0 h-[55%] bg-gradient-to-b to-transparent"
+              :class="WASH[tour.step.value.accent]"
+              aria-hidden="true"
+            />
+          </Transition>
+
+          <header class="relative flex shrink-0 items-center justify-between gap-3 px-6 pt-6">
+            <span class="text-ink-soft text-xs font-semibold tabular-nums">
+              {{ $t('onboarding.progress', { current: tour.index.value + 1, total }) }}
+            </span>
 
             <button
               type="button"
@@ -72,37 +94,79 @@ function onKeydown(event: KeyboardEvent) {
             </button>
           </header>
 
-          <!-- min-h-0 keeps the body inside the shell so long pages scroll here
+          <!-- min-h-0 keeps the body inside the shell so long slides scroll here
                rather than pushing the buttons off the bottom. -->
-          <div class="flex min-h-0 flex-1 flex-col justify-center overflow-y-auto px-6 py-8">
+          <div
+            class="relative flex min-h-0 flex-1 flex-col justify-center overflow-y-auto px-6 py-6"
+          >
             <Transition :name="transitionName" mode="out-in">
-              <div :key="tour.step.value.key" class="flex flex-col items-start gap-5">
-                <span
-                  class="rounded-card flex size-16 items-center justify-center"
-                  :class="tour.step.value.tile"
-                  aria-hidden="true"
-                >
-                  <component :is="tour.step.value.icon" class="size-8" />
-                </span>
+              <div
+                :key="tour.step.value.key"
+                class="slide flex flex-col gap-6"
+                :class="
+                  tour.step.value.variant === 'cover' ? 'items-center text-center' : 'items-start'
+                "
+              >
+                <div v-if="tour.step.value.variant === 'cover'" class="stage" style="--i: 0">
+                  <BrandMark size="lg" />
+                </div>
 
-                <h2 class="text-ink text-2xl leading-tight font-semibold text-balance">
+                <div
+                  v-if="tour.step.value.figure || tour.step.value.visual"
+                  class="stage flex w-full"
+                  :class="tour.step.value.variant === 'cover' ? 'justify-center' : ''"
+                  style="--i: 0"
+                >
+                  <TourFigure
+                    v-if="tour.step.value.figure"
+                    :value="$t(tour.step.value.figure.valueKey)"
+                    :label="$t(tour.step.value.figure.labelKey)"
+                    :range="
+                      tour.step.value.figure.rangeKey ? $t(tour.step.value.figure.rangeKey) : ''
+                    "
+                  />
+                  <component :is="tour.step.value.visual" v-else />
+                </div>
+
+                <h2
+                  class="stage text-ink text-[1.75rem] leading-[1.15] font-semibold tracking-tight text-balance"
+                  style="--i: 1"
+                >
                   {{ $t(`onboarding.${tour.step.value.key}Title`) }}
                 </h2>
 
-                <p class="text-ink-soft text-[15px] leading-relaxed">
+                <p class="stage text-ink-soft text-[15px] leading-relaxed" style="--i: 2">
                   {{ $t(`onboarding.${tour.step.value.key}Body`) }}
+                </p>
+
+                <!-- Citations are set apart and quiet: they are there to be
+                     checked, not to be read as part of the argument. -->
+                <p
+                  v-if="tour.step.value.sourceKey"
+                  class="stage border-hair text-ink-soft border-l-2 py-0.5 pl-3 text-xs leading-snug"
+                  style="--i: 3"
+                >
+                  {{ $t(tour.step.value.sourceKey) }}
+                </p>
+
+                <p
+                  v-else-if="tour.step.value.noteKey"
+                  class="stage text-ink-soft text-xs italic"
+                  style="--i: 3"
+                >
+                  {{ $t(tour.step.value.noteKey) }}
                 </p>
               </div>
             </Transition>
           </div>
 
           <footer
-            class="flex shrink-0 flex-col gap-5 px-6 pt-4 pb-[calc(2rem+env(safe-area-inset-bottom,0px))]"
+            class="relative flex shrink-0 flex-col gap-4 px-6 pt-4 pb-[calc(2rem+env(safe-area-inset-bottom,0px))]"
           >
-            <!-- Dots double as navigation: on a thirteen-page guide, being able
-                 to jump back to the mode you half-read matters. -->
+            <!-- A segmented track rather than dots: ten slides is a sequence
+                 with a length, and the reader deserves to see how much is left. -->
             <div
-              class="-my-2 flex items-center justify-center gap-1"
+              class="-my-2 flex items-center gap-1"
               role="tablist"
               :aria-label="$t('onboarding.progress', { current: tour.index.value + 1, total })"
             >
@@ -113,30 +177,24 @@ function onKeydown(event: KeyboardEvent) {
                 role="tab"
                 :aria-selected="position === tour.index.value"
                 :aria-label="$t('onboarding.progress', { current: position + 1, total })"
-                class="group flex items-center px-0.5 py-2.5"
+                class="group flex flex-1 items-center py-2.5"
                 @click="tour.goTo(position)"
               >
-                <!-- The bar stays 6px; the button around it is 26px tall, which
-                     is what the finger has to find among thirteen of them. -->
                 <span
-                  class="h-1.5 rounded-full transition-all duration-200"
+                  class="h-1 w-full rounded-full transition-colors duration-300"
                   :class="
-                    position === tour.index.value
-                      ? 'bg-sea w-5'
-                      : 'bg-hair group-hover:bg-ink-soft w-1.5'
+                    position <= tour.index.value ? 'bg-sea' : 'bg-hair group-hover:bg-ink-soft/40'
                   "
                 />
               </button>
             </div>
 
-            <!-- Thirteen pages of one-way Next is a guide you cannot re-read.
-                 Back appears from the second page, where it has somewhere to go. -->
             <div class="flex gap-2">
               <BaseButton
                 v-if="tour.index.value > 0"
                 variant="ghost"
                 class="shrink-0 px-5"
-                @click="tour.goTo(tour.index.value - 1)"
+                @click="tour.back()"
               >
                 {{ $t('common.back') }}
               </BaseButton>
@@ -162,34 +220,57 @@ function onKeydown(event: KeyboardEvent) {
   opacity: 0;
 }
 
-.tour-forward-enter-active,
-.tour-forward-leave-active {
-  transition:
-    opacity 180ms ease,
-    transform 180ms cubic-bezier(0.32, 0.72, 0, 1);
+.wash-enter-active,
+.wash-leave-active {
+  position: absolute;
+  transition: opacity 500ms ease;
 }
-.tour-forward-enter-from {
+.wash-enter-from,
+.wash-leave-to {
   opacity: 0;
-  transform: translateX(18px);
-}
-.tour-forward-leave-to {
-  opacity: 0;
-  transform: translateX(-18px);
 }
 
+.tour-forward-enter-active,
+.tour-forward-leave-active,
 .tour-backward-enter-active,
 .tour-backward-leave-active {
   transition:
-    opacity 180ms ease,
-    transform 180ms cubic-bezier(0.32, 0.72, 0, 1);
+    opacity 200ms ease,
+    transform 200ms cubic-bezier(0.32, 0.72, 0, 1);
 }
+.tour-forward-enter-from {
+  opacity: 0;
+  transform: translateX(20px);
+}
+.tour-forward-leave-to,
 .tour-backward-enter-from {
   opacity: 0;
-  transform: translateX(-18px);
+  transform: translateX(-20px);
 }
 .tour-backward-leave-to {
   opacity: 0;
-  transform: translateX(18px);
+  transform: translateX(20px);
+}
+
+/* Figure, then headline, then body, then citation. The order the eye should
+   take them in, made literal — and the reason each slide feels composed rather
+   than swapped. */
+.tour-forward-enter-active .stage,
+.tour-backward-enter-active .stage {
+  opacity: 0;
+  animation: rise 420ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  animation-delay: calc(var(--i) * 70ms + 60ms);
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -198,6 +279,12 @@ function onKeydown(event: KeyboardEvent) {
   .tour-backward-enter-from,
   .tour-backward-leave-to {
     transform: none;
+  }
+
+  .tour-forward-enter-active .stage,
+  .tour-backward-enter-active .stage {
+    opacity: 1;
+    animation: none;
   }
 }
 </style>

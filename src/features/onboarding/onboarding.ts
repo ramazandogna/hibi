@@ -1,58 +1,78 @@
 import { computed, ref } from 'vue'
-import {
-  BookOpenText,
-  CalendarRange,
-  Grid2x2Check,
-  Hand,
-  Layers,
-  Leaf,
-  ListChecks,
-  PencilLine,
-  Settings2,
-  Sparkles,
-  SquarePen,
-  Sunrise,
-  Waves,
-} from 'lucide-vue-next'
 import type { Component } from 'vue'
 
-/** One page of the guide. Wording lives in the catalogue under `onboarding.*`. */
+import TourCompound from './components/visuals/TourCompound.vue'
+import TourCue from './components/visuals/TourCue.vue'
+import TourModes from './components/visuals/TourModes.vue'
+import TourNote from './components/visuals/TourNote.vue'
+import TourStreak from './components/visuals/TourStreak.vue'
+import TourYear from './components/visuals/TourYear.vue'
+
+/** Ambient wash behind a slide. Written out because Tailwind scans plain text. */
+export type TourAccent = 'sea' | 'leaf' | 'ember' | 'amber' | 'deep'
+
 export interface OnboardingStep {
+  /** Message key stem: `onboarding.<key>Title` / `<key>Body`. */
   key: string
-  icon: Component
+  accent: TourAccent
+  /** Cover and closing slides centre their copy; the rest are left-aligned. */
+  variant?: 'cover' | 'default'
+  /** Illustration above the copy. */
+  visual?: Component
   /**
-   * Tailwind classes for the icon tile. Written out rather than built from the
-   * habit kind, because three of these pages *are* the explanation of a kind
-   * and the rest are not tied to one.
+   * A headline number, for the slides that rest on a study. Rendered by
+   * TourFigure; keys resolve against the catalogue.
    */
-  tile: string
+  figure?: { valueKey: string; labelKey: string; rangeKey?: string }
+  /** Citation line. Present only where there is a real paper behind the claim. */
+  sourceKey?: string
+  /** Marks a number as an illustration rather than a finding. */
+  noteKey?: string
 }
 
 /**
+ * The guide, in the order it argues.
+ *
+ * It opens by earning the right to your attention — what habits already do to
+ * your day, how long they actually take — before it explains a single button.
+ * Every research slide carries its citation, and the one slide that is
+ * arithmetic rather than evidence says so.
+ *
  * Typed as a non-empty tuple, not an array: with `noUncheckedIndexedAccess`
  * that is what makes `ONBOARDING_STEPS[0]` a step rather than a maybe-step.
  */
 export const ONBOARDING_STEPS: readonly [OnboardingStep, ...OnboardingStep[]] = [
-  { key: 'welcome', icon: Sparkles, tile: 'bg-sea/15 text-sea' },
-  { key: 'kinds', icon: Layers, tile: 'bg-mist text-ink' },
-  { key: 'build', icon: Leaf, tile: 'bg-leaf/15 text-leaf' },
-  { key: 'quit', icon: Hand, tile: 'bg-ember/15 text-ember' },
-  { key: 'scale', icon: Waves, tile: 'bg-sea/15 text-sea' },
-  { key: 'create', icon: SquarePen, tile: 'bg-mist text-ink' },
-  { key: 'today', icon: Sunrise, tile: 'bg-leaf/15 text-leaf' },
-  { key: 'notes', icon: PencilLine, tile: 'bg-amber/15 text-amber' },
-  { key: 'detail', icon: ListChecks, tile: 'bg-sea/15 text-sea' },
-  { key: 'week', icon: Grid2x2Check, tile: 'bg-mist text-ink' },
-  { key: 'year', icon: CalendarRange, tile: 'bg-deep/15 text-deep' },
-  { key: 'settings', icon: Settings2, tile: 'bg-mist text-ink' },
-  { key: 'done', icon: BookOpenText, tile: 'bg-leaf/15 text-leaf' },
+  { key: 'cover', accent: 'sea', variant: 'cover' },
+  {
+    key: 'habitual',
+    accent: 'deep',
+    figure: { valueKey: 'onboarding.habitualValue', labelKey: 'onboarding.habitualLabel' },
+    sourceKey: 'onboarding.habitualSource',
+  },
+  {
+    key: 'sixtysix',
+    accent: 'sea',
+    figure: {
+      valueKey: 'onboarding.sixtysixValue',
+      labelKey: 'onboarding.sixtysixLabel',
+      rangeKey: 'onboarding.sixtysixRange',
+    },
+    sourceKey: 'onboarding.sixtysixSource',
+  },
+  { key: 'miss', accent: 'leaf', visual: TourStreak, sourceKey: 'onboarding.missSource' },
+  { key: 'compound', accent: 'leaf', visual: TourCompound, noteKey: 'onboarding.compoundNote' },
+  { key: 'modes', accent: 'sea', visual: TourModes },
+  { key: 'cue', accent: 'amber', visual: TourCue, sourceKey: 'onboarding.cueSource' },
+  { key: 'record', accent: 'amber', visual: TourNote, sourceKey: 'onboarding.recordSource' },
+  { key: 'year', accent: 'deep', visual: TourYear },
+  { key: 'start', accent: 'leaf', variant: 'cover' },
 ]
 
 /**
  * Versioned on purpose: bumping it re-shows the guide to everyone, which is the
  * only sane way to introduce a screen that did not exist when they first ran it.
  */
-const STORAGE_KEY = 'hibi-onboarding-v1'
+const STORAGE_KEY = 'hibi-onboarding-v2'
 
 function hasSeen(): boolean {
   try {
@@ -71,8 +91,8 @@ function markSeen() {
   }
 }
 
-// Module-level singleton: the layout renders the tour, Settings restarts it, and
-// both have to be looking at the same state.
+// Module-level singleton: the layout renders the tour, Settings and the empty
+// state restart it, and all three have to be looking at the same state.
 const isOpen = ref(false)
 const index = ref(0)
 
@@ -83,7 +103,7 @@ const index = ref(0)
  * ```ts
  * const tour = useOnboarding()
  * tour.openIfFirstRun()  // app start
- * tour.restart()         // Settings
+ * tour.restart()         // Settings, or the empty state
  * ```
  */
 export function useOnboarding() {
@@ -113,9 +133,13 @@ export function useOnboarding() {
     else index.value += 1
   }
 
+  function back() {
+    index.value = Math.max(index.value - 1, 0)
+  }
+
   function goTo(target: number) {
     index.value = Math.min(Math.max(target, 0), ONBOARDING_STEPS.length - 1)
   }
 
-  return { isOpen, index, step, isLast, openIfFirstRun, restart, dismiss, next, goTo }
+  return { isOpen, index, step, isLast, openIfFirstRun, restart, dismiss, next, back, goTo }
 }

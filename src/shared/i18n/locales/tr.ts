@@ -200,7 +200,8 @@ const tr: typeof en = {
     languageHint: 'Tarihler ve sayılar seçtiğin dile göre biçimlenir.',
     help: 'Yardım',
     guide: 'Uygulama rehberi',
-    guideHint: 'Tüm ekranların tanıtımını yeniden izle.',
+    guideHint:
+      'Alışkanlıkların neden işe yaradığı ve Hibi’nin bunu nasıl takip ettiği — doksan saniye.',
     replayGuide: 'Tekrar izle',
     data: 'Verilerin',
     export: 'Her şeyi JSON olarak dışa aktar',
@@ -277,47 +278,71 @@ const tr: typeof en = {
   onboarding: {
     skip: 'Geç',
     next: 'İleri',
-    start: 'Takibe başla',
-    progress: 'Adım {current} / {total}',
-    welcomeTitle: "Hibi'ye hoş geldin",
-    welcomeBody:
-      'Hibi sessiz bir günlük takip uygulaması. Tek dokunuş bir günü işaretler, tek satır nedenini kaydeder ve bir yıllık dokunuş sonunda gerçekten okunabilir bir şeye dönüşür. İşte bir dakikada tüm uygulama.',
-    kindsTitle: 'Üç takip yolu',
-    kindsBody:
-      'Her alışkanlık üç moddan biridir ve mod, bir günün ne anlama geldiğini belirler. Renk uygulamanın her yerinde aynıdır, böylece etiketlere bakmadan bir ekranı okuyabilirsin.',
-    buildTitle: 'Yeşil — kazanılacak alışkanlıklar',
-    buildBody:
-      'Daha çok yapmak istediklerin: okumak, yürümek, kod yazmak. Bir günü işaretlemek kareyi doldurur, arka arkaya günler seri oluşturur. Yedi günün tamamını dayatmak yerine haftalık bir hedef belirlersin; çünkü tutabildiğin dört gün, bıraktığın yediden iyidir.',
-    quitTitle: 'Kırmızı — bırakılacaklar',
-    quitBody:
-      'Daha az yapmak istediklerin: sigara, gece geç saatte telefon, şeker. Burada işaretli bir gün temiz gün sayılır ve seri, ne kadar süredir temiz kaldığındır. Bir kez kaçırmak sayacı sıfırlar, ilerlemeyi değil.',
-    scaleTitle: 'Mavi — nasıl hissediyorsun',
-    scaleBody:
-      '1 ile 5 arasında puanladığın günlük bir günce. Evet/hayır yerine bir seviye seçer ve nedenini bir satırla yazarsın. Her karenin tonu puanı takip eder, böylece zor bir ay ile iyi bir ay ilk bakışta ayrılır.',
-    createTitle: 'Alışkanlık oluşturmak',
-    createBody:
-      'Menü çubuğunun üstündeki buton formu her ekrandan açar. Bir ad ver, modu seç ve yeşil alışkanlıklar için haftada kaç gün hedeflediğini belirle. Mod sonradan kilitlenir — değiştirmek, kaydettiğin her günün anlamını baştan yazardı.',
-    todayTitle: 'Bugün ekranı',
-    todayBody:
-      'Her satır son beş günü ve bugün için büyük bir butonu gösterir. Bugünü işaretlemek için butona, kaçırdığın bir günü düzeltmek için küçük karelerden birine dokun. Mavi alışkanlıklar bunun yerine bir seçici açar ve Hibi, günü puanlayana kadar sormaya devam eder.',
-    notesTitle: 'Asıl mesele notlar',
-    notesBody:
-      'Bir günü her işaretlediğinde Hibi sana not sorar. Ayrıca geri kalan her şey için günde bir not vardır. Gelecek yılı okumaya değer kılan şey bunlardır: seri ne olduğunu, not ise nedenini anlatır.',
-    detailTitle: 'Bir alışkanlığın içi',
-    detailBody:
-      'Herhangi bir alışkanlık satırına dokunarak aç. Güncel serini, en uzun serini, son otuz günü yüzde olarak ve o alışkanlık için yazdığın tüm notları tek listede görürsün.',
-    weekTitle: 'Hafta ekranı',
-    weekBody:
-      'Yedi sütun, alışkanlık başına bir satır, moda göre gruplanmış. Her grup planlanan günlerin kaçını tamamladığını ve haftayı hangi alışkanlığın taşıdığını gösterir. Bir gün başlığına dokunarak o günü tümüyle aç.',
-    yearTitle: 'Yıl ekranı',
+    start: 'Bir tane ile başla',
+    progress: '{current} / {total}',
+    discover: 'Uygulamayı tanı',
+    discoverHint: 'Doksan saniye — bunun neden işe yaradığı ve renklerin anlamı.',
+
+    coverTitle: 'ひび, “günler” demek',
+    coverBody:
+      'Hedef değil, sistem değil, verimlilik hiç değil. Günler — arka arkaya, her biri ya doldurduğun ya doldurmadığın küçük bir kare. Doksan saniye ver; bunun neden yettiğini göstereceğiz.',
+
+    habitualValue: '%43',
+    habitualLabel: 'günlük davranış, otomatik pilotta',
+    habitualTitle: 'Zaten alışkanlıklarla yaşıyorsun',
+    habitualBody:
+      'Sıradan hayatı izleyen bir günlük çalışması, insanların yaptıklarının yaklaşık %43’ünün neredeyse her gün, aynı yerde ve karar verilmeden gerçekleştiğini buldu. Alışkanlıkla yaşayıp yaşamayacağını hiç seçmedin. Yalnızca hangileriyle yaşayacağını seçiyorsun.',
+    habitualSource: 'Wood, Quinn & Kashy (2002), Journal of Personality and Social Psychology',
+
+    sixtysixValue: '66',
+    sixtysixLabel: 'günde otomatikleşiyor, medyan',
+    sixtysixRange: 'ama aralık 18 ile 254 gün arasıydı',
+    sixtysixTitle: '21 gün efsanesi',
+    sixtysixBody:
+      'University College London’daki araştırmacılar tek bir yeni alışkanlık edinen insanları izledi ve o davranışın ne zaman çaba istemez hâle geldiğini ölçtü. Medyan 66 gündü ve dağılım muazzamdı. Seninki yavaş ilerliyorsa başarısız olmuyorsun — aralığın içindesin.',
+    sixtysixSource:
+      'Lally, van Jaarsveld, Potts & Wardle (2010), European Journal of Social Psychology',
+
+    missTitle: 'Bir günü kaçırmak neredeyse hiçbir şeye mal olmuyor',
+    missBody:
+      'Aynı çalışma bir günün atlandığı durumları da inceledi: tek bir kaçırılmış fırsatın alışkanlığın oluşumu üzerinde ölçülebilir bir etkisi olmadı. Bir seriyi bitiren şey nadiren boşluktur; o boşluğa anlam yüklemektir. Hibi onu renk dolu bir duvardaki tek soluk kare olarak çizer — tam olarak hak ettiği kadar önemli.',
+    missSource:
+      'Lally ve ark. (2010) — tek bir kaçırılmış fırsat alışkanlık oluşumunu kayda değer biçimde etkilemedi',
+
+    compoundUp: '37,8×',
+    compoundDown: '0,03×',
+    compoundTitle: 'Asıl mesele o sıkıcı gün',
+    compoundBody:
+      'Bir yıl boyunca her gün yüzde bir iyileş, sonunda otuz yedi kat iyi olursun. Her gün yüzde bir geri kay, sonunda sıfıra yakınsın. Hiçbir tek günde dramatik bir şey olmuyor — bir takip aracının motivasyonu yenmesinin sebebi tam olarak bu.',
+    compoundNote: 'Bir çalışma değil, aritmetik: 1,01³⁶⁵ ≈ 37,8 ve 0,99³⁶⁵ ≈ 0,03.',
+
+    modesTitle: 'Bir günü işaretlemenin üç yolu',
+    modesBody:
+      'Her alışkanlık üç moddan biridir ve mod, dolu bir karenin ne anlama geldiğini belirler. Renk uygulamanın her yerinde aynı kalır; böylece tek kelime okumadan bütün bir ekranı okuyabilirsin. Birine dokun.',
+
+    cueTrigger: 'Kahvemden sonra',
+    cueAction: '20 sayfa oku',
+    cueTitle: 'Hedefi değil, anı adlandır',
+    cueBody:
+      '94 çalışma boyunca, ne zaman ve nerede harekete geçeceğine önceden karar verenlerin sözünü tutma olasılığı belirgin biçimde daha yüksekti — davranış biliminin en güvenilir bulgularından biri. O yüzden adı “Daha çok oku” değil, “Kahveden sonra oku” olsun. Hatırlamayı ipucuna bırak.',
+    cueSource:
+      'Gollwitzer & Sheeran (2006), Advances in Experimental Social Psychology — 94 çalışma, orta-büyük etki',
+
+    recordNoteDate: '12 Mart',
+    recordNoteBody:
+      'Spor salonunu atladım, onun yerine yazdım. Meğer sabahlardan nefret etmiyormuşum, aceleye getirmekten nefret ediyormuşum.',
+    recordTitle: 'Kaydın kendisi müdahaledir',
+    recordBody:
+      '138 çalışmanın meta-analizi, bir hedefe doğru ilerlemeyi takip etmenin o hedefe ulaşma olasılığını artırdığını buldu — ve ilerleme fiilen kaydedildiğinde etki daha büyüktü. Günü işaretlemek, işten sonra yaptığın angarya değil. İşin bir parçası.',
+    recordSource: 'Harkin ve ark. (2016), Psychological Bulletin — 138 çalışma',
+
+    yearTitle: 'Sonra bir gün geriye kaydırıyorsun',
     yearBody:
-      'Tüm yıl için gün başına bir kare. Not içeren günlerde, dokunup yazdığını okuyabileceğin bir işaret bulunur. Bir yıllık küçük dokunuşu bir şeye dönüştüren ekran budur.',
-    settingsTitle: 'Kendine göre ayarla',
-    settingsBody:
-      'Ayarlar; temayı, haftanın Pazartesi mi Pazar mı başladığını ve dili barındırır. Verilerin sana ait: istediğin an her şeyi JSON olarak dışa aktar ya da hepsini silip hesabı koru.',
-    doneTitle: 'Hepsi bu kadar',
-    doneBody:
-      'Bu rehberi istediğin zaman Ayarlar’dan tekrar izleyebilirsin. Tek bir alışkanlıkla başla — ilkinin serisi oluştuktan sonra ikincisini eklemek çok daha kolay.',
+      'Doldurduğun her kare, henüz göremediğin bir resmin tek pikseli. Bir ay sonra gürültü gibi duruyor. Bir yıl sonra kanıt gibi — ve gerçekten durup bakacağın günler, not bıraktıkların olacak.',
+
+    startTitle: 'Bir tane ile başla',
+    startBody:
+      'Beş değil. Kötü bir günün durduramayacağı kadar küçük, tek bir tane. İlkinin korumaya değer bir çizgisi oluştuğunda ikincisini eklemek çok daha kolay.',
   },
 }
 

@@ -1,8 +1,9 @@
 <script lang="ts" setup>
 import { computed, ref } from 'vue'
-import { ChevronDown, Sparkles } from 'lucide-vue-next'
+import { ChevronDown, ChevronRight, Compass, Sparkles } from 'lucide-vue-next'
 
 import { useCreateHabit, useHabits } from '@/features/habits/habits.queries'
+import { useOnboarding } from '@/features/onboarding/onboarding'
 import { t } from '@/shared/i18n'
 import { toAppError } from '@/shared/lib/app-error'
 import { groupByKind, KIND_META } from '@/shared/lib/kind'
@@ -28,6 +29,7 @@ import BaseSheet from '@/shared/ui/BaseSheet.vue'
 import { useRouter } from 'vue-router'
 
 const router = useRouter()
+const tour = useOnboarding()
 
 /** Squares show five days; the query pulls a year so streaks are exact. */
 const STATS_WINDOW_DAYS = 365
@@ -292,6 +294,40 @@ function openHabit(habitId: string) {
     >
       <template #icon><Sparkles class="size-6" /></template>
       <template #action>
+        <!-- Offered above the starters on purpose: someone with nothing tracked
+             has not decided this is worth doing yet, and the guide is the
+             argument. The duration is on the button because the real objection
+             to a tour is not interest, it is how long it will take. -->
+        <button
+          type="button"
+          class="border-sea/30 bg-sea/8 hover:bg-sea/14 rounded-card flex w-full items-center gap-3 border p-3 text-left transition-colors active:scale-[0.98]"
+          @click="tour.restart()"
+        >
+          <span
+            class="bg-sea flex size-10 shrink-0 items-center justify-center rounded-xl text-white"
+            aria-hidden="true"
+          >
+            <Compass class="size-5" />
+          </span>
+
+          <span class="min-w-0 flex-1">
+            <span class="text-ink block text-sm font-semibold">{{
+              $t('onboarding.discover')
+            }}</span>
+            <span class="text-ink-soft block text-xs leading-snug">
+              {{ $t('onboarding.discoverHint') }}
+            </span>
+          </span>
+
+          <ChevronRight class="text-ink-soft size-4 shrink-0" aria-hidden="true" />
+        </button>
+
+        <div class="flex items-center gap-3 py-1">
+          <span class="bg-hair h-px flex-1" />
+          <span class="text-ink-soft text-xs">{{ $t('auth.or') }}</span>
+          <span class="bg-hair h-px flex-1" />
+        </div>
+
         <BaseButton
           v-for="suggestion in SUGGESTIONS"
           :key="suggestion.key"

@@ -203,7 +203,7 @@ const en = {
     languageHint: 'Dates and numbers follow the language you pick.',
     help: 'Help',
     guide: 'App guide',
-    guideHint: 'Replay the introduction to every screen.',
+    guideHint: 'Ninety seconds on why habits work, and how Hibi tracks them.',
     replayGuide: 'Replay',
     data: 'Your data',
     export: 'Export everything as JSON',
@@ -280,47 +280,71 @@ const en = {
   onboarding: {
     skip: 'Skip',
     next: 'Next',
-    start: 'Start tracking',
-    progress: 'Step {current} of {total}',
-    welcomeTitle: 'Welcome to Hibi',
-    welcomeBody:
-      'Hibi is a quiet daily tracker. One tap marks a day, one line records why, and a year of those taps turns into something you can actually read. Here is the whole app in a minute.',
-    kindsTitle: 'Three ways to track',
-    kindsBody:
-      'Every habit is one of three modes, and the mode decides what a day means. The colour follows it everywhere in the app, so you can read a screen without labels.',
-    buildTitle: 'Green — habits to build',
-    buildBody:
-      'Things you want to do more of: reading, walking, writing code. Marking a day fills the square, and consecutive days build a streak. You set a weekly target instead of demanding all seven, because four days you keep beat seven you drop.',
-    quitTitle: 'Red — things to quit',
-    quitBody:
-      'Things you want to do less of: smoking, late-night scrolling, sugar. Here a marked day counts as a clean day, and the streak is how long you have stayed clean. Slipping once resets the count, not the progress.',
-    scaleTitle: 'Blue — how you feel',
-    scaleBody:
-      'A daily journal rated 1 to 5. Instead of yes or no, you pick a level and write a line about why. The shade of each square follows the rating, so a rough month looks different from a good one at a glance.',
-    createTitle: 'Creating a habit',
-    createBody:
-      'The button above the tab bar opens the form from any screen. Give it a name, pick the mode, and for green habits choose how many days a week you are aiming for. The mode is locked afterwards — changing it would reinterpret every day you already recorded.',
-    todayTitle: 'The Today screen',
-    todayBody:
-      'Each row shows the last five days plus a large button for today. Tap the button to mark today, or tap one of the small squares to fix a day you missed. Blue habits open a picker instead, and Hibi keeps asking until you have rated the day.',
-    notesTitle: 'Notes are the point',
-    notesBody:
-      'Whenever you mark a day, Hibi offers a note. There is also one note per day for everything else. These are what make next year worth reading: a streak tells you what happened, a note tells you why.',
-    detailTitle: 'Inside a habit',
-    detailBody:
-      'Tap any habit row to open it. You get the current streak, your best run, the last thirty days as a percentage, and every note you have written for that habit in one list.',
-    weekTitle: 'The Week screen',
-    weekBody:
-      'Seven columns, one row per habit, grouped by mode. Each group shows how many of its planned days you completed and which habit carried the week. Tap a day header to open that day in full.',
-    yearTitle: 'The Year screen',
+    start: 'Start with one',
+    progress: '{current} / {total}',
+    discover: 'Take the tour',
+    discoverHint: 'Ninety seconds — why this works, and what the colours mean.',
+
+    coverTitle: 'ひび means days',
+    coverBody:
+      'Not goals, not systems, not productivity. Days — one after another, each one a small square you either fill or you do not. Give this ninety seconds and it will show you why that turns out to be enough.',
+
+    habitualValue: '43%',
+    habitualLabel: 'of daily behaviour, on autopilot',
+    habitualTitle: 'You already run on habits',
+    habitualBody:
+      'A diary study of ordinary life found that roughly 43% of what people did was performed almost every day, in the same place, without deciding to. You never chose whether to live by habit. You only choose which ones.',
+    habitualSource: 'Wood, Quinn & Kashy (2002), Journal of Personality and Social Psychology',
+
+    sixtysixValue: '66',
+    sixtysixLabel: 'days to automatic, median',
+    sixtysixRange: 'though it ran from 18 to 254',
+    sixtysixTitle: 'Twenty-one days is a myth',
+    sixtysixBody:
+      'Researchers at University College London followed people forming one new habit and measured when it stopped taking effort. The median was 66 days, and the spread was enormous. If yours feels slow, you are not failing — you are inside the range.',
+    sixtysixSource:
+      'Lally, van Jaarsveld, Potts & Wardle (2010), European Journal of Social Psychology',
+
+    missTitle: 'One missed day costs almost nothing',
+    missBody:
+      'The same study checked what happened when someone skipped: a single missed opportunity had no measurable effect on how the habit formed. What ends a streak is rarely the gap. It is deciding the gap means something. Hibi draws it as one pale square in a wall of colour — exactly as important as it is.',
+    missSource:
+      'Lally et al. (2010) — a single missed opportunity did not materially affect habit formation',
+
+    compoundUp: '37.8×',
+    compoundDown: '0.03×',
+    compoundTitle: 'The boring day is the whole point',
+    compoundBody:
+      'Get one percent better every day for a year and you end up thirty-seven times better. Slip one percent a day and you end up near zero. Nothing dramatic happens on any single day — which is exactly why a tracker beats motivation.',
+    compoundNote: 'Arithmetic, not a study: 1.01³⁶⁵ ≈ 37.8 and 0.99³⁶⁵ ≈ 0.03.',
+
+    modesTitle: 'Three ways to mark a day',
+    modesBody:
+      'Every habit is one of three modes, and the mode decides what a filled square means. The colour follows it everywhere in the app, so you can read a whole screen without reading a word. Tap one.',
+
+    cueTrigger: 'After my coffee',
+    cueAction: 'Read 20 pages',
+    cueTitle: 'Name the moment, not the goal',
+    cueBody:
+      'Across 94 studies, people who decided in advance exactly when and where they would act were substantially more likely to follow through — one of the most dependable effects in behavioural science. So call it “Read after coffee”, not “Read more”. Let the cue do the remembering.',
+    cueSource:
+      'Gollwitzer & Sheeran (2006), Advances in Experimental Social Psychology — 94 studies, a medium-to-large effect',
+
+    recordNoteDate: '12 March',
+    recordNoteBody:
+      'Skipped the gym and wrote instead. Turns out I do not hate mornings, I hate rushing them.',
+    recordTitle: 'The tracking is the intervention',
+    recordBody:
+      'A meta-analysis of 138 studies found that monitoring progress toward a goal makes reaching it more likely — and the effect was larger when the progress was physically recorded. Marking the day is not admin you do after the work. It is part of the work.',
+    recordSource: 'Harkin et al. (2016), Psychological Bulletin — 138 studies',
+
+    yearTitle: 'Then one day you scroll back',
     yearBody:
-      'One square per day for the whole year. Days carrying a note get a marker you can tap to read what you wrote. It is the screen that makes a year of small taps feel like something.',
-    settingsTitle: 'Make it yours',
-    settingsBody:
-      'Settings holds the theme, whether your week starts on Monday or Sunday, and the language. Your data is yours: export everything as JSON at any time, or delete all of it and keep the account.',
-    doneTitle: 'That is all of it',
-    doneBody:
-      'You can replay this guide any time from Settings. Start with one habit — the second one is much easier to add once the first has a streak.',
+      'Every square you fill is one pixel of a picture you cannot see yet. A month in, it looks like noise. A year in, it looks like evidence — and the days you left a note on are the ones you will actually stop at.',
+
+    startTitle: 'Start with one',
+    startBody:
+      'Not five. One, small enough that a bad day cannot stop it. The second habit is far easier to add once the first has a line worth protecting.',
   },
 }
 
