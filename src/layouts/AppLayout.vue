@@ -101,16 +101,11 @@ function stopTracking() {
 
     <AppNavbar />
 
-    <!--
-    isOnline?
-    -->
-    <p
-      v-if="!isOnline"
-      role="status"
-      class="bg-amber/20 text-ink rounded-card w-full px-3 py-2 text-center text-xs"
-    >
-      {{ $t('offline') }}
-    </p>
+    <!-- Floating, not in flow: connectivity flickers in lifts and tunnels, and
+         a banner that reflows the page each time is worse than the outage. -->
+    <Transition name="offline">
+      <p v-if="!isOnline" role="status" class="offline-banner">{{ $t('offline') }}</p>
+    </Transition>
 
     <!--
     Content
@@ -161,6 +156,33 @@ function stopTracking() {
      horizontal panning — the year heatmap — drives its own scrolling instead,
      since a descendant cannot re-enable a direction an ancestor removed. */
   touch-action: pan-y;
+}
+
+/* Under the top bar rather than above the content, so showing and hiding it
+   costs no layout. */
+.offline-banner {
+  @apply bg-amber/90 text-ink absolute left-1/2 z-30 w-full max-w-[360px] -translate-x-1/2 rounded-full px-4 py-2 text-center text-xs font-medium shadow-md backdrop-blur-sm;
+  top: 4.75rem;
+}
+
+.offline-enter-active,
+.offline-leave-active {
+  transition:
+    opacity 200ms ease,
+    transform 200ms cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+.offline-enter-from,
+.offline-leave-to {
+  opacity: 0;
+  transform: translate(-50%, -0.5rem);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .offline-enter-from,
+  .offline-leave-to {
+    transform: translate(-50%, 0);
+  }
 }
 
 /* Floats just above the tab bar, inside the shell, and lets clicks through
