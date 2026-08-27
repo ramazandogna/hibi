@@ -60,27 +60,26 @@ function onTodayTap() {
 
 <template>
   <li
-    class="rounded-card flex cursor-pointer items-center gap-3 border p-3"
+    class="rounded-card flex cursor-pointer items-center gap-2.5 border p-3"
     :class="meta.card"
     @click="emit('open', habit.id)"
   >
-    <div class="flex size-10 shrink-0 items-center justify-center rounded-xl" :class="meta.soft">
-      <span class="size-3 rounded-full" :class="meta.fill" />
-    </div>
-
     <div class="min-w-0 flex-1">
       <!-- The whole row stays tappable as a convenience, but the name is the
            real control: a bare <li> with a click handler is unreachable by
            keyboard and announces nothing to a screen reader. -->
       <button
         type="button"
-        class="text-ink block max-w-full truncate rounded text-left text-sm font-medium"
+        class="text-ink block max-w-full rounded text-left text-sm leading-tight font-medium"
         @click.stop="emit('open', habit.id)"
       >
-        {{ habit.name }}
+        <!-- Two lines rather than an ellipsis: a habit called "Japonca içerik
+             tüket" is unreadable cut to eight characters, and the row growing
+             by one line costs less than the name being useless. -->
+        <span class="line-clamp-2">{{ habit.name }}</span>
       </button>
-      <p v-if="!meta.isBinary" class="text-ink-soft text-xs">{{ summary }}</p>
-      <StreakBadge v-else :streak="streak" :longest="longest" :kind="habit.kind" />
+      <p v-if="!meta.isBinary" class="text-ink-soft mt-0.5 text-xs">{{ summary }}</p>
+      <StreakBadge v-else class="mt-0.5" :streak="streak" :longest="longest" :kind="habit.kind" />
     </div>
 
     <div class="flex shrink-0 items-center gap-1">

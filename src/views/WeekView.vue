@@ -300,7 +300,9 @@ function score(habitId: string, target: number): string {
         <div class="rounded-card border p-3" :class="KIND_META[group.kind].card">
           <div class="grid grid-cols-[1fr_repeat(7,1.75rem)_2.5rem] items-center gap-1">
             <template v-for="habit in group.items" :key="habit.id">
-              <span class="text-ink truncate text-xs font-medium">{{ habit.name }}</span>
+              <span class="text-ink line-clamp-2 pr-1 text-xs leading-tight font-medium">
+                {{ habit.name }}
+              </span>
 
               <button
                 v-for="day in days"
