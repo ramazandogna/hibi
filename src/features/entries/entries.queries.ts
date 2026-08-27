@@ -61,6 +61,10 @@ export function useEntriesInRange(
   return useQuery({
     queryKey: computed(() => entryKeys.range(toValue(from), toValue(to))),
     queryFn: () => listEntriesInRange(toValue(from), toValue(to)),
+    // Far longer than the 60s default: this is the user's own history, it can
+    // only change through this app, and the mutations already patch the cache.
+    // At the default it re-fetched a year of rows on every window focus.
+    staleTime: 30 * 60_000,
     ...(options.keepPrevious ? { placeholderData: keepPreviousData } : {}),
   })
 }
@@ -84,16 +88,14 @@ export function useSetEntry() {
     onMutate: async (vars) => {
       await queryClient.cancelQueries({ queryKey: entryKeys.ranges() })
 
-      // A stand-in row. Its id and user_id never reach the server; onSettled
-      // replaces the whole range with the real rows.
+      // A stand-in row. Its id never reaches the server; onSettled replaces the
+      // whole range with the real rows.
       const optimistic: Entry = {
         id: `optimistic-${vars.habitId}-${vars.dateKey}`,
         habit_id: vars.habitId,
-        user_id: '',
         entry_date: vars.dateKey,
         value: vars.value ?? 1,
         note: vars.note ?? null,
-        created_at: new Date().toISOString(),
       }
 
       const snapshots = patchRanges(queryClient, vars.dateKey, (entries) => [

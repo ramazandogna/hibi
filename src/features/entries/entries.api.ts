@@ -1,5 +1,6 @@
 import { supabase } from '@/shared/lib/supabase'
 import { toAppError } from '@/shared/lib/app-error'
+import { ENTRY_COLUMNS } from './entry.types'
 import type { Entry, NewEntry } from './entry.types'
 
 /**
@@ -21,7 +22,7 @@ import type { Entry, NewEntry } from './entry.types'
 export async function listEntriesInRange(from: string, to: string): Promise<Entry[]> {
   const { data, error } = await supabase
     .from('entries')
-    .select('*')
+    .select(ENTRY_COLUMNS)
     .gte('entry_date', from)
     .lte('entry_date', to)
     .order('entry_date', { ascending: true })
@@ -53,7 +54,7 @@ export async function setEntry(
   const { data, error } = await supabase
     .from('entries')
     .upsert(payload, { onConflict: 'habit_id,entry_date' })
-    .select()
+    .select(ENTRY_COLUMNS)
     .single()
 
   if (error) throw toAppError(error)
