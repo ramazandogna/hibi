@@ -270,6 +270,14 @@ const ja: typeof en = {
     six: 'やめることも連続記録です — クリーンな 1 日はすべて前進です。',
   },
 
+  pwa: {
+    updateTitle: '新しいバージョンがあります',
+    updateBody: 'きりのよいところで再読み込みしてください。',
+    reload: '再読み込み',
+    later: 'あとで',
+    offlineReady: 'Hibi はオフラインでも使えます。',
+  },
+
   notFound: {
     title: 'ここには何もありません',
     description: 'そのページは存在しないか、移動しました。',

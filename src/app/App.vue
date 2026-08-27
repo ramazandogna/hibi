@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { RouterView, useRoute } from 'vue-router'
+import UpdatePrompt from '@/features/pwa/components/UpdatePrompt.vue'
 import AppLayout from '@/layouts/AppLayout.vue'
 import AuthLayout from '@/layouts/AuthLayout.vue'
 import { computed } from 'vue'
@@ -44,6 +45,10 @@ const layoutComponent = computed(() => {
     </aside>
 
     <div class="shell-frame mobile-screen-view">
+      <!-- Inside the shell and above everything in it: an update outranks the
+           tab bar, and it has to appear on the auth screens too. -->
+      <UpdatePrompt />
+
       <component :is="layoutComponent">
         <RouterView v-slot="{ Component, route: matched }">
           <Transition :name="transitionName">

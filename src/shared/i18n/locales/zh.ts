@@ -269,6 +269,14 @@ const zh: typeof en = {
     six: '戒除也是一种连续记录——每一个清白的日子都是进展。',
   },
 
+  pwa: {
+    updateTitle: '有新版本了',
+    updateBody: '在合适的时候重新加载即可。',
+    reload: '重新加载',
+    later: '稍后',
+    offlineReady: 'Hibi 现在可以离线使用了。',
+  },
+
   notFound: {
     title: '这里什么都没有',
     description: '该页面不存在，或者已经移动。',

@@ -274,6 +274,14 @@ const en = {
     six: 'Quitting is a streak too — every clean day counts as progress.',
   },
 
+  pwa: {
+    updateTitle: 'A new version is ready',
+    updateBody: 'Reload when you are at a good stopping point.',
+    reload: 'Reload',
+    later: 'Later',
+    offlineReady: 'Hibi is ready to work offline.',
+  },
+
   notFound: {
     title: 'Nothing here',
     description: 'That page does not exist, or it moved.',

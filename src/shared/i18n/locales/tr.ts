@@ -272,6 +272,14 @@ const tr: typeof en = {
     six: 'Bırakmak da bir seridir — her temiz gün ilerlemedir.',
   },
 
+  pwa: {
+    updateTitle: 'Yeni sürüm hazır',
+    updateBody: 'Uygun bir yerde durduğunda yeniden yükle.',
+    reload: 'Yeniden yükle',
+    later: 'Sonra',
+    offlineReady: 'Hibi artık çevrimdışı çalışabilir.',
+  },
+
   notFound: {
     title: 'Burada bir şey yok',
     description: 'Bu sayfa mevcut değil ya da taşınmış.',
