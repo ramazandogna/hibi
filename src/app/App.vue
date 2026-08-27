@@ -78,7 +78,7 @@ const layoutComponent = computed(() => {
     );
 }
 
-:global(.dark) .screen-view {
+.dark .screen-view {
   background-image:
     repeating-linear-gradient(
       45deg,
