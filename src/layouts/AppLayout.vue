@@ -1,11 +1,9 @@
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue'
+import { computed, defineAsyncComponent, onMounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 
 import { Plus } from 'lucide-vue-next'
 
-import HabitForm from '@/features/habits/components/HabitForm.vue'
-import OnboardingTour from '@/features/onboarding/components/OnboardingTour.vue'
 import { useOnboarding } from '@/features/onboarding/onboarding'
 import BaseSheet from '@/shared/ui/BaseSheet.vue'
 import TipBanner from '@/shared/ui/TipBanner.vue'
@@ -18,6 +16,21 @@ import { useOnline } from '@/shared/lib/use-online.ts'
 
 const route = useRoute()
 const router = useRouter()
+
+/**
+ * Loaded on demand, not with the app.
+ *
+ * Importing these at the top of the layout put them on the critical path:
+ * HabitForm pulls in vee-validate and zod (24 KB gzipped) for a sheet most
+ * visitors never open, and the guide is a screen shown once, ever. The sheet
+ * animates for ~280ms, which is longer than either chunk takes to arrive on a
+ * connection that already loaded the app.
+ */
+const HabitForm = defineAsyncComponent(() => import('@/features/habits/components/HabitForm.vue'))
+
+const OnboardingTour = defineAsyncComponent(
+  () => import('@/features/onboarding/components/OnboardingTour.vue'),
+)
 
 const currentTab = computed(() => route.meta.tab)
 
@@ -78,6 +91,18 @@ const isOnline = useOnline()
 const tour = useOnboarding()
 onMounted(tour.openIfFirstRun)
 
+/**
+ * Latches on first open and never lets go.
+ *
+ * Gating the component on `isOpen` directly would tear it out of the DOM the
+ * instant it closes, so its leave transition would never play. This defers the
+ * chunk for a returning user without costing the animation.
+ */
+const tourMounted = ref(false)
+watch(tour.isOpen, (open) => {
+  if (open) tourMounted.value = true
+})
+
 /** Creating a habit is reachable from every screen, not just Profile. */
 const createOpen = ref(false)
 
@@ -126,7 +151,7 @@ function stopTracking() {
       </button>
     </div>
 
-    <OnboardingTour />
+    <OnboardingTour v-if="tourMounted" />
 
     <BaseSheet v-model="createOpen" :title="$t('habit.new')" :subtitle="$t('habit.newSubtitle')">
       <HabitForm @saved="createOpen = false" />

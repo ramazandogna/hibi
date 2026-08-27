@@ -37,13 +37,19 @@ watch(tour.index, (next, previous) => {
  * order and pointer events, so Tab cannot walk into a screen the user cannot
  * see. Focusing the dialog is what makes the arrow keys work at all.
  */
-watch(tour.isOpen, async (open) => {
-  document.getElementById('app')?.toggleAttribute('inert', open)
-  if (!open) return
+// `immediate` matters now that the layout mounts this component only once the
+// guide has been asked for: without it the first `true` predates the watcher.
+watch(
+  tour.isOpen,
+  async (open) => {
+    document.getElementById('app')?.toggleAttribute('inert', open)
+    if (!open) return
 
-  await nextTick()
-  dialog.value?.focus()
-})
+    await nextTick()
+    dialog.value?.focus()
+  },
+  { immediate: true },
+)
 
 onUnmounted(() => document.getElementById('app')?.removeAttribute('inert'))
 
@@ -57,7 +63,7 @@ function onKeydown(event: KeyboardEvent) {
   <!-- Teleported for the same reason sheets are: the shell clips its children,
        and the guide has to cover the tab bar and the header alike. -->
   <Teleport to="#sheet-root">
-    <Transition name="tour">
+    <Transition name="tour" appear>
       <div
         v-if="tour.isOpen.value"
         ref="dialog"
