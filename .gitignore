@@ -43,4 +43,10 @@ __screenshots__/
 
 # Supabase CLI
 supabase/.temp/
+
+# Working documents. They live in the repo folder so they sit beside the code
+# they describe, but out of git: they are generated deliverables rather than
+# source, and committing them would churn the history with diffs nobody reviews.
 HIBI_PROJE_YOL_HARITASI.html
+HIBI_MOBIL_UX_RAPORU.html
+HIBI_PERFORMANS_RAPORU.html
