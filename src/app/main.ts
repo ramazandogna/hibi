@@ -7,7 +7,7 @@ import { queryClient } from '@/app/providers/query.ts'
 import App from './App.vue'
 import router from './router/router.ts'
 import { useAuthStore } from '@/features/auth/auth.store'
-import { i18n } from '@/shared/i18n'
+import { i18n, loadActiveLocale } from '@/shared/i18n'
 
 async function bootstrap() {
   const app = createApp(App)
@@ -17,7 +17,9 @@ async function bootstrap() {
   app.use(VueQueryPlugin, { queryClient })
 
   const auth = useAuthStore()
-  await auth.init()
+
+  // Both are needed before the first paint and neither depends on the other.
+  await Promise.all([auth.init(), loadActiveLocale()])
 
   app.use(router)
   await router.isReady()
