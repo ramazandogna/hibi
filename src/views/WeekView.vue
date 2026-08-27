@@ -273,7 +273,7 @@ function score(habitId: string, target: number): string {
     <template v-else>
       <!-- Day headers sit once, above the cards; every grid below uses the same
            fixed column template, so columns line up across cards. -->
-      <div class="grid grid-cols-[1fr_repeat(7,1.75rem)_2.5rem] items-center gap-1 px-3">
+      <div class="week-grid items-center px-3">
         <span />
         <button
           v-for="day in days"
@@ -298,7 +298,7 @@ function score(habitId: string, target: number): string {
         />
 
         <div class="rounded-card border p-3" :class="KIND_META[group.kind].card">
-          <div class="grid grid-cols-[1fr_repeat(7,1.75rem)_2.5rem] items-center gap-1">
+          <div class="week-grid items-center">
             <template v-for="habit in group.items" :key="habit.id">
               <span class="text-ink line-clamp-2 pr-1 text-xs leading-tight font-medium">
                 {{ habit.name }}
@@ -406,3 +406,29 @@ function score(habitId: string, target: number): string {
     </BaseSheet>
   </div>
 </template>
+
+<style scoped>
+@reference "@/assets/main.css";
+
+/* One template, shared by the day headers and every group card, so the columns
+   line up across cards.
+
+   A plain media query is right here rather than a container query: the shell is
+   capped at 430px, so on desktop this never fires and the wide layout stands,
+   while on a phone the shell *is* the viewport and the query means what it
+   says. */
+.week-grid {
+  @apply grid gap-1;
+  grid-template-columns: 1fr repeat(7, 1.75rem) 2.5rem;
+}
+
+/* Below this the fixed columns eat the habit name alive: 7 cells, a score and
+   the gaps come to 268px of a 304px row, leaving 36px — about four characters.
+   Narrowing the cells and the gaps hands roughly 60px back. */
+@media (max-width: 380px) {
+  .week-grid {
+    gap: 0.125rem;
+    grid-template-columns: 1fr repeat(7, 1.5rem) 1.75rem;
+  }
+}
+</style>
