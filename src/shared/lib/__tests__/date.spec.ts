@@ -59,7 +59,7 @@ describe('fromDateKey', () => {
   })
 
   it('throws on a malformed key', () => {
-    expect(() => fromDateKey('2026-08')).toThrow()
+    expect(() => fromDateKey('2026-08')).toThrow('Invalid date key')
   })
 })
 
