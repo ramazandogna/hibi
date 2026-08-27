@@ -129,6 +129,9 @@ const zh: typeof en = {
     loadingHabit: '正在加载习惯…',
     missing: '该习惯已不存在。',
     notes: '笔记',
+    activity: '记录',
+    since: '自 {date} 起记录',
+    noNotesTitle: '还没有写下任何东西',
     noNotes: '还没有笔记。打卡这个习惯时可以顺手写一条。',
   },
 

@@ -129,6 +129,9 @@ const ja: typeof en = {
     loadingHabit: '習慣を読み込み中…',
     missing: 'この習慣はもう存在しません。',
     notes: 'メモ',
+    activity: '記録',
+    since: '{date} から記録中',
+    noNotesTitle: 'まだ何も書かれていません',
     noNotes: 'まだメモがありません。この習慣を記録するときに書けます。',
   },
 

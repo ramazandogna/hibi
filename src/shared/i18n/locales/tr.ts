@@ -130,6 +130,9 @@ const tr: typeof en = {
     loadingHabit: 'Alışkanlık yükleniyor…',
     missing: 'Bu alışkanlık artık mevcut değil.',
     notes: 'Notlar',
+    activity: 'Etkinlik',
+    since: '{date} tarihinden beri takipte',
+    noNotesTitle: 'Henüz bir şey yazılmamış',
     noNotes: 'Henüz not yok. Bu alışkanlığı işaretlerken bir not bırakabilirsin.',
   },
 

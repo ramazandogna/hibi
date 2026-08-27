@@ -133,6 +133,9 @@ const en = {
     loadingHabit: 'Loading habit…',
     missing: 'This habit no longer exists.',
     notes: 'Notes',
+    activity: 'Activity',
+    since: 'Tracking since {date}',
+    noNotesTitle: 'Nothing written down yet',
     noNotes: 'No notes yet. Add one when you check this habit off.',
   },
 
