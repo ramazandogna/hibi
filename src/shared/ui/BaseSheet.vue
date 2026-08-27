@@ -1,9 +1,26 @@
 <script setup lang="ts">
-import { nextTick, onUnmounted, ref, watch } from 'vue'
+import { computed, nextTick, onUnmounted, ref, watch } from 'vue'
 import { X } from 'lucide-vue-next'
+
+import { useVisualViewport } from '@/shared/lib/use-visual-viewport'
 
 const open = defineModel<boolean>({ required: true })
 const { title, subtitle = '' } = defineProps<{ title: string; subtitle?: string }>()
+
+const viewport = useVisualViewport()
+
+/**
+ * Pins the sheet to the area the keyboard has left visible.
+ *
+ * Only needed where the layout viewport does not shrink on its own — iOS. On
+ * Android the numbers already agree, so this is a no-op there rather than a
+ * second, competing adjustment.
+ */
+const viewportStyle = computed(() =>
+  viewport.value
+    ? { height: `${viewport.value.height}px`, top: `${viewport.value.offsetTop}px` }
+    : undefined,
+)
 
 const panel = ref<HTMLElement | null>(null)
 let lastFocused: HTMLElement | null = null
@@ -52,9 +69,13 @@ onUnmounted(() => {
 <template>
   <Teleport to="#sheet-root">
     <Transition name="sheet">
-      <div v-if="open" class="fixed inset-0 z-50 flex items-center justify-center">
+      <div
+        v-if="open"
+        class="fixed inset-x-0 top-0 bottom-0 z-50 flex items-center justify-center"
+        :style="viewportStyle"
+      >
         <div
-          class="shell-frame md:rounded-shell relative flex flex-col justify-end overflow-hidden"
+          class="shell-frame md:rounded-shell relative flex max-h-full flex-col justify-end overflow-hidden"
         >
           <div class="bg-ink/45 absolute inset-0 backdrop-blur-[2px]" @click="close" />
 
