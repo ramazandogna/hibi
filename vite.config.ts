@@ -15,6 +15,11 @@ export default defineConfig({
       // 'prompt', not 'autoUpdate': swapping the app out from under someone
       // mid-entry is how you lose the note they were writing.
       registerType: 'prompt',
+      // injectManifest rather than generateSW: the worker has to handle `push`,
+      // and a generated worker has nowhere to put that.
+      strategies: 'injectManifest',
+      srcDir: 'src',
+      filename: 'sw.ts',
       includeAssets: ['favicon.ico', 'favicon.svg', 'apple-touch-icon.png'],
       manifest: {
         name: 'Hibi — habit & mood tracker',
@@ -38,16 +43,8 @@ export default defineConfig({
           },
         ],
       },
-      workbox: {
+      injectManifest: {
         globPatterns: ['**/*.{js,css,html,svg,png,ico,woff2}'],
-        // Every route is client-side, so a cold navigation to /week must be
-        // answered with the shell — the same rule vercel.json applies on the
-        // server, restated for the service worker.
-        navigateFallback: 'index.html',
-        // Supabase responses are per-user and change constantly. Caching them
-        // would show one account's data to the next person on a shared device.
-        navigateFallbackDenylist: [/^\/api/],
-        runtimeCaching: [],
       },
       devOptions: {
         // Off by default: a service worker in dev caches the very files you are
