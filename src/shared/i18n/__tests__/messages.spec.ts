@@ -1,3 +1,5 @@
+import { readFileSync, readdirSync, statSync } from 'node:fs'
+import { join } from 'node:path'
 import { describe, expect, it } from 'vitest'
 import { createI18n } from 'vue-i18n'
 
@@ -41,4 +43,47 @@ describe('message catalogue', () => {
       expect(leafKeys(LOCALES[locale as keyof typeof LOCALES]).sort()).toEqual([...KEYS].sort())
     },
   )
+})
+
+/** Every `.ts` and `.vue` file under src, excluding the catalogues themselves. */
+function sourceFiles(dir: string, found: string[] = []): string[] {
+  for (const name of readdirSync(dir)) {
+    const path = join(dir, name)
+
+    if (statSync(path).isDirectory()) {
+      if (name !== 'locales') sourceFiles(path, found)
+    } else if (path.endsWith('.ts') || path.endsWith('.vue')) {
+      found.push(path)
+    }
+  }
+
+  return found
+}
+
+describe('keys the code asks for', () => {
+  /**
+   * Parity between locales is not enough.
+   *
+   * Four keys once landed in `week` instead of `stats` in all four files at
+   * once: every locale agreed, every message compiled, and the app rendered
+   * `stats.weekLeft` on screen. Only checking the call sites against the
+   * catalogue catches that.
+   */
+  it('all exist in the catalogue', () => {
+    const known = new Set(KEYS)
+    const missing = new Set<string>()
+
+    for (const file of sourceFiles('src')) {
+      const source = readFileSync(file, 'utf8')
+
+      // Literal single-quoted keys only. Template literals like
+      // `kind.${kind}.label` are dynamic and cannot be checked here.
+      for (const match of source.matchAll(/\$?\bt\(\s*'([a-z][\w.]*)'/gi)) {
+        const key = match[1]
+        if (key && key.includes('.') && !known.has(key)) missing.add(`${key}  (${file})`)
+      }
+    }
+
+    expect([...missing].sort()).toEqual([])
+  })
 })

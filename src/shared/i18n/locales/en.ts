@@ -64,7 +64,7 @@ const en = {
       hint: 'Something you want to do less. Days you stay clean are the streak.',
     },
     scale: {
-      label: 'Scale',
+      label: 'Rate',
       group: 'How you feel',
       streak: 'avg this week',
       hint: 'A daily journal entry rated 1 to 5, so a month gets a shape.',
@@ -102,10 +102,6 @@ const en = {
     previous: 'Previous week',
     next: 'Next week',
     notesThisWeek: 'Notes this week',
-    thisWeek: '{done}/{target} this week',
-    weekDone: 'Week complete',
-    weekLeft: '{count} to go this week',
-    weeksOnTarget: 'weeks on target',
     noData: 'No data for this week.',
     review: '{completed} of {planned} days · {percent}%',
     strongest: 'strongest {name}',
@@ -116,6 +112,7 @@ const en = {
     next: 'Next year',
     thatDay: 'That day',
     hasNote: 'has a note — tap to read',
+    noteLegend: 'Days with a note — tap to read',
     less: 'Less',
     more: 'More',
   },
@@ -177,6 +174,10 @@ const en = {
   },
 
   stats: {
+    thisWeek: '{done}/{target} this week',
+    weekDone: 'Week complete',
+    weekLeft: '{count} to go',
+    weeksOnTarget: 'weeks on target',
     avgThisWeek: 'avg this week',
     avgLastWeek: 'avg last week',
     daysTracked: 'days tracked',
@@ -396,6 +397,7 @@ const en = {
       'Get one percent better every day for a year and you end up thirty-seven times better. Slip one percent a day and you end up near zero. Nothing dramatic happens on any single day — which is exactly why a tracker beats motivation.',
     compoundNote: 'Arithmetic, not a study: 1.01³⁶⁵ ≈ 37.8 and 0.99³⁶⁵ ≈ 0.03.',
 
+    tapHint: 'Tap a mode to see what it means',
     modesTitle: 'Three ways to mark a day',
     modesBody:
       'Every habit is one of three modes, and the mode decides what a filled square means. The colour follows it everywhere in the app, so you can read a whole screen without reading a word. Tap one.',

@@ -98,10 +98,6 @@ const ja: typeof en = {
     previous: '前の週',
     next: '次の週',
     notesThisWeek: '今週のメモ',
-    thisWeek: '今週 {done}/{target}',
-    weekDone: '今週は達成',
-    weekLeft: '今週あと {count}',
-    weeksOnTarget: '目標達成の週',
     noData: 'この週のデータはありません。',
     review: '{planned} 日中 {completed} 日 ・ {percent}%',
     strongest: '最も好調 {name}',
@@ -112,6 +108,7 @@ const ja: typeof en = {
     next: '次の年',
     thatDay: 'その日',
     hasNote: 'メモあり — タップして読む',
+    noteLegend: 'メモのある日 — タップで読む',
     less: '少',
     more: '多',
   },
@@ -173,6 +170,10 @@ const ja: typeof en = {
   },
 
   stats: {
+    thisWeek: '今週 {done}/{target}',
+    weekDone: '今週は達成',
+    weekLeft: 'あと {count} 日',
+    weeksOnTarget: '目標達成の週',
     avgThisWeek: '今週の平均',
     avgLastWeek: '先週の平均',
     daysTracked: '記録した日数',
@@ -390,6 +391,7 @@ const ja: typeof en = {
       '1 年間、毎日 1% ずつ良くなれば、37 倍になります。毎日 1% ずつ落ちれば、ほぼゼロです。どの 1 日にも劇的なことは起きません。記録が意欲に勝つ理由は、まさにそこにあります。',
     compoundNote: '研究ではなく算数です：1.01³⁶⁵ ≈ 37.8、0.99³⁶⁵ ≈ 0.03。',
 
+    tapHint: 'タップすると意味が表示されます',
     modesTitle: '1 日を記録する 3 つの方法',
     modesBody:
       'すべての習慣は 3 つのモードのいずれかで、モードが「埋まったマス」の意味を決めます。色はアプリ全体で共通なので、文字を読まずに画面全体を読み取れます。どれかに触れてみてください。',

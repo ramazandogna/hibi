@@ -98,10 +98,6 @@ const zh: typeof en = {
     previous: '上一周',
     next: '下一周',
     notesThisWeek: '本周笔记',
-    thisWeek: '本周 {done}/{target}',
-    weekDone: '本周已达成',
-    weekLeft: '本周还差 {count}',
-    weeksOnTarget: '达标周数',
     noData: '本周没有数据。',
     review: '{planned} 天中完成 {completed} 天 · {percent}%',
     strongest: '表现最好：{name}',
@@ -112,6 +108,7 @@ const zh: typeof en = {
     next: '下一年',
     thatDay: '那一天',
     hasNote: '有笔记 — 点按查看',
+    noteLegend: '有笔记的日子 — 点按查看',
     less: '少',
     more: '多',
   },
@@ -173,6 +170,10 @@ const zh: typeof en = {
   },
 
   stats: {
+    thisWeek: '本周 {done}/{target}',
+    weekDone: '本周已达成',
+    weekLeft: '还差 {count} 天',
+    weeksOnTarget: '达标周数',
     avgThisWeek: '本周平均',
     avgLastWeek: '上周平均',
     daysTracked: '记录天数',
@@ -388,6 +389,7 @@ const zh: typeof en = {
       '一年里每天进步百分之一，最后会好三十七倍；每天退步百分之一，最后接近于零。任何单独的一天都不会发生什么戏剧性的事——这正是记录能胜过动力的原因。',
     compoundNote: '这是算术，不是研究：1.01³⁶⁵ ≈ 37.8，0.99³⁶⁵ ≈ 0.03。',
 
+    tapHint: '点一下，看看它是什么意思',
     modesTitle: '记录一天的三种方式',
     modesBody:
       '每个习惯都属于三种模式之一，模式决定了一个填满的方块意味着什么。颜色在整个应用中保持一致，所以你不读一个字也能读懂整屏。点一下试试。',
