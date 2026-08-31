@@ -104,7 +104,7 @@ onMounted(() => {
             :data-date="day"
             :disabled="!noteDays?.has(day)"
             :aria-label="noteDays?.has(day) ? `${day} — ${$t('year.hasNote')}` : day"
-            class="rounded-cell after:border-surface after:bg-ink relative size-2.5 transition-transform after:absolute after:-top-px after:-right-px after:hidden after:size-[5px] after:rounded-full after:border after:content-[''] data-[note]:z-10 data-[note]:scale-125 data-[note]:cursor-pointer data-[note]:before:absolute data-[note]:before:-inset-1 data-[note]:before:content-[''] data-[note]:after:block data-[note]:hover:scale-150"
+            class="rounded-cell after:bg-ink relative size-2.5 after:absolute after:inset-0 after:m-auto after:hidden after:size-[4px] after:rounded-full after:transition-transform after:content-[''] data-[note]:cursor-pointer data-[note]:before:absolute data-[note]:before:-inset-1 data-[note]:before:content-[''] data-[note]:after:block data-[note]:hover:after:scale-150"
             :data-note="noteDays?.has(day) ? '' : undefined"
             :class="
               dayCellClass({
@@ -124,9 +124,7 @@ onMounted(() => {
       class="text-ink-soft mt-2 flex items-center justify-end gap-1.5 text-[10px]"
     >
       <span class="rounded-cell relative inline-block size-2.5" :class="KIND_META[kind].empty">
-        <span
-          class="border-surface bg-ink absolute -top-px -right-px size-[5px] rounded-full border"
-        />
+        <span class="bg-ink absolute inset-0 m-auto size-[4px] rounded-full" />
       </span>
       {{ $t('year.hasNote') }}
     </p>
