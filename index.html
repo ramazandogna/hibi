@@ -2,7 +2,11 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" href="/favicon.ico" />
+    <!-- SVG first: modern browsers pick it and render the mark at any density.
+         The .ico is the fallback for the ones that do not. -->
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="/favicon.ico" sizes="32x32" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <!-- interactive-widget=resizes-content: the on-screen keyboard shrinks the
          viewport instead of scrolling the page under it, so a sheet with a
          focused input keeps its own layout above the keyboard. -->
