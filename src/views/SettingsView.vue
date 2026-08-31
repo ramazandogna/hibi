@@ -6,7 +6,7 @@ import NotificationSettings from '@/features/notifications/components/Notificati
 import InstallSettings from '@/features/pwa/components/InstallSettings.vue'
 import DataSection from '@/features/profile/components/DataSection.vue'
 import ProfileSettings from '@/features/profile/components/ProfileSettings.vue'
-import PageHeader from '@/shared/ui/PageHeader.vue'
+import { PageHeader } from 'rei-kit'
 
 const router = useRouter()
 </script>

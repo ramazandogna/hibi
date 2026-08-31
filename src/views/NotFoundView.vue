@@ -2,7 +2,7 @@
 import { Compass } from 'lucide-vue-next'
 import { RouterLink } from 'vue-router'
 
-import EmptyState from '@/shared/ui/EmptyState.vue'
+import { EmptyState } from 'rei-kit'
 </script>
 
 <template>

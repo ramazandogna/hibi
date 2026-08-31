@@ -5,13 +5,9 @@ import { CalendarDays, GraduationCap, Palette } from 'lucide-vue-next'
 import LanguagePicker from './LanguagePicker.vue'
 import { useProfile, useUpdateProfile } from '../profile.queries'
 import { useOnboarding } from '@/features/onboarding/onboarding'
-import { useTheme } from '@/shared/lib/theme'
-import type { ThemePreference } from '@/shared/lib/theme'
+import { BaseButton, SegmentedControl, SettingsGroup, SettingsRow, useTheme } from 'rei-kit'
+import type { ThemePreference } from 'rei-kit'
 import { useI18n } from 'vue-i18n'
-import BaseButton from '@/shared/ui/BaseButton.vue'
-import SegmentedControl from '@/shared/ui/SegmentedControl.vue'
-import SettingsGroup from '@/shared/ui/SettingsGroup.vue'
-import SettingsRow from '@/shared/ui/SettingsRow.vue'
 
 const { t } = useI18n()
 

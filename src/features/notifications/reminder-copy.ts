@@ -1,5 +1,5 @@
 import { t } from '@/shared/i18n'
-import { fromDateKey } from '@/shared/lib/date'
+import { fromDateKey } from 'rei-kit'
 
 export type ReminderSlot = 'morning' | 'evening'
 

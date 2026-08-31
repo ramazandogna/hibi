@@ -4,7 +4,7 @@ import { nextTick, onUnmounted, ref, watch } from 'vue'
 import { ONBOARDING_STEPS, useOnboarding } from '../onboarding'
 import type { TourAccent } from '../onboarding'
 import TourFigure from './visuals/TourFigure.vue'
-import BaseButton from '@/shared/ui/BaseButton.vue'
+import { BaseButton } from 'rei-kit'
 import BrandMark from '@/shared/ui/BrandMark.vue'
 
 const tour = useOnboarding()

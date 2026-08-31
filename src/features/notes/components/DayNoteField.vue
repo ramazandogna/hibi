@@ -2,7 +2,7 @@
 import { ref, watch } from 'vue'
 
 import { useSaveNote } from '../notes.queries'
-import { useDebouncedCallback } from '@/shared/lib/use-debounced-callback'
+import { useDebouncedCallback } from 'rei-kit'
 
 const { dateKey, initialBody = '' } = defineProps<{
   dateKey: string

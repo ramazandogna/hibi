@@ -1,5 +1,5 @@
-import { addDays, startOfWeek } from '@/shared/lib/date'
-import type { WeekStart } from '@/shared/lib/date'
+import { addDays, startOfWeek } from 'rei-kit'
+import type { WeekStart } from 'rei-kit'
 
 /**
  * Streak and completion maths.

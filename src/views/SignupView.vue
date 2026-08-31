@@ -4,13 +4,10 @@ import { useRoute, useRouter } from 'vue-router'
 import { useForm } from 'vee-validate'
 import { toTypedSchema } from '@vee-validate/zod'
 
-import GoogleButton from '@/features/auth/components/GoogleButton.vue'
 import { toAuthMessageKey } from '@/features/auth/auth.errors'
 import { signupSchema } from '@/features/auth/auth.schema'
 import { useAuthStore } from '@/features/auth/auth.store'
-import { safeRedirect } from '@/shared/lib/redirect'
-import BaseButton from '@/shared/ui/BaseButton.vue'
-import BaseInput from '@/shared/ui/BaseInput.vue'
+import { BaseButton, BaseInput, GoogleButton, safeRedirect } from 'rei-kit'
 
 const auth = useAuthStore()
 const router = useRouter()

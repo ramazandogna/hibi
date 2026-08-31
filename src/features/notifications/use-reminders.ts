@@ -5,7 +5,7 @@ import { eveningMessage, morningMessage } from './reminder-copy'
 import type { ReminderSlot } from './reminder-copy'
 import { listEntriesInRange } from '@/features/entries/entries.api'
 import { useHabits } from '@/features/habits/habits.queries'
-import { useToday } from '@/shared/lib/today'
+import { useToday } from 'rei-kit'
 
 /**
  * When each reminder may fire, as [open, close) in local hours.

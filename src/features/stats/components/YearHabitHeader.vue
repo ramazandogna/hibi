@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import type { Habit } from '@/features/habits/habit.types'
+import { KIND_META } from '@/shared/lib/kind'
 import StreakBadge from '@/features/stats/components/StreakBadge.vue'
 import { useHabitStats } from '@/features/stats/use-habit-stats'
-import { toDateKey } from '@/shared/lib/date'
-import KindDot from '@/shared/ui/KindDot.vue'
+import { ToneDot, toDateKey } from 'rei-kit'
 
 const { habit, markedDays, values } = defineProps<{
   habit: Habit
@@ -20,7 +20,7 @@ const { summary, streak, longest } = useHabitStats(
 
 <template>
   <div class="flex items-center gap-2">
-    <KindDot :kind="habit.kind" />
+    <ToneDot :fill="KIND_META[habit.kind].fill" />
     <span class="text-ink min-w-0 flex-1 truncate text-sm font-medium">{{ habit.name }}</span>
 
     <span v-if="habit.kind === 'scale'" class="text-ink-soft shrink-0 text-xs">{{ summary }}</span>

@@ -10,12 +10,11 @@ import {
   rollingAverage,
   weeksOnTarget,
 } from './streak'
-import { addDays, todayKey } from '@/shared/lib/date'
-import type { WeekStart } from '@/shared/lib/date'
+import { addDays, toAppError, todayKey } from 'rei-kit'
+import type { WeekStart } from 'rei-kit'
 import type { HabitKind } from '@/shared/lib/kind'
 import { t } from '@/shared/i18n'
 import { supabase } from '@/shared/lib/supabase'
-import { toAppError } from '@/shared/lib/app-error'
 import type { Habit } from '../habits/habit.types'
 
 /**

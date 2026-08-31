@@ -14,10 +14,7 @@ import {
 import type { Habit } from '../habit.types'
 import { t } from '@/shared/i18n'
 import { groupByKind, KIND_META } from '@/shared/lib/kind'
-import BaseButton from '@/shared/ui/BaseButton.vue'
-import BaseSheet from '@/shared/ui/BaseSheet.vue'
-import KindDot from '@/shared/ui/KindDot.vue'
-import SectionHeading from '@/shared/ui/SectionHeading.vue'
+import { BaseButton, BaseSheet, SectionHeading, ToneDot } from 'rei-kit'
 
 const emit = defineEmits<{ edit: [habit: Habit] }>()
 
@@ -102,7 +99,7 @@ async function confirmDelete() {
 
     <section v-for="group in habitGroups" v-else :key="group.kind" class="flex flex-col gap-2">
       <SectionHeading
-        :kind="group.kind"
+        :tone="KIND_META[group.kind]"
         :label="$t(`kind.${group.kind}.group`)"
         :count="group.items.length"
       />
@@ -114,7 +111,7 @@ async function confirmDelete() {
           class="rounded-card flex items-center gap-1 border py-1.5 pr-1.5 pl-3"
           :class="KIND_META[habit.kind].card"
         >
-          <KindDot :kind="habit.kind" />
+          <ToneDot :fill="KIND_META[habit.kind].fill" />
           <span class="text-ink flex-1 truncate text-sm font-medium">{{ habit.name }}</span>
 
           <button
@@ -166,7 +163,7 @@ async function confirmDelete() {
           :key="habit.id"
           class="border-hair rounded-card flex items-center gap-1 border border-dashed py-1.5 pr-1.5 pl-3"
         >
-          <KindDot :kind="habit.kind" />
+          <ToneDot :fill="KIND_META[habit.kind].fill" />
           <span class="text-ink-soft flex-1 truncate text-sm">{{ habit.name }}</span>
 
           <button

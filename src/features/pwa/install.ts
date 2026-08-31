@@ -1,6 +1,6 @@
 import { computed, ref } from 'vue'
 
-import { isInstalled, needsIosInstall } from '@/shared/lib/platform'
+import { isInstalled, needsIosInstall } from 'rei-kit'
 
 /**
  * The event Chromium fires when it decides the app is installable.

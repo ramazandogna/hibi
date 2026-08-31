@@ -57,6 +57,11 @@ export default defineConfig({
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url)),
     },
+    // A linked package resolves its own copy of these, which gives the app two
+    // Vue runtimes: composables stop sharing state and the types stop matching.
+    // Harmless once rei-kit is installed from the registry, essential while it
+    // is linked for development.
+    dedupe: ['vue', 'vue-i18n'],
   },
   /**
    * vue-i18n ships its esm-bundler build expecting the host to resolve these.

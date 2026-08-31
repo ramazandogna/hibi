@@ -9,15 +9,19 @@ import { useEntriesInRange, useSetEntry, useToggleEntry } from '@/features/entri
 import { useHabits } from '@/features/habits/habits.queries'
 import DayNoteField from '@/features/notes/components/DayNoteField.vue'
 import { useNotesInRange } from '@/features/notes/notes.queries'
-import { addDays, fromDateKey, startOfWeek } from '@/shared/lib/date'
-import { useToday } from '@/shared/lib/today'
-import { formatDate } from '@/shared/lib/format'
+import {
+  BaseSheet,
+  PageHeader,
+  SectionHeading,
+  SkeletonList,
+  addDays,
+  formatDate,
+  fromDateKey,
+  startOfWeek,
+  useToday,
+} from 'rei-kit'
 import { dayCellClass, groupByKind, KIND_META } from '@/shared/lib/kind'
 import type { HabitKind } from '@/shared/lib/kind'
-import BaseSheet from '@/shared/ui/BaseSheet.vue'
-import PageHeader from '@/shared/ui/PageHeader.vue'
-import SectionHeading from '@/shared/ui/SectionHeading.vue'
-import SkeletonList from '@/shared/ui/SkeletonList.vue'
 
 import { useWeekStart } from '@/features/profile/profile.queries'
 
@@ -291,7 +295,7 @@ function score(habitId: string, target: number): string {
 
       <section v-for="group in habitGroups" :key="group.kind" class="flex flex-col gap-2">
         <SectionHeading
-          :kind="group.kind"
+          :tone="KIND_META[group.kind]"
           :label="$t(`kind.${group.kind}.group`)"
           :count="group.items.length"
         />

@@ -11,16 +11,20 @@ import { useProfile } from '@/features/profile/profile.queries'
 import StreakBadge from '@/features/stats/components/StreakBadge.vue'
 import YearHeatmap from '@/features/stats/components/YearHeatmap.vue'
 import { useHabitStats } from '@/features/stats/use-habit-stats'
-import { fromDateKey, lastNDays, toDateKey } from '@/shared/lib/date'
-import type { WeekStart } from '@/shared/lib/date'
-import { formatDate } from '@/shared/lib/format'
+import {
+  BaseSheet,
+  SkeletonList,
+  StatCard,
+  ToneDot,
+  formatDate,
+  fromDateKey,
+  lastNDays,
+  toDateKey,
+  useToday,
+} from 'rei-kit'
+import type { WeekStart } from 'rei-kit'
 import { KIND_META } from '@/shared/lib/kind'
-import { useToday } from '@/shared/lib/today'
 import { t } from '@/shared/i18n'
-import BaseSheet from '@/shared/ui/BaseSheet.vue'
-import KindDot from '@/shared/ui/KindDot.vue'
-import SkeletonList from '@/shared/ui/SkeletonList.vue'
-import StatCard from '@/shared/ui/StatCard.vue'
 
 const { id } = defineProps<{ id: string }>()
 
@@ -178,7 +182,7 @@ async function archiveAndLeave() {
         :class="KIND_META[habit.kind].card"
       >
         <span class="flex items-center gap-1.5">
-          <KindDot :kind="habit.kind" />
+          <ToneDot :fill="KIND_META[habit.kind].fill" />
           <span
             class="text-[11px] font-semibold tracking-wide uppercase"
             :class="KIND_META[habit.kind].text"

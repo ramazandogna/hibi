@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 
-import BaseButton from '@/shared/ui/BaseButton.vue'
+import { BaseButton } from 'rei-kit'
 
 const { habitName, initialNote = '' } = defineProps<{
   habitName: string

@@ -3,7 +3,7 @@ import { computed, ref } from 'vue'
 import { Download, Share } from 'lucide-vue-next'
 
 import { useInstall } from '../install'
-import { addDays, todayKey } from '@/shared/lib/date'
+import { addDays, todayKey } from 'rei-kit'
 
 const { canPrompt, needsManualSteps, prompt } = useInstall()
 

@@ -1,21 +1,14 @@
 <script setup lang="ts">
-import { computed, defineAsyncComponent, onMounted, ref, watch } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
+import { defineAsyncComponent, onMounted, ref, watch } from 'vue'
 
 import { Plus } from 'lucide-vue-next'
 
 import { useOnboarding } from '@/features/onboarding/onboarding'
 import { useReminders } from '@/features/notifications/use-reminders'
-import BaseSheet from '@/shared/ui/BaseSheet.vue'
+import { BaseSheet, tapFeedback } from 'rei-kit'
 import AppNavbar from '@/layouts/components/app/AppNavbar.vue'
 import AppTopBar from '@/layouts/components/app/AppTopBar.vue'
-import { TAB_PATH, tabAtOffset } from '@/shared/lib/tabs'
-import { forceSlideDirection } from '@/shared/lib/tab-transition'
-import { tapFeedback } from '@/shared/lib/haptics'
-import { useOnline } from '@/shared/lib/use-online.ts'
-
-const route = useRoute()
-const router = useRouter()
+import { useOnline } from 'rei-kit'
 
 /**
  * Loaded on demand, not with the app.
@@ -31,58 +24,6 @@ const HabitForm = defineAsyncComponent(() => import('@/features/habits/component
 const OnboardingTour = defineAsyncComponent(
   () => import('@/features/onboarding/components/OnboardingTour.vue'),
 )
-
-const currentTab = computed(() => route.meta.tab)
-
-/** Minimum horizontal travel before a drag counts as a swipe. */
-const SWIPE_MIN_PX = 44
-/** A flick this short in time counts on half the distance. */
-const FLICK_MS = 250
-const FLICK_MIN_PX = 24
-/** How much more horizontal than vertical the drag must be, so scrolling wins. */
-const HORIZONTAL_RATIO = 1.2
-
-let startX = 0
-let startY = 0
-let startTime = 0
-let tracking = false
-
-function onPointerDown(event: PointerEvent) {
-  // Desktop has the tab bar; dragging with a mouse usually means selecting text.
-  if (event.pointerType === 'mouse') return
-
-  // Inside a horizontally scrolling area the drag belongs to that area, not to
-  // tab navigation — otherwise scrolling the year grid changes the screen.
-  if (event.target instanceof Element && event.target.closest('[data-hscroll]')) return
-
-  startX = event.clientX
-  startY = event.clientY
-  startTime = event.timeStamp
-  tracking = true
-}
-
-function onPointerUp(event: PointerEvent) {
-  if (!tracking) return
-  tracking = false
-
-  const tab = currentTab.value
-  if (!tab) return
-
-  const dx = event.clientX - startX
-  const dy = event.clientY - startY
-  const elapsed = event.timeStamp - startTime
-
-  // A quick flick and a long deliberate drag are both swipes; only a slow,
-  // short movement is ambiguous enough to ignore.
-  const threshold = elapsed < FLICK_MS ? FLICK_MIN_PX : SWIPE_MIN_PX
-
-  if (Math.abs(dx) < threshold) return
-  if (Math.abs(dx) < Math.abs(dy) * HORIZONTAL_RATIO) return
-
-  const offset = dx < 0 ? 1 : -1
-  forceSlideDirection(offset > 0 ? 'forward' : 'backward')
-  void router.push(TAB_PATH[tabAtOffset(tab, offset)])
-}
 
 const isOnline = useOnline()
 
@@ -112,10 +53,6 @@ function openCreate() {
   tapFeedback()
   createOpen.value = true
 }
-
-function stopTracking() {
-  tracking = false
-}
 </script>
 
 <template>
@@ -133,12 +70,7 @@ function stopTracking() {
     <!--
     Content
     -->
-    <main
-      class="page-content"
-      @pointerdown="onPointerDown"
-      @pointerup="onPointerUp"
-      @pointercancel="stopTracking"
-    >
+    <main class="page-content">
       <slot />
     </main>
 
@@ -172,13 +104,9 @@ function stopTracking() {
 
 .page-content {
   @apply relative mt-2 min-h-0 w-full grow overflow-hidden;
-  /* Vertical panning belongs to the browser; horizontal belongs to the swipe
-     gesture. This is not only about who scrolls: with `auto`, the browser
-     claims a diagonal drag and fires pointercancel, which killed the swipe
-     anywhere there was content to scroll. The one element that genuinely needs
-     horizontal panning — the year heatmap — drives its own scrolling instead,
-     since a descendant cannot re-enable a direction an ancestor removed. */
-  touch-action: pan-y;
+  /* No touch-action override any more. The swipe gesture it protected is gone,
+     so the browser owns panning in both directions again — which is also what
+     lets the year heatmap scroll horizontally by finger without help. */
 }
 
 /* Under the top bar rather than above the content, so showing and hiding it

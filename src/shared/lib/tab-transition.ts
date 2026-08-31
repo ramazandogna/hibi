@@ -13,23 +13,6 @@ let override: SlideDirection | null = null
 export const slideDirection = readonly(direction)
 
 /**
- * Pins the direction of the next navigation, ignoring tab order.
- *
- * Swipes need this: moving from the last tab to the first wraps around, but
- * the motion is still forward, so index comparison would give the wrong answer.
- * Consumed once, then cleared.
- *
- * @example
- * ```ts
- * forceSlideDirection('forward')
- * router.push(TAB_PATH[tabAtOffset(current, 1)])
- * ```
- */
-export function forceSlideDirection(next: SlideDirection): void {
-  override = next
-}
-
-/**
  * Resolves the direction for a navigation. Call once per route change.
  *
  * @param to - Tab being entered, if the route has one.

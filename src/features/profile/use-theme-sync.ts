@@ -2,7 +2,7 @@ import { watch } from 'vue'
 
 import { useProfile } from './profile.queries'
 import { useAuthStore } from '@/features/auth/auth.store'
-import { isThemePreference, useTheme } from '@/shared/lib/theme'
+import { isThemePreference, useTheme } from 'rei-kit'
 
 /**
  * Adopts the theme stored on the account, once, as soon as it arrives.

@@ -1,5 +1,5 @@
 import { supabase } from '@/shared/lib/supabase'
-import { toAppError } from '@/shared/lib/app-error'
+import { toAppError } from 'rei-kit'
 import type { Profile, ProfilePatch } from './profile.types'
 import type { Tables } from '@/shared/types/database.types'
 
