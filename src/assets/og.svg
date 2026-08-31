@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-label="Hibi — habit and mood tracker">
+  <defs>
+    <linearGradient id="ink" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#67C090"/>
+      <stop offset="28%" stop-color="#26667F"/>
+      <stop offset="100%" stop-color="#124170"/>
+    </linearGradient>
+
+    <!-- The same 45 degree lattice as the app shell, at the app's own spacing:
+         this image is a picture of the product, not a poster about it. -->
+    <pattern id="lattice" width="56" height="56" patternUnits="userSpaceOnUse">
+      <path d="M-14 14 L14 -14 M0 56 L56 0 M42 70 L70 42"
+            stroke="#124170" stroke-opacity="0.07" stroke-width="1.5" fill="none"/>
+      <path d="M-14 42 L14 70 M0 0 L56 56 M42 -14 L70 14"
+            stroke="#124170" stroke-opacity="0.07" stroke-width="1.5" fill="none"/>
+    </pattern>
+  </defs>
+
+  <rect width="1200" height="630" fill="#F4FAF8"/>
+  <rect width="1200" height="630" fill="url(#lattice)"/>
+
+  <!-- Mark, sized and cornered like the real app icon. -->
+  <rect x="110" y="165" width="300" height="300" rx="66" fill="#FFFFFF"/>
+  <rect x="110" y="165" width="300" height="300" rx="66" fill="none"
+        stroke="#124170" stroke-opacity="0.12" stroke-width="2"/>
+  <text x="260" y="315" fill="url(#ink)"
+        font-family="Hiragino Sans, Hiragino Kaku Gothic ProN, Yu Gothic, Noto Sans JP, sans-serif"
+        font-size="112" font-weight="600" letter-spacing="-3"
+        text-anchor="middle" dominant-baseline="central">ひび</text>
+
+  <text x="470" y="292" fill="url(#ink)"
+        font-family="Inter, -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif"
+        font-size="128" font-weight="700" letter-spacing="-4">Hibi</text>
+
+  <text x="474" y="372" fill="#0F2229"
+        font-family="Inter, -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif"
+        font-size="38" font-weight="500">Build habits, quit what drains you,</text>
+  <text x="474" y="424" fill="#0F2229"
+        font-family="Inter, -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif"
+        font-size="38" font-weight="500">and notice how you feel.</text>
+
+  <!-- A year of cells: the app's own visual signature, and it fills the
+       bottom band without any words. -->
+  <g fill="#67C090">
+    <rect x="474" y="480" width="22" height="22" rx="4" fill-opacity="0.25"/>
+    <rect x="505" y="480" width="22" height="22" rx="4" fill-opacity="0.55"/>
+    <rect x="536" y="480" width="22" height="22" rx="4" fill-opacity="0.85"/>
+    <rect x="567" y="480" width="22" height="22" rx="4" fill-opacity="0.35"/>
+    <rect x="598" y="480" width="22" height="22" rx="4" fill-opacity="1"/>
+    <rect x="629" y="480" width="22" height="22" rx="4" fill-opacity="0.65"/>
+    <rect x="660" y="480" width="22" height="22" rx="4" fill-opacity="0.2"/>
+    <rect x="691" y="480" width="22" height="22" rx="4" fill-opacity="0.9"/>
+    <rect x="722" y="480" width="22" height="22" rx="4" fill-opacity="0.45"/>
+    <rect x="753" y="480" width="22" height="22" rx="4" fill-opacity="0.75"/>
+  </g>
+</svg>

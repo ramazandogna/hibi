@@ -8,6 +8,20 @@ import { VitePWA } from 'vite-plugin-pwa'
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [
+    /**
+     * Absolute URLs for the social card.
+     *
+     * Open Graph asks for absolute URLs, but the app never hardcodes its own
+     * origin anywhere else -- auth uses `window.location.origin` -- and the
+     * domain is still open. So the origin arrives as build-time configuration,
+     * and an unset variable degrades to a root-relative path rather than
+     * leaving a broken placeholder in the markup.
+     */
+    {
+      name: 'hibi:site-url',
+      transformIndexHtml: (html: string) =>
+        html.replaceAll('%SITE_URL%', (process.env['VITE_SITE_URL'] ?? '').replace(/\/$/, '')),
+    },
     vue(),
     vueDevTools(),
     tailwindcss(),
@@ -45,6 +59,9 @@ export default defineConfig({
       },
       injectManifest: {
         globPatterns: ['**/*.{js,css,html,svg,png,ico,woff2}'],
+        // The social card is for crawlers; no one running the app ever requests
+        // it, so precaching it would cost every install 128 kB for nothing.
+        globIgnores: ['og.png'],
       },
       devOptions: {
         // Off by default: a service worker in dev caches the very files you are
