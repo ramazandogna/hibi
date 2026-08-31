@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue'
 
-import { formatDate, fromDateKey, leadingBlanks, useDragScroll, useToday } from 'rei-kit'
+import { formatDate, fromDateKey, leadingBlanks, useToday } from 'rei-kit'
 import type { WeekStart } from 'rei-kit'
 import { dayCellClass, KIND_META } from '@/shared/lib/kind'
 import type { HabitKind } from '@/shared/lib/kind'
@@ -27,7 +27,6 @@ const emit = defineEmits<{ select: [dateKey: string] }>()
 type MonthBlock = { key: string; label: string; blanks: number; days: string[] }
 
 const scroller = ref<HTMLElement | null>(null)
-const { didDrag } = useDragScroll(scroller)
 const today = useToday()
 /**
  * The year split into month blocks.
@@ -66,9 +65,6 @@ const months = computed<MonthBlock[]>(() => {
  * where a mistap is obvious. Here a cell is only a door to what was written.
  */
 function onGridClick(event: MouseEvent) {
-  // A press that scrolled the grid is not a tap on the cell it started over.
-  if (didDrag()) return
-
   const cell = (event.target as HTMLElement).closest('[data-date]')
   const date = cell?.getAttribute('data-date')
 
@@ -86,7 +82,7 @@ onMounted(() => {
        of view with the months and was clipped at the left edge, so the one line
        explaining what the dots mean was only visible after scrolling. -->
   <div class="flex flex-col gap-2">
-    <div ref="scroller" data-hscroll class="no-scrollbar -mx-1 overflow-x-auto px-1">
+    <div ref="scroller" class="no-scrollbar -mx-1 overflow-x-auto px-1">
       <div class="flex gap-1.5" @click="onGridClick">
         <div v-for="month in months" :key="month.key" class="flex flex-col gap-1">
           <span class="text-ink-soft text-[9px] leading-none">{{ month.label }}</span>
