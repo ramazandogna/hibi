@@ -71,14 +71,23 @@ export default defineConfig({
     }),
   ],
   resolve: {
-    alias: {
-      '@': fileURLToPath(new URL('./src', import.meta.url)),
-    },
+
     // A linked package resolves its own copy of these, which gives the app two
     // Vue runtimes: composables stop sharing state and the types stop matching.
     // Harmless once rei-kit is installed from the registry, essential while it
     // is linked for development.
     dedupe: ['vue', 'vue-i18n'],
+    alias: [
+      { find: '@', replacement: fileURLToPath(new URL('./src', import.meta.url)) },
+
+      // Supabase ships as an umbrella package. These three are never called by
+      // this app, and emptying them takes 106 kB (25 kB gzip) off the critical
+      // path. See build/supabase-unused.js for why it is done this way.
+      ...['realtime-js', 'storage-js', 'functions-js'].map((name) => ({
+        find: `@supabase/${name}`,
+        replacement: fileURLToPath(new URL('./build/supabase-unused.js', import.meta.url)),
+      })),
+    ],
   },
   /**
    * vue-i18n ships its esm-bundler build expecting the host to resolve these.
