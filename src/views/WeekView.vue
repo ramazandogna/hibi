@@ -287,7 +287,6 @@ function score(habitId: string, target: number): string {
         >
           {{ weekdayLabel(day) }}
         </button>
-        <span />
       </div>
 
       <section v-for="group in habitGroups" :key="group.kind" class="flex flex-col gap-2">
@@ -300,8 +299,13 @@ function score(habitId: string, target: number): string {
         <div class="rounded-card border p-3" :class="KIND_META[group.kind].card">
           <div class="week-grid items-center">
             <template v-for="habit in group.items" :key="habit.id">
-              <span class="text-ink line-clamp-2 pr-1 text-xs leading-tight font-medium">
-                {{ habit.name }}
+              <span class="flex min-w-0 flex-col pr-1.5">
+                <span class="text-ink line-clamp-2 text-xs leading-tight font-medium">
+                  {{ habit.name }}
+                </span>
+                <span class="text-ink-soft text-[10px] leading-tight tabular-nums">
+                  {{ score(habit.id, habit.target_per_week) }}
+                </span>
               </span>
 
               <button
@@ -328,10 +332,6 @@ function score(habitId: string, target: number): string {
                   "
                 />
               </button>
-
-              <span class="text-ink-soft text-right text-[10px] tabular-nums">
-                {{ score(habit.id, habit.target_per_week) }}
-              </span>
             </template>
           </div>
 
@@ -419,7 +419,7 @@ function score(habitId: string, target: number): string {
    says. */
 .week-grid {
   @apply grid gap-1;
-  grid-template-columns: 1fr repeat(7, 1.75rem) 2.5rem;
+  grid-template-columns: 1fr repeat(7, 1.5rem);
 }
 
 /* Below this the fixed columns eat the habit name alive: 7 cells, a score and
@@ -428,7 +428,6 @@ function score(habitId: string, target: number): string {
 @media (max-width: 380px) {
   .week-grid {
     gap: 0.125rem;
-    grid-template-columns: 1fr repeat(7, 1.5rem) 1.75rem;
   }
 }
 </style>
