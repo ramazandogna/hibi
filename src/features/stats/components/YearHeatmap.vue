@@ -85,48 +85,53 @@ onMounted(() => {
 </script>
 
 <template>
-  <div ref="scroller" data-hscroll class="no-scrollbar -mx-1 overflow-x-auto px-1">
-    <div class="flex gap-1.5" @click="onGridClick">
-      <div v-for="month in months" :key="month.key" class="flex flex-col gap-1">
-        <span class="text-ink-soft text-[9px] leading-none">{{ month.label }}</span>
+  <!-- The legend sits outside the scroll box on purpose: inside it, it slid out
+       of view with the months and was clipped at the left edge, so the one line
+       explaining what the dots mean was only visible after scrolling. -->
+  <div class="flex flex-col gap-2">
+    <div ref="scroller" data-hscroll class="no-scrollbar -mx-1 overflow-x-auto px-1">
+      <div class="flex gap-1.5" @click="onGridClick">
+        <div v-for="month in months" :key="month.key" class="flex flex-col gap-1">
+          <span class="text-ink-soft text-[9px] leading-none">{{ month.label }}</span>
 
-        <div class="grid grid-flow-col grid-rows-7 gap-[2px]">
-          <span
-            v-for="blank in month.blanks"
-            :key="`blank-${blank}`"
-            aria-hidden="true"
-            class="size-2.5"
-          />
-          <button
-            v-for="day in month.days"
-            :key="day"
-            type="button"
-            :data-date="day"
-            :disabled="!noteDays?.has(day)"
-            :aria-label="noteDays?.has(day) ? `${day} — ${$t('year.hasNote')}` : day"
-            class="rounded-cell after:bg-ink relative size-2.5 after:absolute after:inset-0 after:m-auto after:hidden after:size-[4px] after:rounded-full after:transition-transform after:content-[''] data-[note]:cursor-pointer data-[note]:before:absolute data-[note]:before:-inset-1 data-[note]:before:content-[''] data-[note]:after:block data-[note]:hover:after:scale-150"
-            :data-note="noteDays?.has(day) ? '' : undefined"
-            :class="
-              dayCellClass({
-                kind,
-                isMarked: markedDays.has(day),
-                value: values?.get(day),
-                isFuture: day > today,
-              })
-            "
-          />
+          <div class="grid grid-flow-col grid-rows-7 gap-[2px]">
+            <span
+              v-for="blank in month.blanks"
+              :key="`blank-${blank}`"
+              aria-hidden="true"
+              class="size-2.5"
+            />
+            <button
+              v-for="day in month.days"
+              :key="day"
+              type="button"
+              :data-date="day"
+              :disabled="!noteDays?.has(day)"
+              :aria-label="noteDays?.has(day) ? `${day} — ${$t('year.hasNote')}` : day"
+              class="rounded-cell after:bg-ink relative size-2.5 after:absolute after:inset-0 after:m-auto after:hidden after:size-[4px] after:rounded-full after:transition-transform after:content-[''] data-[note]:cursor-pointer data-[note]:before:absolute data-[note]:before:-inset-1 data-[note]:before:content-[''] data-[note]:after:block data-[note]:hover:after:scale-150"
+              :data-note="noteDays?.has(day) ? '' : undefined"
+              :class="
+                dayCellClass({
+                  kind,
+                  isMarked: markedDays.has(day),
+                  value: values?.get(day),
+                  isFuture: day > today,
+                })
+              "
+            />
+          </div>
         </div>
       </div>
     </div>
 
     <p
       v-if="noteDays && noteDays.size > 0"
-      class="text-ink-soft mt-2 flex items-center justify-end gap-1.5 text-[10px]"
+      class="text-ink-soft flex items-center gap-1.5 text-[10px]"
     >
       <span class="rounded-cell relative inline-block size-2.5" :class="KIND_META[kind].empty">
         <span class="bg-ink absolute inset-0 m-auto size-[4px] rounded-full" />
       </span>
-      {{ $t('year.hasNote') }}
+      {{ $t('year.noteLegend') }}
     </p>
   </div>
 </template>
