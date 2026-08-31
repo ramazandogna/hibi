@@ -92,6 +92,24 @@ export async function subscribeToPush(): Promise<boolean> {
 }
 
 /**
+ * Whether this browser already holds a push subscription.
+ *
+ * The source of truth is the browser, not anything we stored: a subscription
+ * survives reloads, and the service worker can also drop one on its own.
+ */
+export async function hasPushSubscription(): Promise<boolean> {
+  if (!pushConfigured || !('serviceWorker' in navigator)) return false
+
+  try {
+    const registration = await navigator.serviceWorker.ready
+
+    return (await registration.pushManager.getSubscription()) !== null
+  } catch {
+    return false
+  }
+}
+
+/**
  * Unsubscribes this browser and forgets the row.
  *
  * Deleting server-side matters more than the local unsubscribe: a row left

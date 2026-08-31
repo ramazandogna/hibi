@@ -1,8 +1,9 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { onMounted, ref, watch } from 'vue'
 import { BellRing, Clock, Share, Wifi } from 'lucide-vue-next'
 
 import { showNotification, useNotifications } from '../notifications'
+import { hasPushSubscription } from '../push'
 import { needsIosInstall } from '@/shared/lib/platform'
 import { pushConfigured, subscribeToPush, unsubscribeFromPush } from '../push'
 import { t } from '@/shared/i18n'
@@ -14,6 +15,13 @@ const { supported, permission, isEnabled, isActive, request } = useNotifications
 
 /** Whether this browser is registered for pushes that survive the tab closing. */
 const pushActive = ref(false)
+
+// Asked of the browser rather than remembered from a toggle: the subscription
+// outlives the session that created it, and a returning user was being told
+// reminders were foreground-only when they were not.
+onMounted(async () => {
+  pushActive.value = await hasPushSubscription()
+})
 
 /** On iOS the ask is pointless until the app is installed. */
 const iosInstallNeeded = needsIosInstall()

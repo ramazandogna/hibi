@@ -57,22 +57,18 @@ const COPY: Record<Locale, Copy> = {
   },
   tr: {
     morningTitle: ['Yeni bir kare', 'Günü sen yazıyorsun', 'Seri devam ediyor'],
-    morningBuild: 'kazanılacak {count}',
-    morningQuit: 'bırakılacak {count}',
+    morningBuild: '{count} yapılacak',
+    morningQuit: '{count} bırakılacak',
     morningNone: 'Henüz alışkanlık yok. Bir tane yeter.',
-    morningPush: [
-      'En kolayından başla.',
-      'Küçük ama yapılmış olan kazanır.',
-      'Zaman bulunmaz, ayrılır.',
-    ],
+    morningPush: ['En kolayından başla.', 'Küçük olsun, ama olsun.', 'Zaman bulunmaz, ayrılır.'],
     eveningTitle: ['Gün kapanmadan', 'Son bir bakış', 'Bugün nasıldı?'],
-    eveningLeft: '{count} tanesi açık.',
+    eveningLeft: 'Geriye {count} kaldı.',
     eveningAllDone: 'Hepsi tamam.',
-    eveningNone: 'Bugün hiç işaret yok.',
+    eveningNone: 'Bugün hiçbirini işaretlemedin.',
     pushLeft: [
       'Beş dakikan var mı?',
       'En küçüğünü yap, gün sayılsın.',
-      'Yarısı bile boş kareden iyi.',
+      'Bir tanesi bile boş kareden iyi.',
     ],
     pushDone: [
       'İyi bir gün böyle görünür.',
