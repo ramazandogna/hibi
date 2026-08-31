@@ -8,6 +8,9 @@ import App from './App.vue'
 import router from './router/router.ts'
 import { useAuthStore } from '@/features/auth/auth.store'
 import { i18n, loadActiveLocale } from '@/shared/i18n'
+// Side-effect import: registers the beforeinstallprompt listener before Vue
+// mounts, because the event fires once and early.
+import '@/features/pwa/install'
 
 async function bootstrap() {
   const app = createApp(App)
