@@ -1,0 +1,8 @@
+project_id = "ogeuvetzjdyxukufnayj"
+
+# Called by pg_cron through pg_net, which sends no Authorization header, so the
+# platform's JWT check would reject every run. Authentication is the
+# x-reminder-secret header the function checks itself — a secret scoped to this
+# one endpoint, rather than a service-role JWT that would grant far more.
+[functions.send-reminders]
+verify_jwt = false
