@@ -271,6 +271,13 @@ const zh: typeof en = {
 
   offline: '你已离线——更改不会被保存。',
 
+  error: {
+    title: '此页面出现了问题',
+    body: '应用的其他部分仍可正常使用 — 可以切换标签页，或重试此页面。',
+    retry: '重试',
+    reload: '重新加载应用',
+  },
+
   install: {
     title: '把 Hibi 放到主屏幕',
     body: '打开时没有地址栏，关掉标签页后提醒也照常送达。',

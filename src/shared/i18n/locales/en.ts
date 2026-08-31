@@ -276,6 +276,13 @@ const en = {
 
   offline: "You're offline — changes won't be saved.",
 
+  error: {
+    title: 'This screen ran into a problem',
+    body: 'The rest of the app is fine — switch tabs, or try this screen again.',
+    retry: 'Try again',
+    reload: 'Reload the app',
+  },
+
   install: {
     title: 'Put Hibi on your Home Screen',
     body: 'It opens without a browser bar, and reminders keep arriving once the tab is closed.',

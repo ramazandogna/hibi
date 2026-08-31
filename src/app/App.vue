@@ -8,6 +8,7 @@ import { Github, Mail } from 'lucide-vue-next'
 import { VueQueryDevtools } from '@tanstack/vue-query-devtools'
 import { slideDirection } from '@/shared/lib/tab-transition'
 import { useThemeSync } from '@/features/profile/use-theme-sync'
+import AppErrorBoundary from '@/shared/ui/AppErrorBoundary.vue'
 
 const route = useRoute()
 useThemeSync()
@@ -50,11 +51,15 @@ const layoutComponent = computed(() => {
       <UpdatePrompt />
 
       <component :is="layoutComponent">
-        <RouterView v-slot="{ Component, route: matched }">
-          <Transition :name="transitionName">
-            <component :is="Component" :key="matched.path" :class="pageClass" />
-          </Transition>
-        </RouterView>
+        <!-- Inside the layout on purpose: a page that throws must not take the
+             tab bar with it, because switching tabs is the way out. -->
+        <AppErrorBoundary>
+          <RouterView v-slot="{ Component, route: matched }">
+            <Transition :name="transitionName">
+              <component :is="Component" :key="matched.path" :class="pageClass" />
+            </Transition>
+          </RouterView>
+        </AppErrorBoundary>
       </component>
     </div>
   </div>

@@ -273,6 +273,13 @@ const tr: typeof en = {
 
   offline: 'Çevrimdışısın — değişiklikler kaydedilmeyecek.',
 
+  error: {
+    title: 'Bu ekranda bir sorun çıktı',
+    body: 'Uygulamanın geri kalanı çalışıyor — sekme değiştirebilir ya da bu ekranı yeniden deneyebilirsin.',
+    retry: 'Yeniden dene',
+    reload: 'Uygulamayı yenile',
+  },
+
   install: {
     title: "Hibi'yi ana ekranına ekle",
     body: 'Adres çubuğu olmadan açılır ve sekme kapalıyken de hatırlatmalar gelmeye devam eder.',
