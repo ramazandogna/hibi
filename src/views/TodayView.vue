@@ -287,9 +287,13 @@ function openHabit(habitId: string) {
       </template>
     </PageHeader>
 
-    <InstallPrompt />
-
-    <NotificationNudge />
+    <!-- Only once there is something to be reminded about. A brand-new account
+         has the guide open; stacking two permission asks on top of it is a wall
+         rather than a welcome. -->
+    <template v-if="!isPending && !isError && !isEmpty">
+      <InstallPrompt />
+      <NotificationNudge />
+    </template>
 
     <SkeletonList v-if="isPending" row-height="h-14" :label="$t('today.loadingHabits')" />
 

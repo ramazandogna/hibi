@@ -4,6 +4,7 @@ import { BellRing, Share } from 'lucide-vue-next'
 
 import { useNotifications } from '../notifications'
 import { needsIosInstall } from '@/shared/lib/platform'
+import { useInstall } from '@/features/pwa/install'
 import { todayKey } from '@/shared/lib/date'
 import { addDays } from '@/shared/lib/date'
 
@@ -32,13 +33,19 @@ const snoozed = ref(snoozedUntil())
 /** iOS cannot grant this from a tab, so the card teaches instead of asking. */
 const iosInstallNeeded = needsIosInstall()
 
+// The one cross-feature import here, and it earns its place: two cards asking
+// for two permissions in the same breath is how both get dismissed. Installing
+// comes first because on half these devices it is what makes a reminder arrive
+// at all; the ask waits until that card is gone.
+const install = useInstall()
+
 const visible = computed(() => {
   if (todayKey() < snoozed.value) return false
 
   // Nothing here on iOS: the install card above already says that adding Hibi
-  // to the Home Screen is what makes notifications possible, and two cards
-  // making the same point is one too many.
+  // to the Home Screen is what makes notifications possible.
   if (iosInstallNeeded) return false
+  if (install.canPrompt.value) return false
 
   return supported && permission.value === 'default'
 })
