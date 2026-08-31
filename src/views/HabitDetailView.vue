@@ -45,14 +45,11 @@ const values = computed(
 const statsInput = computed(() => ({
   kind: habit.value?.kind ?? 'build',
   createdAt: habit.value ? toDateKey(new Date(habit.value.created_at)) : today.value,
+  targetPerWeek: habit.value?.target_per_week ?? 7,
 }))
 
-const { streak, longest, completion30, average7, averagePrevious7, summary } = useHabitStats(
-  statsInput,
-  markedDays,
-  values,
-  rangeTo,
-)
+const { streak, longest, completion30, average7, averagePrevious7, summary, week, weekHistory } =
+  useHabitStats(statsInput, markedDays, values, rangeTo, weekStartsOn)
 
 const createdOn = computed(() =>
   habit.value
@@ -94,10 +91,25 @@ const cards = computed(() => {
     ]
   }
 
+  // A paced habit is judged by the week, so the third slot reports weeks hit
+  // rather than a raw thirty-day rate that its own target guarantees is low.
+  const third =
+    kind === 'build' && week.value.isPaced
+      ? {
+          value: `${weekHistory.value.met}/${weekHistory.value.total}`,
+          label: t('stats.weeksOnTarget'),
+          trend: null,
+        }
+      : {
+          value: `${Math.round(completion30.value * 100)}%`,
+          label: t('stats.last30'),
+          trend: null,
+        }
+
   return [
     { value: String(streak.value), label: t(`kind.${kind}.streak`), trend: null },
     { value: String(longest.value), label: t('stats.bestRun'), trend: null },
-    { value: `${Math.round(completion30.value * 100)}%`, label: t('stats.last30'), trend: null },
+    third,
   ]
 })
 
@@ -180,8 +192,14 @@ async function archiveAndLeave() {
         </h1>
 
         <div class="flex flex-wrap items-center gap-x-4 gap-y-1">
+          <span
+            v-if="habit.kind === 'build' && week.isPaced"
+            class="text-ink-soft text-xs tabular-nums"
+          >
+            {{ $t('stats.thisWeek', { done: week.done, target: week.target }) }}
+          </span>
           <StreakBadge
-            v-if="KIND_META[habit.kind].isBinary"
+            v-else-if="KIND_META[habit.kind].isBinary"
             :streak="streak"
             :longest="longest"
             :kind="habit.kind"

@@ -1,4 +1,5 @@
-import { addDays } from '@/shared/lib/date'
+import { addDays, startOfWeek } from '@/shared/lib/date'
+import type { WeekStart } from '@/shared/lib/date'
 
 /**
  * Streak and completion maths.
@@ -132,4 +133,69 @@ export function rollingAverage(
   }
 
   return count === 0 ? null : sum / count
+}
+
+/**
+ * Days marked inside the week containing `today`.
+ *
+ * Counts only up to `today`, not the whole week: on a Tuesday, "1 of 4" should
+ * mean one done and five days left, not one done and three missed.
+ *
+ * @param marked - Every marked day key.
+ * @param today - The day to anchor the week on.
+ * @param weekStart - Where the week begins, from the profile.
+ *
+ * @example
+ * ```ts
+ * daysThisWeek(marked, '2026-08-31', 1) // 2
+ * ```
+ */
+export function daysThisWeek(
+  marked: ReadonlySet<string>,
+  today: string,
+  weekStart: WeekStart,
+): number {
+  const from = startOfWeek(today, weekStart)
+  let count = 0
+
+  for (let day = from; day <= today; day = addDays(day, 1)) {
+    if (marked.has(day)) count += 1
+  }
+
+  return count
+}
+
+/**
+ * How many of the last `weeks` complete weeks hit the target.
+ *
+ * The current week is excluded — judging a week that is still running would
+ * report a failure every Monday morning.
+ *
+ * @example
+ * ```ts
+ * weeksOnTarget(marked, '2026-08-31', 1, 4, 12) // 9
+ * ```
+ */
+export function weeksOnTarget(
+  marked: ReadonlySet<string>,
+  today: string,
+  weekStart: WeekStart,
+  target: number,
+  weeks: number,
+): { met: number; total: number } {
+  const thisWeek = startOfWeek(today, weekStart)
+  let met = 0
+
+  for (let index = 1; index <= weeks; index += 1) {
+    const from = addDays(thisWeek, -7 * index)
+    let count = 0
+
+    for (let offset = 0; offset < 7; offset += 1) {
+      if (marked.has(addDays(from, offset))) count += 1
+    }
+
+    if (count >= target) met += 1
+  }
+
+  return { met, total: weeks }
 }

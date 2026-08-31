@@ -1,8 +1,17 @@
 import { computed, toValue } from 'vue'
 import type { MaybeRefOrGetter } from 'vue'
 
-import { cleanDays, completionRate, currentStreak, longestStreak, rollingAverage } from './streak'
+import {
+  cleanDays,
+  completionRate,
+  currentStreak,
+  daysThisWeek,
+  longestStreak,
+  rollingAverage,
+  weeksOnTarget,
+} from './streak'
 import { addDays, todayKey } from '@/shared/lib/date'
+import type { WeekStart } from '@/shared/lib/date'
 import type { HabitKind } from '@/shared/lib/kind'
 import { t } from '@/shared/i18n'
 import { supabase } from '@/shared/lib/supabase'
@@ -19,6 +28,8 @@ export type HabitStatsInput = {
   kind: HabitKind
   /** Creation day as a date key; where a quit habit's clean count starts. */
   createdAt: string
+  /** Days per week the user is aiming for. 7 means "every day". */
+  targetPerWeek?: number
 }
 
 /**
@@ -32,6 +43,7 @@ export function useHabitStats(
   markedDays: MaybeRefOrGetter<ReadonlySet<string>>,
   values: MaybeRefOrGetter<ReadonlyMap<string, number>>,
   today: MaybeRefOrGetter<string> = todayKey,
+  weekStartsOn: MaybeRefOrGetter<WeekStart> = 1,
 ) {
   const streak = computed(() => {
     const { kind, createdAt } = toValue(habit)
@@ -58,6 +70,38 @@ export function useHabitStats(
     rollingAverage(toValue(values), addDays(toValue(today), -7), 7),
   )
 
+  /**
+   * Progress against the weekly target.
+   *
+   * A target below seven is the whole point of the setting: it says the habit
+   * is judged by the week, not by today, so a Tuesday with nothing marked is
+   * not yet a failure. `remaining` is what makes that legible.
+   */
+  const week = computed(() => {
+    const { targetPerWeek = 7 } = toValue(habit)
+    const done = daysThisWeek(toValue(markedDays), toValue(today), toValue(weekStartsOn))
+
+    return {
+      done,
+      target: targetPerWeek,
+      met: done >= targetPerWeek,
+      remaining: Math.max(targetPerWeek - done, 0),
+      /** Only worth showing when the target is not simply "every day". */
+      isPaced: targetPerWeek < 7,
+    }
+  })
+
+  /** How many of the last twelve finished weeks hit the target. */
+  const weekHistory = computed(() =>
+    weeksOnTarget(
+      toValue(markedDays),
+      toValue(today),
+      toValue(weekStartsOn),
+      toValue(habit).targetPerWeek ?? 7,
+      12,
+    ),
+  )
+
   /** One line for the habit row, phrased per kind. */
   const summary = computed(() => {
     const { kind } = toValue(habit)
@@ -76,7 +120,7 @@ export function useHabitStats(
     })
   })
 
-  return { streak, longest, completion30, average7, averagePrevious7, summary }
+  return { streak, longest, completion30, average7, averagePrevious7, summary, week, weekHistory }
 }
 
 /** A single habit by id, archived or not. */

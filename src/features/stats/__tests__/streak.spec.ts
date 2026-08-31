@@ -1,7 +1,15 @@
 import { describe, expect, it } from 'vitest'
 
 import { lastNDays } from '@/shared/lib/date'
-import { cleanDays, completionRate, currentStreak, longestStreak, rollingAverage } from '../streak'
+import {
+  cleanDays,
+  completionRate,
+  currentStreak,
+  daysThisWeek,
+  longestStreak,
+  rollingAverage,
+  weeksOnTarget,
+} from '../streak'
 
 /** Shorthand for building the marked-day sets the functions take. */
 const marked = (...keys: string[]) => new Set(keys)
@@ -120,5 +128,46 @@ describe('rollingAverage', () => {
 
   it('is null when the window has data only outside it', () => {
     expect(rollingAverage(new Map([['2026-08-10', 3]]), '2026-08-24', 7)).toBeNull()
+  })
+})
+
+describe('daysThisWeek', () => {
+  it('counts only up to today, not the rest of the week', () => {
+    // Monday 2026-08-31 .. marked Mon and Tue; today is Tuesday.
+    const marked = new Set(['2026-08-31', '2026-09-01', '2026-09-04'])
+
+    expect(daysThisWeek(marked, '2026-09-01', 1)).toBe(2)
+  })
+
+  it('respects a Sunday week start', () => {
+    const marked = new Set(['2026-08-30', '2026-08-31'])
+
+    // Sunday-start week contains 30 Aug; Monday-start week does not.
+    expect(daysThisWeek(marked, '2026-08-31', 0)).toBe(2)
+    expect(daysThisWeek(marked, '2026-08-31', 1)).toBe(1)
+  })
+})
+
+describe('weeksOnTarget', () => {
+  it('excludes the week still running', () => {
+    // Four full days in each of the two previous weeks, none this week.
+    const marked = new Set([
+      '2026-08-17',
+      '2026-08-18',
+      '2026-08-19',
+      '2026-08-20',
+      '2026-08-24',
+      '2026-08-25',
+      '2026-08-26',
+      '2026-08-27',
+    ])
+
+    expect(weeksOnTarget(marked, '2026-08-31', 1, 4, 2)).toEqual({ met: 2, total: 2 })
+  })
+
+  it('counts a week short of the target as missed', () => {
+    const marked = new Set(['2026-08-24', '2026-08-25'])
+
+    expect(weeksOnTarget(marked, '2026-08-31', 1, 4, 1)).toEqual({ met: 0, total: 1 })
   })
 })
