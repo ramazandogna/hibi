@@ -2,8 +2,11 @@
   "extends": "./tsconfig.app.json",
 
   // Override to include only test files and clear exclusions.
-  // Application code imported in tests is automatically included via module resolution.
-  "include": ["src/**/__tests__/*", "env.d.ts"],
+  // Application code imported in tests is automatically included via module
+  // resolution -- but ambient declaration files are not, because nothing
+  // imports them. They have to be listed, or this project type-checks the app's
+  // components against an unaugmented RouteMeta.
+  "include": ["src/**/__tests__/*", "src/**/*.d.ts", "env.d.ts"],
   "exclude": [],
 
   "compilerOptions": {
