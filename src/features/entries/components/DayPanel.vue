@@ -50,7 +50,9 @@ const doneCount = computed(() => rows.value.filter((row) => row.isMarked).length
           type="button"
           class="flex size-11 items-center justify-center rounded-xl transition-transform duration-100 active:scale-95"
           :class="
-            row.isMarked ? [KIND_META[row.habit.kind].fill, 'text-white'] : 'bg-mist text-ink-soft'
+            row.isMarked
+              ? [KIND_META[row.habit.kind].fill, 'text-white']
+              : [KIND_META[row.habit.kind].empty, 'text-ink-soft']
           "
           :aria-pressed="row.isMarked"
           :aria-label="`${row.habit.name}, ${title}`"

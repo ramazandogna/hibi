@@ -158,7 +158,7 @@ function onTodayTap() {
       <button
         type="button"
         class="flex size-11 items-center justify-center rounded-xl transition-transform duration-100 select-none active:scale-95"
-        :class="markedDays.has(today) ? [meta.fill, 'text-white'] : 'bg-mist text-ink-soft'"
+        :class="markedDays.has(today) ? [meta.fill, 'text-white'] : [meta.empty, 'text-ink-soft']"
         :aria-pressed="markedDays.has(today)"
         :aria-label="`${habit.name}, ${$t('day.today')}`"
         @click.stop="onTodayTap"
