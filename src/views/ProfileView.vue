@@ -9,14 +9,16 @@ import HabitManager from '@/features/habits/components/HabitManager.vue'
 import { useArchivedHabits, useHabits } from '@/features/habits/habits.queries'
 import type { Habit } from '@/features/habits/habit.types'
 import { useProfile, useUpdateProfile } from '@/features/profile/profile.queries'
-import { formatDate } from '@/shared/lib/format'
-import { useDebouncedCallback } from '@/shared/lib/use-debounced-callback'
-import BaseInput from '@/shared/ui/BaseInput.vue'
-import BaseSheet from '@/shared/ui/BaseSheet.vue'
-import PageHeader from '@/shared/ui/PageHeader.vue'
-import SettingsGroup from '@/shared/ui/SettingsGroup.vue'
-import SettingsRow from '@/shared/ui/SettingsRow.vue'
-import StatCard from '@/shared/ui/StatCard.vue'
+import {
+  BaseInput,
+  BaseSheet,
+  PageHeader,
+  SettingsGroup,
+  SettingsRow,
+  StatCard,
+  formatDate,
+  useDebouncedCallback,
+} from 'rei-kit'
 
 const auth = useAuthStore()
 const router = useRouter()

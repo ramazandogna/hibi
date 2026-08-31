@@ -4,7 +4,7 @@ import type { MaybeRefOrGetter } from 'vue'
 
 import { getProfile, updateProfile } from './profile.api'
 import { profileKeys } from './profile.keys'
-import type { WeekStart } from '@/shared/lib/date'
+import type { WeekStart } from 'rei-kit'
 
 /**
  * Vue bindings for the profile.

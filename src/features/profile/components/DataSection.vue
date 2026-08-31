@@ -3,17 +3,18 @@ import { ref } from 'vue'
 
 import { deleteAllData, exportEverything } from '../profile.api'
 import { useAuthStore } from '@/features/auth/auth.store'
-import { toAppError } from '@/shared/lib/app-error'
-import { downloadJson } from '@/shared/lib/download'
-import { todayKey } from '@/shared/lib/date'
+import {
+  BaseButton,
+  BaseInput,
+  BaseSheet,
+  SettingsGroup,
+  SettingsRow,
+  downloadJson,
+  toAppError,
+  todayKey,
+} from 'rei-kit'
 import { queryClient } from '@/app/providers/query'
 import { Download, Trash2 } from 'lucide-vue-next'
-
-import BaseButton from '@/shared/ui/BaseButton.vue'
-import BaseInput from '@/shared/ui/BaseInput.vue'
-import BaseSheet from '@/shared/ui/BaseSheet.vue'
-import SettingsGroup from '@/shared/ui/SettingsGroup.vue'
-import SettingsRow from '@/shared/ui/SettingsRow.vue'
 
 const auth = useAuthStore()
 

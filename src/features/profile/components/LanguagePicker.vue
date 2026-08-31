@@ -4,8 +4,7 @@ import { Check, Languages } from 'lucide-vue-next'
 
 import { SUPPORTED_LOCALES, useLocalePreference } from '@/shared/i18n'
 import type { LocalePreference } from '@/shared/i18n'
-import BaseSheet from '@/shared/ui/BaseSheet.vue'
-import SettingsRow from '@/shared/ui/SettingsRow.vue'
+import { BaseSheet, SettingsRow } from 'rei-kit'
 
 const preference = useLocalePreference()
 

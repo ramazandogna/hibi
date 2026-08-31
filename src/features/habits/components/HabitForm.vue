@@ -3,13 +3,11 @@ import { computed, ref } from 'vue'
 import { useForm } from 'vee-validate'
 import { toTypedSchema } from '@vee-validate/zod'
 
-import BaseButton from '@/shared/ui/BaseButton.vue'
-import BaseInput from '@/shared/ui/BaseInput.vue'
+import { BaseButton, BaseInput, toAppError } from 'rei-kit'
 import KindPicker from './KindPicker.vue'
 import { createHabitSchema } from '../habit.schema'
 import { useCreateHabit, useUpdateHabit } from '../habits.queries'
 import type { Habit } from '../habit.types'
-import { toAppError } from '@/shared/lib/app-error'
 
 const { habit = undefined } = defineProps<{ habit?: Habit | undefined }>()
 const emit = defineEmits<{ saved: [] }>()

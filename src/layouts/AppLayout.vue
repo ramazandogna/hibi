@@ -6,13 +6,12 @@ import { Plus } from 'lucide-vue-next'
 
 import { useOnboarding } from '@/features/onboarding/onboarding'
 import { useReminders } from '@/features/notifications/use-reminders'
-import BaseSheet from '@/shared/ui/BaseSheet.vue'
+import { BaseSheet, tapFeedback } from 'rei-kit'
 import AppNavbar from '@/layouts/components/app/AppNavbar.vue'
 import AppTopBar from '@/layouts/components/app/AppTopBar.vue'
 import { TAB_PATH, tabAtOffset } from '@/shared/lib/tabs'
 import { forceSlideDirection } from '@/shared/lib/tab-transition'
-import { tapFeedback } from '@/shared/lib/haptics'
-import { useOnline } from '@/shared/lib/use-online.ts'
+import { useOnline } from 'rei-kit'
 
 const route = useRoute()
 const router = useRouter()

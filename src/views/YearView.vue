@@ -12,13 +12,17 @@ import { useNotesInRange } from '@/features/notes/notes.queries'
 import { useWeekStart } from '@/features/profile/profile.queries'
 import YearHabitHeader from '@/features/stats/components/YearHabitHeader.vue'
 import YearHeatmap from '@/features/stats/components/YearHeatmap.vue'
-import { eachDayOfYear, fromDateKey, todayKey } from '@/shared/lib/date'
-import { formatDate } from '@/shared/lib/format'
+import {
+  BaseSheet,
+  PageHeader,
+  SectionHeading,
+  SkeletonList,
+  eachDayOfYear,
+  formatDate,
+  fromDateKey,
+  todayKey,
+} from 'rei-kit'
 import { groupByKind, KIND_META } from '@/shared/lib/kind'
-import BaseSheet from '@/shared/ui/BaseSheet.vue'
-import PageHeader from '@/shared/ui/PageHeader.vue'
-import SectionHeading from '@/shared/ui/SectionHeading.vue'
-import SkeletonList from '@/shared/ui/SkeletonList.vue'
 
 const route = useRoute()
 const router = useRouter()
@@ -249,7 +253,7 @@ function onSelectDay(habitId: string, dateKey: string) {
       class="flex flex-col gap-2"
     >
       <SectionHeading
-        :kind="group.kind"
+        :tone="KIND_META[group.kind]"
         :label="$t(`kind.${group.kind}.group`)"
         :count="group.items.length"
       />

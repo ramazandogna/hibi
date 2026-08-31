@@ -1,5 +1,5 @@
 import { activeLocale } from '@/shared/i18n'
-import { toAppError } from '@/shared/lib/app-error'
+import { toAppError } from 'rei-kit'
 import { supabase } from '@/shared/lib/supabase'
 
 /**

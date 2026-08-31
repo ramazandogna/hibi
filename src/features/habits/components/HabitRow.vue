@@ -3,12 +3,9 @@ import { computed } from 'vue'
 import { Check } from 'lucide-vue-next'
 
 import type { Habit } from '../habit.types'
-import type { WeekStart } from '@/shared/lib/date'
+import { formatDate, fromDateKey, relativeDayLabel, tapFeedback, toDateKey } from 'rei-kit'
+import type { WeekStart } from 'rei-kit'
 import { dayCellClass, KIND_META } from '@/shared/lib/kind'
-import { fromDateKey, toDateKey } from '@/shared/lib/date'
-import { formatDate } from '@/shared/lib/format'
-import { shortDayLabel } from '@/shared/lib/day-label'
-import { tapFeedback } from '@/shared/lib/haptics'
 import { useHabitStats } from '@/features/stats/use-habit-stats'
 import StreakBadge from '@/features/stats/components/StreakBadge.vue'
 
@@ -126,7 +123,12 @@ function onTodayTap() {
     <div class="flex shrink-0 items-end gap-1">
       <div v-for="day in previousDays" :key="day" class="flex w-7 flex-col items-center gap-1">
         <span class="text-ink-soft/70 text-[9px] leading-none whitespace-nowrap">
-          {{ shortDayLabel(day, today) }}
+          {{
+            relativeDayLabel(day, today, {
+              today: $t('day.today'),
+              yesterday: $t('day.yesterdayShort'),
+            })
+          }}
         </span>
 
         <button

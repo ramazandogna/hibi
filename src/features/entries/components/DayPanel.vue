@@ -3,10 +3,8 @@ import { computed } from 'vue'
 import { Check } from 'lucide-vue-next'
 
 import type { Habit } from '@/features/habits/habit.types'
-import { fromDateKey } from '@/shared/lib/date'
-import { formatDate } from '@/shared/lib/format'
+import { ToneDot, formatDate, fromDateKey } from 'rei-kit'
 import { KIND_META } from '@/shared/lib/kind'
-import KindDot from '@/shared/ui/KindDot.vue'
 
 const { dateKey, habits, markedByHabit, valuesByHabit } = defineProps<{
   dateKey: string
@@ -43,7 +41,7 @@ const doneCount = computed(() => rows.value.filter((row) => row.isMarked).length
 
     <ul class="flex flex-col gap-1">
       <li v-for="row in rows" :key="row.habit.id" class="flex items-center gap-3">
-        <KindDot :kind="row.habit.kind" />
+        <ToneDot :fill="KIND_META[row.habit.kind].fill" />
         <span class="text-ink flex-1 truncate text-sm">{{ row.habit.name }}</span>
 
         <button

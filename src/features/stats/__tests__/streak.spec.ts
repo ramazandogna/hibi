@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import { lastNDays } from '@/shared/lib/date'
+import { lastNDays } from 'rei-kit'
 import {
   cleanDays,
   completionRate,

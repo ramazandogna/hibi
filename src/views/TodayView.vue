@@ -7,17 +7,22 @@ import { useOnboarding } from '@/features/onboarding/onboarding'
 import NotificationNudge from '@/features/notifications/components/NotificationNudge.vue'
 import InstallPrompt from '@/features/pwa/components/InstallPrompt.vue'
 import { t } from '@/shared/i18n'
-import { toAppError } from '@/shared/lib/app-error'
+import {
+  BaseButton,
+  BaseSheet,
+  EmptyState,
+  PageHeader,
+  SectionHeading,
+  SkeletonList,
+  formatDate,
+  fromDateKey,
+  lastNDays,
+  toAppError,
+  useToday,
+} from 'rei-kit'
+import type { WeekStart } from 'rei-kit'
 import { groupByKind, KIND_META } from '@/shared/lib/kind'
 import type { HabitKind } from '@/shared/lib/kind'
-import BaseButton from '@/shared/ui/BaseButton.vue'
-import EmptyState from '@/shared/ui/EmptyState.vue'
-import PageHeader from '@/shared/ui/PageHeader.vue'
-import SectionHeading from '@/shared/ui/SectionHeading.vue'
-import SkeletonList from '@/shared/ui/SkeletonList.vue'
-import { fromDateKey, lastNDays } from '@/shared/lib/date'
-import { useToday } from '@/shared/lib/today'
-import { formatDate } from '@/shared/lib/format'
 import { useEntriesInRange, useSetEntry, useToggleEntry } from '@/features/entries/entries.queries'
 import DayPanel from '@/features/entries/components/DayPanel.vue'
 import EntryNoteSheet from '@/features/entries/components/EntryNoteSheet.vue'
@@ -28,8 +33,6 @@ import HabitRow from '@/features/habits/components/HabitRow.vue'
 import DayNoteField from '@/features/notes/components/DayNoteField.vue'
 import { useNotesInRange } from '@/features/notes/notes.queries'
 import { useProfile } from '@/features/profile/profile.queries'
-import type { WeekStart } from '@/shared/lib/date'
-import BaseSheet from '@/shared/ui/BaseSheet.vue'
 import { useRouter } from 'vue-router'
 
 const router = useRouter()
@@ -370,7 +373,7 @@ function openHabit(habitId: string) {
       class="flex flex-col gap-2"
     >
       <SectionHeading
-        :kind="group.kind"
+        :tone="KIND_META[group.kind]"
         :label="$t(`kind.${group.kind}.group`)"
         :count="group.items.length"
       />

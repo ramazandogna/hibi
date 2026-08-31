@@ -1,6 +1,6 @@
 import type { NavigationGuard, NavigationHookAfter } from 'vue-router'
 import { useAuthStore } from '@/features/auth/auth.store'
-import { safeRedirect } from '@/shared/lib/redirect'
+import { safeRedirect } from 'rei-kit'
 
 export const authGuard: NavigationGuard = (to) => {
   const auth = useAuthStore()

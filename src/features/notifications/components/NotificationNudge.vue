@@ -3,10 +3,8 @@ import { computed, ref } from 'vue'
 import { BellRing, Share } from 'lucide-vue-next'
 
 import { useNotifications } from '../notifications'
-import { needsIosInstall } from '@/shared/lib/platform'
+import { addDays, needsIosInstall, todayKey } from 'rei-kit'
 import { useInstall } from '@/features/pwa/install'
-import { todayKey } from '@/shared/lib/date'
-import { addDays } from '@/shared/lib/date'
 
 /**
  * The occasional ask for notification permission.

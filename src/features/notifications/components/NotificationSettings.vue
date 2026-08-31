@@ -4,12 +4,9 @@ import { BellRing, Clock, Share, Wifi } from 'lucide-vue-next'
 
 import { showNotification, useNotifications } from '../notifications'
 import { hasPushSubscription } from '../push'
-import { needsIosInstall } from '@/shared/lib/platform'
+import { BaseButton, SettingsGroup, SettingsRow, needsIosInstall } from 'rei-kit'
 import { pushConfigured, subscribeToPush, unsubscribeFromPush } from '../push'
 import { t } from '@/shared/i18n'
-import BaseButton from '@/shared/ui/BaseButton.vue'
-import SettingsGroup from '@/shared/ui/SettingsGroup.vue'
-import SettingsRow from '@/shared/ui/SettingsRow.vue'
 
 const { supported, permission, isEnabled, isActive, request } = useNotifications()
 

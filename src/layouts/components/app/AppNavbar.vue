@@ -25,7 +25,7 @@ import { CheckCheck, Brackets, Calendar1, UserStar } from 'lucide-vue-next'
 import type { Component } from 'vue'
 
 import type { AppTab } from '@/shared/types/navigation.types'
-import { tapFeedback } from '@/shared/lib/haptics'
+import { tapFeedback } from 'rei-kit'
 import { TAB_ORDER, TAB_PATH } from '@/shared/lib/tabs'
 
 const route = useRoute()

@@ -2,9 +2,7 @@
 import { CheckCircle2, Download, Share } from 'lucide-vue-next'
 
 import { useInstall } from '../install'
-import BaseButton from '@/shared/ui/BaseButton.vue'
-import SettingsGroup from '@/shared/ui/SettingsGroup.vue'
-import SettingsRow from '@/shared/ui/SettingsRow.vue'
+import { BaseButton, SettingsGroup, SettingsRow } from 'rei-kit'
 
 /**
  * The way back to installing after the card has been dismissed.

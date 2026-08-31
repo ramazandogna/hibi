@@ -3,7 +3,7 @@ import { ref } from 'vue'
 import { BellRing, Crown, Settings, Sparkles, TrendingUp } from 'lucide-vue-next'
 import { RouterLink } from 'vue-router'
 
-import BaseSheet from '@/shared/ui/BaseSheet.vue'
+import { BaseSheet } from 'rei-kit'
 import BrandMark from '@/shared/ui/BrandMark.vue'
 
 /**

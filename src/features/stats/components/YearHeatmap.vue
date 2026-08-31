@@ -1,11 +1,8 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue'
 
-import { fromDateKey, leadingBlanks } from '@/shared/lib/date'
-import { useDragScroll } from '@/shared/lib/use-drag-scroll'
-import { useToday } from '@/shared/lib/today'
-import { formatDate } from '@/shared/lib/format'
-import type { WeekStart } from '@/shared/lib/date'
+import { formatDate, fromDateKey, leadingBlanks, useDragScroll, useToday } from 'rei-kit'
+import type { WeekStart } from 'rei-kit'
 import { dayCellClass, KIND_META } from '@/shared/lib/kind'
 import type { HabitKind } from '@/shared/lib/kind'
 

@@ -2,7 +2,7 @@
 import { ref } from 'vue'
 
 import { LEVELS } from '../levels'
-import BaseButton from '@/shared/ui/BaseButton.vue'
+import { BaseButton } from 'rei-kit'
 
 const { initialValue = null, initialNote = '' } = defineProps<{
   initialValue?: number | null
