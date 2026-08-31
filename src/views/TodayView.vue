@@ -4,6 +4,8 @@ import { ChevronDown, ChevronRight, Compass, Sparkles } from 'lucide-vue-next'
 
 import { useCreateHabit, useHabits } from '@/features/habits/habits.queries'
 import { useOnboarding } from '@/features/onboarding/onboarding'
+import NotificationNudge from '@/features/notifications/components/NotificationNudge.vue'
+import InstallPrompt from '@/features/pwa/components/InstallPrompt.vue'
 import { t } from '@/shared/i18n'
 import { toAppError } from '@/shared/lib/app-error'
 import { groupByKind, KIND_META } from '@/shared/lib/kind'
@@ -25,11 +27,16 @@ import ScalePicker from '@/features/entries/components/ScalePicker.vue'
 import HabitRow from '@/features/habits/components/HabitRow.vue'
 import DayNoteField from '@/features/notes/components/DayNoteField.vue'
 import { useNotesInRange } from '@/features/notes/notes.queries'
+import { useProfile } from '@/features/profile/profile.queries'
+import type { WeekStart } from '@/shared/lib/date'
 import BaseSheet from '@/shared/ui/BaseSheet.vue'
 import { useRouter } from 'vue-router'
 
 const router = useRouter()
 const tour = useOnboarding()
+
+const { data: profile } = useProfile()
+const weekStartsOn = computed<WeekStart>(() => (profile.value?.week_starts_on === 0 ? 0 : 1))
 
 /** Squares show five days; the query pulls a year so streaks are exact. */
 const STATS_WINDOW_DAYS = 365
@@ -280,6 +287,10 @@ function openHabit(habitId: string) {
       </template>
     </PageHeader>
 
+    <InstallPrompt />
+
+    <NotificationNudge />
+
     <SkeletonList v-if="isPending" row-height="h-14" :label="$t('today.loadingHabits')" />
 
     <div v-else-if="isError" class="flex flex-col items-center gap-3 py-10 text-center">
@@ -369,6 +380,7 @@ function openHabit(habitId: string) {
           :days="days"
           :today="rangeTo"
           :marked-days="markedByHabit.get(habit.id) ?? new Set()"
+          :week-starts-on="weekStartsOn"
           @toggle="(day) => onToggle(habit.id, day)"
           @scale="(day) => openScale(habit.id, day)"
           @open="openHabit"
