@@ -40,6 +40,22 @@ heatmap), and **Profile / Settings**.
 Available in **English, Turkish, Japanese and Chinese**, with light and dark
 themes and a configurable week start.
 
+It installs to the Home Screen, works offline for reading, and sends a morning
+and an evening reminder through Web Push — delivered by a scheduled Postgres job
+calling an Edge Function, so they arrive with every tab closed.
+
+## Screens
+
+<!-- Drop four PNGs into docs/screens/ and delete the comment markers around the
+     table below. Shoot them at 430 px wide, the width the shell is designed to,
+     one in dark mode. Nothing sells a tracker like its Year screen. -->
+
+<!--
+| Today | Week | Year | Profile |
+| ----- | ---- | ---- | ------- |
+| <img src="docs/screens/today.png" alt="Today" width="200"> | <img src="docs/screens/week.png" alt="Week" width="200"> | <img src="docs/screens/year.png" alt="Year" width="200"> | <img src="docs/screens/profile.png" alt="Profile" width="200"> |
+-->
+
 ## Running it
 
 Requires **Node ≥ 22.18** (or ≥ 24.12) and **pnpm**.
@@ -102,6 +118,34 @@ missing or misspelled key fails the build rather than rendering a raw key on
 screen — and a test pushes every message through vue-i18n's compiler, because
 compilation happens lazily at runtime and would otherwise reach production.
 
+## The design system is a package, not a folder
+
+The components, composables and tokens that are not about habits live in
+[**rei-kit**](https://github.com/ramazandogna/rei-kit)
+([npm](https://www.npmjs.com/package/rei-kit)), installed here like any other
+dependency. Pulling them out took 79 files and about 1,600 lines out of this
+repository.
+
+The interesting part was making that safe rather than making it possible. A
+package that an app depends on can break it in ways neither repository's type
+checker can see, so the kit is held to three gates:
+
+- **A consumer job.** Every change to the kit packs the real tarball, installs
+  it into this app, and runs this app's own `pnpm check`. A change that would
+  break Hibi fails in the kit's CI, before it is published.
+- **A build-time bundle check.** Every peer dependency must be imported rather
+  than inlined. A second copy of a library that works through provide/inject is
+  not a spare copy — its injection key differs, so the app's provider becomes
+  invisible. This shipped once, in 0.2.0, and took the navigation bar down; it
+  cannot ship again, because `prepublishOnly` runs the check.
+- **Seam tests, on this side.** Both halves type-check perfectly while wired to
+  nothing, so this repository tests the join: that the kit's colour roles are
+  defined, that its stylesheet is imported, that the navigation bar mounts
+  against a real router.
+
+Publishing runs on npm Trusted Publishing — OIDC, with provenance, and no token
+stored in either repository.
+
 ## Stack
 
 Vue 3.5 · TypeScript (strict, with `exactOptionalPropertyTypes` and
@@ -116,9 +160,14 @@ failure names itself. A second workflow pings Supabase every three days, because
 a free project pauses after seven days of silence and takes the live demo with
 it.
 
+A screen that throws is caught by an error boundary placed inside the layout,
+so the shell and the tab bar survive and switching tabs stays available — the
+recovery a person actually reaches for.
+
 Bundle and interface work is tracked in two audits kept alongside the code.
-Current numbers: **148 KB gzipped** on the critical path across 7 files, and 3
-queries per screen.
+Current numbers: **134 KB gzipped** on the critical path across 7 files, and 3
+queries per screen. Supabase ships as an umbrella package; realtime, storage and
+functions are aliased away at build time, which is 23 KB of that.
 
 ## Credits
 
