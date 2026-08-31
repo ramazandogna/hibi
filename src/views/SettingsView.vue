@@ -2,6 +2,8 @@
 import { useRouter } from 'vue-router'
 import { ArrowLeft } from 'lucide-vue-next'
 
+import NotificationSettings from '@/features/notifications/components/NotificationSettings.vue'
+import InstallSettings from '@/features/pwa/components/InstallSettings.vue'
 import DataSection from '@/features/profile/components/DataSection.vue'
 import ProfileSettings from '@/features/profile/components/ProfileSettings.vue'
 import PageHeader from '@/shared/ui/PageHeader.vue'
@@ -25,6 +27,10 @@ const router = useRouter()
     </PageHeader>
 
     <ProfileSettings />
+
+    <NotificationSettings />
+
+    <InstallSettings />
 
     <DataSection />
   </div>
