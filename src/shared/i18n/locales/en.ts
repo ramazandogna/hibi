@@ -71,6 +71,12 @@ const en = {
     },
   },
 
+  day: {
+    today: 'Today',
+    yesterday: 'Yesterday',
+    yesterdayShort: 'Yest.',
+  },
+
   level: {
     1: 'Rough',
     2: 'Low',
@@ -96,6 +102,10 @@ const en = {
     previous: 'Previous week',
     next: 'Next week',
     notesThisWeek: 'Notes this week',
+    thisWeek: '{done}/{target} this week',
+    weekDone: 'Week complete',
+    weekLeft: '{count} to go this week',
+    weeksOnTarget: 'weeks on target',
     noData: 'No data for this week.',
     review: '{completed} of {planned} days · {percent}%',
     strongest: 'strongest {name}',
@@ -119,7 +129,8 @@ const en = {
     mode: 'Mode',
     modeLocked: 'Tracking mode cannot be changed — it would reinterpret your history.',
     weeklyTarget: 'Weekly target',
-    weeklyTargetHint: 'Days per week you are aiming for. Four you keep beats seven you drop.',
+    weeklyTargetHint:
+      'How many days a week counts as a win. Set it below seven and Hibi judges the habit by the week instead of by today — a quiet Tuesday stops looking like failure, and four days you keep beat seven you drop.',
     create: 'Create habit',
     saveChanges: 'Save changes',
     archiveHabit: 'Archive habit',
@@ -264,14 +275,70 @@ const en = {
 
   offline: "You're offline — changes won't be saved.",
 
-  tip: {
-    dismiss: 'Dismiss tip',
-    one: 'Missing one day rarely breaks a habit. Missing two starts to.',
-    two: 'Habits stick faster when they follow something you already do every day.',
-    three: 'Writing down why you slipped is what turns a streak into a story.',
-    four: 'Small targets beat ambitious ones: four days a week you keep beats seven you drop.',
-    five: 'Rating how you feel takes five seconds and gives next month a shape.',
-    six: 'Quitting is a streak too — every clean day counts as progress.',
+  install: {
+    title: 'Put Hibi on your Home Screen',
+    body: 'It opens without a browser bar, and reminders keep arriving once the tab is closed.',
+    action: 'Install',
+    later: 'Not now',
+    iosTitle: 'Add Hibi to your Home Screen',
+    iosBody:
+      'Tap the Share button in Safari, then Add to Home Screen. Notifications only work once you open Hibi from there.',
+    settingsRow: 'Install the app',
+    installed: 'Hibi is installed on this device.',
+  },
+
+  notify: {
+    section: 'Reminders',
+    sectionHint: 'Two a day: one to open it, one to close it. Nothing else, ever.',
+    toggle: 'Daily reminders',
+    schedule: 'Morning 08:00 · Evening 21:00',
+    background: 'Works with the app closed.',
+    foregroundOnly: 'Only while Hibi is open in a tab.',
+    enable: 'Turn on reminders',
+    enabled: 'Reminders are on',
+    test: 'Send a test',
+    denied: 'Your browser is blocking notifications for Hibi.',
+    deniedHelp:
+      'Open the padlock beside the address bar, allow notifications, then come back to this screen.',
+    unsupported: 'This browser cannot show notifications.',
+    iosTitle: 'One step first on iPhone',
+    iosBody:
+      'Safari only allows notifications once Hibi is on your Home Screen. Tap the Share button, then Add to Home Screen, and open Hibi from there.',
+
+    nudgeTitle: 'Let Hibi tap you on the shoulder',
+    nudgeBody:
+      'The hardest part of a habit is remembering it exists. Two notifications a day — what you planned this morning, what is still open tonight — and nothing else.',
+    nudgeAction: 'Allow notifications',
+    nudgeLater: 'Not now',
+
+    morningTitle1: 'A new square to fill',
+    morningTitle2: 'Today is yours to shape',
+    morningTitle3: 'The line is still unbroken',
+    morningBuild: '{count} to build',
+    morningQuit: '{count} to stay clean from',
+    morningNone: 'Nothing tracked yet. One habit is enough to start.',
+    morningPush1: 'Start with the easiest one.',
+    morningPush2: 'Small and done beats big and skipped.',
+    morningPush3: 'You do not find the time. You take it.',
+
+    eveningTitle1: 'Before the day closes',
+    eveningTitle2: 'One last look',
+    eveningTitle3: 'How did today go?',
+    eveningLeft: '{count} still open.',
+    eveningAllDone: 'Everything marked.',
+    eveningNone: 'Nothing marked today.',
+    eveningPushLeft1: 'Five minutes is enough.',
+    eveningPushLeft2: 'Do the smallest one and the day still counts.',
+    eveningPushLeft3: 'Half a habit beats a blank square.',
+    eveningPushDone1: 'That is what a good day looks like.',
+    eveningPushDone2: 'The line holds. Sleep on it.',
+    eveningPushDone3: 'Nothing left to do — rare, and worth noticing.',
+    eveningPushNone1: 'Missing one day costs almost nothing. Missing two starts to.',
+    eveningPushNone2: 'There is still time to make it one.',
+    eveningPushNone3: 'Tomorrow is easier if today is not a zero.',
+
+    testTitle: 'This is what a reminder looks like',
+    testBody: 'Short, quiet, and twice a day at most.',
   },
 
   pwa: {

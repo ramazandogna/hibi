@@ -5,8 +5,8 @@ import { useRoute, useRouter } from 'vue-router'
 import { Plus } from 'lucide-vue-next'
 
 import { useOnboarding } from '@/features/onboarding/onboarding'
+import { useReminders } from '@/features/notifications/use-reminders'
 import BaseSheet from '@/shared/ui/BaseSheet.vue'
-import TipBanner from '@/shared/ui/TipBanner.vue'
 import AppNavbar from '@/layouts/components/app/AppNavbar.vue'
 import AppTopBar from '@/layouts/components/app/AppTopBar.vue'
 import { TAB_PATH, tabAtOffset } from '@/shared/lib/tabs'
@@ -86,6 +86,8 @@ function onPointerUp(event: PointerEvent) {
 
 const isOnline = useOnline()
 
+useReminders()
+
 // First run only. Mounted here rather than in a view so it survives tab
 // switches and covers the chrome as well as the page.
 const tour = useOnboarding()
@@ -119,10 +121,6 @@ function stopTracking() {
 <template>
   <div class="app-layout global-wrapper">
     <AppTopBar />
-
-    <div class="tip-slot">
-      <TipBanner />
-    </div>
 
     <AppNavbar />
 
@@ -210,19 +208,12 @@ function stopTracking() {
   }
 }
 
-/* Floats just above the tab bar, inside the shell, and lets clicks through
-   everywhere the banner itself is not. */
-.tip-slot {
-  @apply pointer-events-none absolute left-1/2 z-30 w-full max-w-[360px] -translate-x-1/2 px-4;
-  bottom: calc(5.25rem + env(safe-area-inset-bottom, 0px));
-}
-
 /* Shares the tab bar's column so the button lines up with the bar's right edge
    at every width. Anchoring it to the layout instead put it 400px away from the
    shell on a desktop screen. */
 .fab-slot {
   @apply pointer-events-none absolute left-1/2 z-40 flex w-full max-w-[360px] -translate-x-1/2 justify-end px-4;
-  bottom: calc(9.25rem + env(safe-area-inset-bottom, 0px));
+  bottom: calc(6rem + env(safe-area-inset-bottom, 0px));
 }
 
 /* An extended FAB: a bare "+" says nothing about what it adds, and this is the

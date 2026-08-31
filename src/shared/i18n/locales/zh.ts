@@ -67,6 +67,12 @@ const zh: typeof en = {
     },
   },
 
+  day: {
+    today: '今天',
+    yesterday: '昨天',
+    yesterdayShort: '昨天',
+  },
+
   level: {
     1: '很糟',
     2: '偏低',
@@ -92,6 +98,10 @@ const zh: typeof en = {
     previous: '上一周',
     next: '下一周',
     notesThisWeek: '本周笔记',
+    thisWeek: '本周 {done}/{target}',
+    weekDone: '本周已达成',
+    weekLeft: '本周还差 {count}',
+    weeksOnTarget: '达标周数',
     noData: '本周没有数据。',
     review: '{planned} 天中完成 {completed} 天 · {percent}%',
     strongest: '表现最好：{name}',
@@ -115,7 +125,8 @@ const zh: typeof en = {
     mode: '模式',
     modeLocked: '记录模式无法更改——那会改变你已有记录的含义。',
     weeklyTarget: '每周目标',
-    weeklyTargetHint: '你打算每周做几天。坚持住的四天胜过放弃的七天。',
+    weeklyTargetHint:
+      '每周做到几天就算达成。设成小于七天，Hibi 就按「周」而不是按「今天」来衡量这个习惯——空过的一个周二不再像失败，而坚持住的四天胜过放弃的七天。',
     create: '创建习惯',
     saveChanges: '保存更改',
     archiveHabit: '归档习惯',
@@ -259,14 +270,68 @@ const zh: typeof en = {
 
   offline: '你已离线——更改不会被保存。',
 
-  tip: {
-    dismiss: '关闭提示',
-    one: '漏掉一天很少会毁掉习惯，漏掉两天才会。',
-    two: '把新习惯接在你每天已经会做的事情后面，它会更快扎根。',
-    three: '写下自己为什么中断，才把记录变成故事。',
-    four: '小目标胜过大目标：坚持住的四天，胜过放弃的七天。',
-    five: '给感受打个分只要五秒，却让下个月有了形状。',
-    six: '戒除也是一种连续记录——每一个清白的日子都是进展。',
+  install: {
+    title: '把 Hibi 放到主屏幕',
+    body: '打开时没有地址栏，关掉标签页后提醒也照常送达。',
+    action: '安装',
+    later: '暂时不用',
+    iosTitle: '把 Hibi 添加到主屏幕',
+    iosBody: '在 Safari 中点按分享按钮，选择「添加到主屏幕」。只有从那里打开，通知才会生效。',
+    settingsRow: '安装应用',
+    installed: 'Hibi 已安装在这台设备上。',
+  },
+
+  notify: {
+    section: '提醒',
+    sectionHint: '每天两条：一条开启这一天，一条收尾。除此之外什么都不发。',
+    toggle: '每日提醒',
+    schedule: '早上 08:00 · 晚上 21:00',
+    background: '应用关闭时也能收到。',
+    foregroundOnly: '仅在 Hibi 打开时。',
+    enable: '开启提醒',
+    enabled: '提醒已开启',
+    test: '发送测试',
+    denied: '浏览器正在阻止 Hibi 的通知。',
+    deniedHelp: '点击地址栏旁边的锁形图标，允许通知，然后回到这个页面。',
+    unsupported: '这个浏览器无法显示通知。',
+    iosTitle: 'iPhone 上还差一步',
+    iosBody:
+      'Safari 只有在把 Hibi 添加到主屏幕之后才允许通知。点按分享按钮，选择「添加到主屏幕」，然后从那里打开 Hibi。',
+
+    nudgeTitle: '让 Hibi 拍拍你的肩膀',
+    nudgeBody:
+      '养成习惯最难的部分，是记得它的存在。每天两条通知——早上是你打算做的，晚上是还没做的。除此之外，什么都不会有。',
+    nudgeAction: '允许通知',
+    nudgeLater: '暂时不用',
+
+    morningTitle1: '又一个等着被填满的方块',
+    morningTitle2: '今天由你来塑造',
+    morningTitle3: '这条线还没断',
+    morningBuild: '{count} 个要养成',
+    morningQuit: '{count} 个要忍住',
+    morningNone: '还没有任何记录。一个习惯就够开始了。',
+    morningPush1: '从最容易的那个开始。',
+    morningPush2: '做成的小事，胜过跳过的大事。',
+    morningPush3: '时间不是找出来的，是拿出来的。',
+
+    eveningTitle1: '在这一天结束之前',
+    eveningTitle2: '最后看一眼',
+    eveningTitle3: '今天过得怎么样？',
+    eveningLeft: '还有 {count} 个没完成。',
+    eveningAllDone: '全部已记录。',
+    eveningNone: '今天还没有任何记录。',
+    eveningPushLeft1: '五分钟就够了。',
+    eveningPushLeft2: '做最小的那一个，这一天照样算数。',
+    eveningPushLeft3: '做一半也胜过空着的方块。',
+    eveningPushDone1: '好日子就是这个样子。',
+    eveningPushDone2: '这条线守住了，安心睡吧。',
+    eveningPushDone3: '没有待办了——难得，也值得留意。',
+    eveningPushNone1: '漏掉一天几乎不用付出代价，漏掉两天才会。',
+    eveningPushNone2: '想让它变成一天，现在还来得及。',
+    eveningPushNone3: '今天不是零，明天就会轻松得多。',
+
+    testTitle: '提醒长这个样子',
+    testBody: '简短、安静，每天最多两条。',
   },
 
   pwa: {

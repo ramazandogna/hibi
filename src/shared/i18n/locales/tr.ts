@@ -67,6 +67,12 @@ const tr: typeof en = {
     },
   },
 
+  day: {
+    today: 'Bugün',
+    yesterday: 'Dün',
+    yesterdayShort: 'Dün',
+  },
+
   level: {
     1: 'Kötü',
     2: 'Düşük',
@@ -92,6 +98,10 @@ const tr: typeof en = {
     previous: 'Önceki hafta',
     next: 'Sonraki hafta',
     notesThisWeek: 'Bu haftanın notları',
+    thisWeek: 'bu hafta {done}/{target}',
+    weekDone: 'Hafta tamam',
+    weekLeft: 'bu hafta {count} kaldı',
+    weeksOnTarget: 'hedefi tutan hafta',
     noData: 'Bu hafta için veri yok.',
     review: '{planned} günün {completed} tanesi · %{percent}',
     strongest: 'en güçlüsü {name}',
@@ -116,7 +126,7 @@ const tr: typeof en = {
     modeLocked: 'Takip modu değiştirilemez — geçmişinin anlamını baştan yazardı.',
     weeklyTarget: 'Haftalık hedef',
     weeklyTargetHint:
-      'Haftada kaç gün hedefliyorsun. Tutabildiğin dört gün, bıraktığın yediden iyidir.',
+      'Haftada kaç gün yaparsan başarı sayılır. Yediden düşük seçersen Hibi alışkanlığı bugüne göre değil haftaya göre değerlendirir — boş geçen bir salı artık başarısızlık gibi görünmez, ve tutabildiğin dört gün bıraktığın yediden iyidir.',
     create: 'Alışkanlık oluştur',
     saveChanges: 'Değişiklikleri kaydet',
     archiveHabit: 'Alışkanlığı arşivle',
@@ -262,14 +272,68 @@ const tr: typeof en = {
 
   offline: 'Çevrimdışısın — değişiklikler kaydedilmeyecek.',
 
-  tip: {
-    dismiss: 'İpucunu kapat',
-    one: 'Bir günü kaçırmak alışkanlığı nadiren bozar. İki gün bozmaya başlar.',
-    two: 'Alışkanlıklar, zaten her gün yaptığın bir şeyin arkasına eklendiğinde daha hızlı yerleşir.',
-    three: 'Neden aksattığını yazmak, bir seriyi hikâyeye çeviren şeydir.',
-    four: 'Küçük hedefler iddialı olanları yener: tutabildiğin dört gün, bıraktığın yediden iyidir.',
-    five: 'Nasıl hissettiğini puanlamak beş saniye sürer ve gelecek aya bir şekil verir.',
-    six: 'Bırakmak da bir seridir — her temiz gün ilerlemedir.',
+  install: {
+    title: "Hibi'yi ana ekranına ekle",
+    body: 'Adres çubuğu olmadan açılır ve sekme kapalıyken de hatırlatmalar gelmeye devam eder.',
+    action: 'Yükle',
+    later: 'Şimdi değil',
+    iosTitle: "Hibi'yi ana ekrana ekle",
+    iosBody:
+      "Safari'de Paylaş butonuna dokun, sonra Ana Ekrana Ekle'yi seç. Bildirimler ancak Hibi'yi oradan açtığında çalışır.",
+    settingsRow: 'Uygulamayı yükle',
+    installed: 'Hibi bu cihazda kurulu.',
+  },
+
+  notify: {
+    section: 'Hatırlatmalar',
+    sectionHint: 'Günde iki tane. Biri günü açar, biri kapatır.',
+    toggle: 'Günlük hatırlatmalar',
+    schedule: 'Sabah 08:00 · Akşam 21:00',
+    background: 'Uygulama kapalıyken de çalışır.',
+    foregroundOnly: 'Yalnızca Hibi bir sekmede açıkken.',
+    enable: 'Hatırlatmaları aç',
+    enabled: 'Hatırlatmalar açık',
+    test: 'Deneme gönder',
+    denied: 'Tarayıcın Hibi için bildirimleri engelliyor.',
+    deniedHelp: 'Adres çubuğundaki kilide dokun, bildirimlere izin ver, buraya dön.',
+    unsupported: 'Bu tarayıcı bildirim gösteremiyor.',
+    iosTitle: "iPhone'da önce bir adım",
+    iosBody:
+      "Safari, bildirimlere ancak Hibi ana ekrandayken izin veriyor. Paylaş butonuna dokun, Ana Ekrana Ekle'yi seç ve Hibi'yi oradan aç.",
+
+    nudgeTitle: 'Hibi hatırlatsın mı?',
+    nudgeBody: 'Günde iki bildirim: sabah ne var, akşam ne kaldı. Fazlası yok.',
+    nudgeAction: 'İzin ver',
+    nudgeLater: 'Şimdi değil',
+
+    morningTitle1: 'Yeni bir kare',
+    morningTitle2: 'Günü sen yazıyorsun',
+    morningTitle3: 'Seri devam ediyor',
+    morningBuild: 'kazanılacak {count}',
+    morningQuit: 'bırakılacak {count}',
+    morningNone: 'Henüz alışkanlık yok. Bir tane yeter.',
+    morningPush1: 'En kolayından başla.',
+    morningPush2: 'Küçük ama yapılmış olan kazanır.',
+    morningPush3: 'Zaman bulunmaz, ayrılır.',
+
+    eveningTitle1: 'Gün kapanmadan',
+    eveningTitle2: 'Son bir bakış',
+    eveningTitle3: 'Bugün nasıldı?',
+    eveningLeft: '{count} tanesi açık.',
+    eveningAllDone: 'Hepsi tamam.',
+    eveningNone: 'Bugün hiç işaret yok.',
+    eveningPushLeft1: 'Beş dakikan var mı?',
+    eveningPushLeft2: 'En küçüğünü yap, gün sayılsın.',
+    eveningPushLeft3: 'Yarısı bile boş kareden iyi.',
+    eveningPushDone1: 'İyi bir gün böyle görünür.',
+    eveningPushDone2: 'Seri sende. İyi geceler.',
+    eveningPushDone3: 'Bugün hiçbir şey eksik kalmadı.',
+    eveningPushNone1: 'Bir gün önemli değil. İki gün olmaya başlar.',
+    eveningPushNone2: 'Hâlâ vakit var.',
+    eveningPushNone3: 'Sıfır olmasın, yarın kolaylaşır.',
+
+    testTitle: 'Hatırlatmalar böyle görünür',
+    testBody: 'Kısa, sessiz, günde en fazla iki kez.',
   },
 
   pwa: {

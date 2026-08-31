@@ -67,6 +67,12 @@ const ja: typeof en = {
     },
   },
 
+  day: {
+    today: '今日',
+    yesterday: '昨日',
+    yesterdayShort: '昨日',
+  },
+
   level: {
     1: 'つらい',
     2: '低い',
@@ -92,6 +98,10 @@ const ja: typeof en = {
     previous: '前の週',
     next: '次の週',
     notesThisWeek: '今週のメモ',
+    thisWeek: '今週 {done}/{target}',
+    weekDone: '今週は達成',
+    weekLeft: '今週あと {count}',
+    weeksOnTarget: '目標達成の週',
     noData: 'この週のデータはありません。',
     review: '{planned} 日中 {completed} 日 ・ {percent}%',
     strongest: '最も好調 {name}',
@@ -115,7 +125,8 @@ const ja: typeof en = {
     mode: 'モード',
     modeLocked: '記録モードは変更できません。過去の記録の意味が変わってしまうためです。',
     weeklyTarget: '週の目標',
-    weeklyTargetHint: '週に何日を目指すか。続く 4 日は、続かない 7 日に勝ります。',
+    weeklyTargetHint:
+      '週に何日できれば達成とみなすか。7 未満にすると、Hibi はその習慣を「今日」ではなく「その週」で見ます。何もしなかった火曜日が失敗に見えなくなり、続く 4 日は続かない 7 日に勝ります。',
     create: '習慣を作成',
     saveChanges: '変更を保存',
     archiveHabit: '習慣をアーカイブ',
@@ -260,14 +271,69 @@ const ja: typeof en = {
 
   offline: 'オフラインです — 変更は保存されません。',
 
-  tip: {
-    dismiss: 'ヒントを閉じる',
-    one: '1 日休んでも習慣はめったに崩れません。崩れ始めるのは 2 日目からです。',
-    two: 'すでに毎日していることの直後に置くと、習慣は早く定着します。',
-    three: 'つまずいた理由を書き残すことが、記録を物語に変えます。',
-    four: '小さな目標のほうが強い。続く週 4 日は、続かない 7 日に勝ります。',
-    five: '気分の評価は 5 秒。それが来月の形をつくります。',
-    six: 'やめることも連続記録です — クリーンな 1 日はすべて前進です。',
+  install: {
+    title: 'Hibi をホーム画面に',
+    body: 'アドレスバーなしで開き、タブを閉じてもリマインダーが届きます。',
+    action: 'インストール',
+    later: '今はしない',
+    iosTitle: 'Hibi をホーム画面に追加',
+    iosBody:
+      'Safari の共有ボタンから「ホーム画面に追加」を選んでください。通知はそこから開いたときにだけ届きます。',
+    settingsRow: 'アプリをインストール',
+    installed: 'この端末に Hibi はインストール済みです。',
+  },
+
+  notify: {
+    section: 'リマインダー',
+    sectionHint: '1 日 2 回。1 日を開く合図と、閉じる合図。それ以外は送りません。',
+    toggle: '毎日のリマインダー',
+    schedule: '朝 08:00 ・ 夜 21:00',
+    background: 'アプリを閉じていても届きます。',
+    foregroundOnly: 'Hibi をタブで開いている間だけ。',
+    enable: 'リマインダーをオンにする',
+    enabled: 'リマインダーはオンです',
+    test: 'テスト送信',
+    denied: 'ブラウザが Hibi の通知をブロックしています。',
+    deniedHelp: 'アドレスバー横の鍵アイコンを開いて通知を許可し、この画面に戻ってください。',
+    unsupported: 'このブラウザは通知を表示できません。',
+    iosTitle: 'iPhone ではもうひとつだけ',
+    iosBody:
+      'Safari は、Hibi をホーム画面に追加したあとでのみ通知を許可します。共有ボタンから「ホーム画面に追加」を選び、そこから Hibi を開いてください。',
+
+    nudgeTitle: 'Hibi にそっと声をかけさせてください',
+    nudgeBody:
+      '習慣のいちばん難しいところは、その存在を思い出すことです。1 日 2 回だけ — 朝は今日やると決めたこと、夜はまだ残っていること。それ以外は何も送りません。',
+    nudgeAction: '通知を許可する',
+    nudgeLater: '今はしない',
+
+    morningTitle1: '今日、埋める新しいマス',
+    morningTitle2: '今日をつくるのはあなたです',
+    morningTitle3: '線はまだ途切れていません',
+    morningBuild: '育てる習慣 {count} 件',
+    morningQuit: '我慢すること {count} 件',
+    morningNone: 'まだ記録がありません。習慣ひとつあれば始められます。',
+    morningPush1: 'いちばん簡単なものから。',
+    morningPush2: '小さくてもやったほうが、大きくても飛ばすより勝ります。',
+    morningPush3: '時間は見つけるものではなく、取るものです。',
+
+    eveningTitle1: '一日が終わる前に',
+    eveningTitle2: '最後にもう一度',
+    eveningTitle3: '今日はどうでしたか？',
+    eveningLeft: 'まだ {count} 件残っています。',
+    eveningAllDone: 'すべて記録済みです。',
+    eveningNone: '今日はまだ何も記録されていません。',
+    eveningPushLeft1: '5 分あれば足ります。',
+    eveningPushLeft2: 'いちばん小さいものをひとつ。それで今日は成立します。',
+    eveningPushLeft3: '半分でも、空のマスよりずっといい。',
+    eveningPushDone1: 'よい一日とは、こういう日のことです。',
+    eveningPushDone2: '線は保たれました。安心して休んでください。',
+    eveningPushDone3: 'やることは残っていません。珍しくて、気づく価値のある日です。',
+    eveningPushNone1: '1 日休んでも、ほとんど失いません。2 日目から崩れ始めます。',
+    eveningPushNone2: '1 件にするなら、まだ間に合います。',
+    eveningPushNone3: '今日がゼロでなければ、明日はずっと楽です。',
+
+    testTitle: 'リマインダーはこう表示されます',
+    testBody: '短く、静かに、多くても 1 日 2 回。',
   },
 
   pwa: {

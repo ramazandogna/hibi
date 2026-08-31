@@ -128,9 +128,9 @@
   }
 
   .page-slide {
-    /* pb clears both the floating tab bar and the action button above it, so
-       the last row of any list stays reachable. */
-    @apply no-scrollbar h-full w-full overflow-y-auto px-4 pb-52;
+    /* pb clears the floating tab bar and the action button above it, so the
+       last row of any list stays reachable. */
+    @apply no-scrollbar h-full w-full overflow-y-auto px-4 pb-44;
   }
 
   .slide-forward-enter-active,
