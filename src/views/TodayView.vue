@@ -225,7 +225,7 @@ const valuesByHabit = computed(() => {
 })
 
 const setEntry = useSetEntry()
-const scaleTarget = ref<{ habitId: string; dateKey: string } | null>(null)
+const scaleTarget = ref<{ habitId: string; dateKey: string; picked: number | null } | null>(null)
 const scaleOpen = computed({
   get: () => scaleTarget.value !== null,
   set: (open: boolean) => {
@@ -233,15 +233,18 @@ const scaleOpen = computed({
   },
 })
 
-function openScale(habitId: string, dateKey: string) {
-  scaleTarget.value = { habitId, dateKey }
+/** @param picked A value tapped on the way in, pre-selected in the sheet. */
+function openScale(habitId: string, dateKey: string, picked: number | null = null) {
+  scaleTarget.value = { habitId, dateKey, picked }
 }
 
 /**
  * Scale habits with no value for today.
  *
- * Asking inline costs one tap instead of opening the picker, which is the
- * difference between a mood tracker that gets filled in and one that does not.
+ * The inline row is where the rating starts, not where it ends: tapping a face
+ * carries that value into the picker rather than committing it. A number on its
+ * own is the least interesting half of a mood entry, and writing one word about
+ * why is what makes the Year screen worth reading a month later.
  */
 const pendingCheckIns = computed(() =>
   (habits.value ?? []).filter(
@@ -250,14 +253,15 @@ const pendingCheckIns = computed(() =>
 )
 
 function checkIn(habitId: string, value: number) {
-  setEntry.mutate({ habitId, dateKey: rangeTo.value, value })
+  openScale(habitId, rangeTo.value, value)
 }
 
 function clearScale() {
   const target = scaleTarget.value
   if (!target) return
 
-  toggle(target, true)
+  // `picked` is sheet state, not part of the entry: spread only what is stored.
+  toggle({ habitId: target.habitId, dateKey: target.dateKey }, true)
   scaleTarget.value = null
 }
 
@@ -265,7 +269,7 @@ function saveScale(payload: { value: number; note: string | null }) {
   const target = scaleTarget.value
   if (!target) return
 
-  setEntry.mutate({ ...target, ...payload })
+  setEntry.mutate({ habitId: target.habitId, dateKey: target.dateKey, ...payload })
   scaleTarget.value = null
 }
 
@@ -440,7 +444,12 @@ function openHabit(habitId: string) {
       <ScalePicker
         v-if="scaleTarget"
         :key="`${scaleTarget.habitId}-${scaleTarget.dateKey}`"
-        :initial-value="valuesByHabit.get(scaleTarget.habitId)?.get(scaleTarget.dateKey) ?? null"
+        :initial-value="
+          scaleTarget.picked ??
+          valuesByHabit.get(scaleTarget.habitId)?.get(scaleTarget.dateKey) ??
+          null
+        "
+        :initial-note="noteByHabitDay.get(`${scaleTarget.habitId}:${scaleTarget.dateKey}`) ?? ''"
         @submit="saveScale"
         @remove="clearScale"
       />

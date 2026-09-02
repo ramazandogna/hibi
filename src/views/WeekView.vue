@@ -84,6 +84,22 @@ const valuesByHabit = computed(() => {
   return map
 })
 
+/** The note already on an entry, so re-rating a day cannot silently erase it. */
+const entryNotesByHabit = computed(() => {
+  const map = new Map<string, Map<string, string>>()
+
+  for (const entry of entries.value ?? []) {
+    const body = (entry.note ?? '').trim()
+    if (!body) continue
+
+    const perDay = map.get(entry.habit_id) ?? new Map<string, string>()
+    perDay.set(entry.entry_date, body)
+    map.set(entry.habit_id, perDay)
+  }
+
+  return map
+})
+
 const { data: notes } = useNotesInRange(weekStart, weekEnd)
 
 /**
@@ -386,6 +402,7 @@ function score(habitId: string, target: number): string {
         v-if="scalingHabitId && selectedDay"
         :key="`${scalingHabitId}-${selectedDay}`"
         :initial-value="valuesByHabit.get(scalingHabitId)?.get(selectedDay) ?? null"
+        :initial-note="entryNotesByHabit.get(scalingHabitId)?.get(selectedDay) ?? ''"
         @submit="onScaleSubmit"
         @remove="onScaleRemove"
       />

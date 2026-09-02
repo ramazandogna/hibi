@@ -292,6 +292,7 @@ function onSelectDay(habitId: string, dateKey: string) {
         v-if="scalingHabitId && dayPanelDate"
         :key="`${scalingHabitId}-${dayPanelDate}`"
         :initial-value="valuesByHabit.get(scalingHabitId)?.get(dayPanelDate) ?? null"
+        :initial-note="entryNotesByHabit.get(scalingHabitId)?.get(dayPanelDate) ?? ''"
         @submit="onScaleSubmit"
         @remove="onScaleRemove"
       />
