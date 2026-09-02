@@ -2,52 +2,11 @@ import { onScopeDispose, watch } from 'vue'
 
 import { showNotification, useNotifications } from './notifications'
 import { eveningMessage, morningMessage } from './reminder-copy'
+import { slotForNow } from './reminder-windows'
 import type { ReminderSlot } from './reminder-copy'
 import { listEntriesInRange } from '@/features/entries/entries.api'
 import { useHabits } from '@/features/habits/habits.queries'
 import { toDateKey } from 'rei-kit'
-
-/**
- * When each reminder may fire, as [open, close) in local minutes past midnight.
- *
- * A window rather than an instant, because this scheduler only runs while the
- * app is open: someone who opens Hibi at 09:30 should still get the morning
- * nudge.
- *
- * The evening window closes at 23:00, not midnight. A reminder that asks how
- * the day went has to arrive while the day is still the one being asked about;
- * past midnight it is both wrong and, at that hour, unwelcome.
- */
-const WINDOWS: Record<ReminderSlot, { from: number; to: number }> = {
-  morning: { from: 8 * 60 + 30, to: 12 * 60 },
-  evening: { from: 21 * 60, to: 23 * 60 },
-}
-
-/**
- * Which reminder, if any, belongs to this moment.
- *
- * Exported for its tests: the boundaries are the whole point of the windows,
- * and they are not reachable from outside without waiting for the clock.
- *
- * @param now The local time to place.
- * @returns The slot whose window contains `now`, or null between them.
- *
- * @example
- * ```ts
- * slotForNow(new Date(2026, 0, 1, 8, 30)) // 'morning'
- * slotForNow(new Date(2026, 0, 1, 23, 0)) // null
- * ```
- */
-export function slotForNow(now: Date): ReminderSlot | null {
-  const minutes = now.getHours() * 60 + now.getMinutes()
-
-  for (const slot of ['morning', 'evening'] as const) {
-    const { from, to } = WINDOWS[slot]
-    if (minutes >= from && minutes < to) return slot
-  }
-
-  return null
-}
 
 const FIRED_KEY = 'hibi-reminder-fired'
 

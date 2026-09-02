@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import { slotForNow } from '../use-reminders'
+import { slotForNow } from '../reminder-windows'
 
 /**
  * The windows exist to keep a reminder inside the day it is about.
