@@ -1,16 +1,24 @@
 // Sends the daily reminders.
 //
-// Invoked hourly by pg_cron (see 0006_reminder_cron.sql). Each run asks: for
-// whom is it 08:00 or 21:00 right now, in their own time zone, and who has not
-// already been sent that slot today? Hourly rather than twice daily because
-// "08:00" is a different instant in every zone.
+// Invoked every half hour by pg_cron (see 0007_reminder_windows.sql). Each run
+// asks: whose local clock is inside a reminder window right now, and who has not
+// already been sent that slot today? Not twice daily, because "08:30" is a
+// different instant in every zone.
+//
+// A window rather than an exact time, because a run can be late -- pg_net
+// queues, functions cold-start -- and an exact match would silently skip the day
+// rather than send a few minutes on.
 import webpush from 'npm:web-push@3.6.7'
 import { createClient } from 'jsr:@supabase/supabase-js@2'
 
 import { buildMessage } from './messages.ts'
 import type { Locale, Slot } from './messages.ts'
 
-const SLOT_HOUR: Record<Slot, number> = { morning: 8, evening: 21 }
+/** When each slot may be sent, as [open, close) in local minutes past midnight. */
+const WINDOWS: Record<Slot, { from: number; to: number }> = {
+  morning: { from: 8 * 60 + 30, to: 12 * 60 },
+  evening: { from: 21 * 60, to: 23 * 60 },
+}
 
 interface Subscription {
   id: string
@@ -24,8 +32,8 @@ interface Subscription {
   last_evening_on: string | null
 }
 
-/** The wall clock in someone else's time zone, as {hour, dateKey}. */
-function localNow(timeZone: string): { hour: number; dateKey: string } {
+/** The wall clock in someone else's time zone, as {minutes, dateKey}. */
+function localNow(timeZone: string): { minutes: number; dateKey: string } {
   const parts = new Intl.DateTimeFormat('en-CA', {
     timeZone,
     hour12: false,
@@ -33,13 +41,14 @@ function localNow(timeZone: string): { hour: number; dateKey: string } {
     month: '2-digit',
     day: '2-digit',
     hour: '2-digit',
+    minute: '2-digit',
   }).formatToParts(new Date())
 
   const get = (type: string) => parts.find((part) => part.type === type)?.value ?? '00'
 
   return {
     // 'en-CA' formats hours as 00-23, but midnight can come back as '24'.
-    hour: Number(get('hour')) % 24,
+    minutes: (Number(get('hour')) % 24) * 60 + Number(get('minute')),
     dateKey: `${get('year')}-${get('month')}-${get('day')}`,
   }
 }
@@ -86,10 +95,11 @@ Deno.serve(async (request) => {
   let dropped = 0
 
   for (const sub of (subscriptions ?? []) as Subscription[]) {
-    const { hour, dateKey } = localNow(sub.time_zone)
+    const { minutes, dateKey } = localNow(sub.time_zone)
 
-    const slot: Slot | null =
-      hour === SLOT_HOUR.morning ? 'morning' : hour === SLOT_HOUR.evening ? 'evening' : null
+    const slot = (['morning', 'evening'] as const).find(
+      (candidate) => minutes >= WINDOWS[candidate].from && minutes < WINDOWS[candidate].to,
+    )
 
     if (!slot) continue
 
@@ -126,6 +136,13 @@ Deno.serve(async (request) => {
       await webpush.sendNotification(
         { endpoint: sub.endpoint, keys: { p256dh: sub.p256dh, auth: sub.auth } },
         JSON.stringify({ ...message, tag: `hibi-${slot}`, url: '/' }),
+        // Expire the push when its window closes.
+        //
+        // Push services hold a message for a sleeping or offline phone and hand
+        // it over whenever the device next checks in. Without a TTL that can be
+        // hours: "how did today go" arriving after midnight, about a day that is
+        // already over. Undelivered by then, it is better dropped than shown.
+        { TTL: (WINDOWS[slot].to - minutes) * 60 },
       )
       sent += 1
 

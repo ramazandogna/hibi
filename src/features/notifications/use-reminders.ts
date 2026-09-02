@@ -5,19 +5,48 @@ import { eveningMessage, morningMessage } from './reminder-copy'
 import type { ReminderSlot } from './reminder-copy'
 import { listEntriesInRange } from '@/features/entries/entries.api'
 import { useHabits } from '@/features/habits/habits.queries'
-import { useToday } from 'rei-kit'
+import { toDateKey } from 'rei-kit'
 
 /**
- * When each reminder may fire, as [open, close) in local hours.
+ * When each reminder may fire, as [open, close) in local minutes past midnight.
  *
  * A window rather than an instant, because this scheduler only runs while the
  * app is open: someone who opens Hibi at 09:30 should still get the morning
- * nudge. The windows close well before the next slot so a "good morning" can
- * never arrive at midnight.
+ * nudge.
+ *
+ * The evening window closes at 23:00, not midnight. A reminder that asks how
+ * the day went has to arrive while the day is still the one being asked about;
+ * past midnight it is both wrong and, at that hour, unwelcome.
  */
 const WINDOWS: Record<ReminderSlot, { from: number; to: number }> = {
-  morning: { from: 8, to: 14 },
-  evening: { from: 21, to: 24 },
+  morning: { from: 8 * 60 + 30, to: 12 * 60 },
+  evening: { from: 21 * 60, to: 23 * 60 },
+}
+
+/**
+ * Which reminder, if any, belongs to this moment.
+ *
+ * Exported for its tests: the boundaries are the whole point of the windows,
+ * and they are not reachable from outside without waiting for the clock.
+ *
+ * @param now The local time to place.
+ * @returns The slot whose window contains `now`, or null between them.
+ *
+ * @example
+ * ```ts
+ * slotForNow(new Date(2026, 0, 1, 8, 30)) // 'morning'
+ * slotForNow(new Date(2026, 0, 1, 23, 0)) // null
+ * ```
+ */
+export function slotForNow(now: Date): ReminderSlot | null {
+  const minutes = now.getHours() * 60 + now.getMinutes()
+
+  for (const slot of ['morning', 'evening'] as const) {
+    const { from, to } = WINDOWS[slot]
+    if (minutes >= from && minutes < to) return slot
+  }
+
+  return null
 }
 
 const FIRED_KEY = 'hibi-reminder-fired'
@@ -65,27 +94,20 @@ function releaseSlot(slot: ReminderSlot) {
  */
 export function useReminders() {
   const { isActive } = useNotifications()
-  const today = useToday()
   const { data: habits } = useHabits()
 
   let timer: ReturnType<typeof setInterval> | undefined
 
-  function slotForNow(now: Date): ReminderSlot | null {
-    const hour = now.getHours()
-
-    for (const slot of ['morning', 'evening'] as const) {
-      const { from, to } = WINDOWS[slot]
-      if (hour >= from && hour < to) return slot
-    }
-
-    return null
-  }
-
   async function check() {
     if (!isActive.value || document.visibilityState !== 'visible') return
 
-    const dateKey = today.value
-    const slot = slotForNow(new Date())
+    // One reading of the clock for both the slot and the day it belongs to.
+    // Taking the date from a separately-maintained ref would let the two
+    // disagree across midnight, which is how a slot gets claimed under the wrong
+    // date and fires twice.
+    const now = new Date()
+    const dateKey = toDateKey(now)
+    const slot = slotForNow(now)
     if (!slot || readFired()[slot] === dateKey) return
 
     const active = habits.value
