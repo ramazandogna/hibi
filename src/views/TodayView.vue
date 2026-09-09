@@ -282,15 +282,15 @@ function openHabit(habitId: string) {
   <div class="flex w-full flex-col gap-4">
     <PageHeader :title="todayTitle">
       <template #title>
-        <button
-          type="button"
+        <BaseButton
+          variant="unstyled"
           class="header-action"
           :aria-label="$t('common.openItem', { name: todayTitle })"
           @click="dayPanelOpen = true"
         >
           <span class="truncate">{{ todayTitle }}</span>
           <ChevronDown class="text-ink-soft size-4 shrink-0" aria-hidden="true" />
-        </button>
+        </BaseButton>
       </template>
     </PageHeader>
 
@@ -320,8 +320,8 @@ function openHabit(habitId: string) {
              has not decided this is worth doing yet, and the guide is the
              argument. The duration is on the button because the real objection
              to a tour is not interest, it is how long it will take. -->
-        <button
-          type="button"
+        <BaseButton
+          variant="unstyled"
           class="border-sea/30 bg-sea/8 hover:bg-sea/14 rounded-card flex w-full items-center gap-3 border p-3 text-left transition-colors active:scale-[0.98]"
           @click="tour.restart()"
         >
@@ -342,7 +342,7 @@ function openHabit(habitId: string) {
           </span>
 
           <ChevronRight class="text-ink-soft size-4 shrink-0" aria-hidden="true" />
-        </button>
+        </BaseButton>
 
         <div class="flex items-center gap-3 py-1">
           <span class="bg-hair h-px flex-1" />

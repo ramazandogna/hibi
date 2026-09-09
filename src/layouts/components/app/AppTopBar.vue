@@ -3,7 +3,7 @@ import { ref } from 'vue'
 import { BellRing, Crown, Settings, Sparkles, TrendingUp } from 'lucide-vue-next'
 import { RouterLink } from 'vue-router'
 
-import { BaseSheet } from 'rei-kit'
+import { BaseButton, BaseSheet } from 'rei-kit'
 import BrandMark from '@/shared/ui/BrandMark.vue'
 
 /**
@@ -37,14 +37,14 @@ const PERKS = [
         <Settings class="size-[18px]" />
       </RouterLink>
 
-      <button
-        type="button"
+      <BaseButton
+        variant="unstyled"
         class="text-amber/70 hover:bg-amber/10 hover:text-amber rounded-card flex size-9 items-center justify-center transition-colors active:scale-90"
         :aria-label="$t('topbar.premium')"
         @click="premiumOpen = true"
       >
         <Crown class="size-[18px]" />
-      </button>
+      </BaseButton>
     </div>
   </header>
 

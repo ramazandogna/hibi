@@ -10,6 +10,7 @@ import { useArchivedHabits, useHabits } from '@/features/habits/habits.queries'
 import type { Habit } from '@/features/habits/habit.types'
 import { useProfile, useUpdateProfile } from '@/features/profile/profile.queries'
 import {
+  BaseButton,
   BaseInput,
   BaseSheet,
   PageHeader,
@@ -88,14 +89,14 @@ async function logout() {
         </RouterLink>
       </template>
       <template #right>
-        <button
-          type="button"
+        <BaseButton
+          variant="unstyled"
           class="text-ink-soft hover:text-alert hover:bg-alert/10 flex size-10 items-center justify-center rounded-full transition-colors active:scale-90"
           :aria-label="$t('profile.signOut')"
           @click="logout"
         >
           <LogOut class="size-5" />
-        </button>
+        </BaseButton>
       </template>
     </PageHeader>
 

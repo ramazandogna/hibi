@@ -67,14 +67,14 @@ async function install() {
         <div class="flex items-center gap-2">
           <!-- No button on iOS: Safari exposes no way to open the Share sheet
                from script, so a button here could only fail. -->
-          <button
+          <BaseButton
             v-if="canPrompt"
-            type="button"
+            variant="unstyled"
             class="bg-leaf rounded-full px-3.5 py-2 text-xs font-semibold text-white transition-transform duration-100 active:scale-95"
             @click="install"
           >
             {{ $t('install.action') }}
-          </button>
+          </BaseButton>
 
           <BaseButton pill size="xs" variant="quiet" @click="snooze">
             {{ $t('install.later') }}

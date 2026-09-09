@@ -3,7 +3,14 @@ import { computed } from 'vue'
 import { Check } from 'lucide-vue-next'
 
 import type { Habit } from '../habit.types'
-import { formatDate, fromDateKey, relativeDayLabel, tapFeedback, toDateKey } from 'rei-kit'
+import {
+  BaseButton,
+  formatDate,
+  fromDateKey,
+  relativeDayLabel,
+  tapFeedback,
+  toDateKey,
+} from 'rei-kit'
 import type { WeekStart } from 'rei-kit'
 import { dayCellClass, KIND_META } from '@/shared/lib/kind'
 import { useHabitStats } from '@/features/stats/use-habit-stats'
@@ -89,8 +96,8 @@ function onTodayTap() {
       <!-- The whole row stays tappable as a convenience, but the name is the
            real control: a bare <li> with a click handler is unreachable by
            keyboard and announces nothing to a screen reader. -->
-      <button
-        type="button"
+      <BaseButton
+        variant="unstyled"
         class="text-ink block max-w-full rounded text-left text-sm leading-tight font-medium"
         @click.stop="emit('open', habit.id)"
       >
@@ -98,7 +105,7 @@ function onTodayTap() {
              tüket" is unreadable cut to eight characters, and the row growing
              by one line costs less than the name being useless. -->
         <span class="line-clamp-2">{{ habit.name }}</span>
-      </button>
+      </BaseButton>
       <div v-if="showWeekPace" class="mt-1 flex items-center gap-1.5">
         <span class="flex gap-0.5" aria-hidden="true">
           <span
@@ -131,10 +138,10 @@ function onTodayTap() {
           }}
         </span>
 
-        <button
-          type="button"
+        <BaseButton
+          variant="unstyled"
           class="flex h-10 w-full items-center justify-center transition-transform duration-100 select-none active:scale-90"
-          :aria-pressed="markedDays.has(day)"
+          :pressed="markedDays.has(day)"
           :aria-label="`${habit.name}, ${dayLabel(day)}`"
           @click.stop="onDayTap(day)"
         >
@@ -148,7 +155,7 @@ function onTodayTap() {
               })
             "
           />
-        </button>
+        </BaseButton>
       </div>
     </div>
 
@@ -157,17 +164,17 @@ function onTodayTap() {
         {{ $t('day.today') }}
       </span>
 
-      <button
-        type="button"
+      <BaseButton
+        variant="unstyled"
         class="flex size-11 items-center justify-center rounded-xl transition-transform duration-100 select-none active:scale-95"
         :class="markedDays.has(today) ? [meta.fill, 'text-white'] : [meta.empty, 'text-ink-soft']"
-        :aria-pressed="markedDays.has(today)"
+        :pressed="markedDays.has(today)"
         :aria-label="`${habit.name}, ${$t('day.today')}`"
         @click.stop="onTodayTap"
       >
         <Check v-if="meta.isBinary" class="size-5" />
         <span v-else class="text-sm font-semibold">{{ todayValue ?? '–' }}</span>
-      </button>
+      </BaseButton>
     </div>
   </li>
 </template>

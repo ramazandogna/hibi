@@ -94,6 +94,12 @@ onMounted(() => {
               aria-hidden="true"
               class="size-2.5"
             />
+            <!-- The one raw <button> left in this app, and it is deliberate.
+                 There are 365 of these on screen and none has a handler of its
+                 own: the grid delegates through `closest('[data-date]')`. A
+                 kit component here would be 365 Vue instances bought with
+                 nothing, for markup that is a hit target rather than a
+                 control. Everything else in Hibi comes from BaseButton. -->
             <button
               v-for="day in month.days"
               :key="day"

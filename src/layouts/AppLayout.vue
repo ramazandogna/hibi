@@ -5,7 +5,7 @@ import { Plus } from 'lucide-vue-next'
 
 import { useOnboarding } from '@/features/onboarding/onboarding'
 import { useReminders } from '@/features/notifications/use-reminders'
-import { BaseSheet, tapFeedback } from 'rei-kit'
+import { BaseButton, BaseSheet, tapFeedback } from 'rei-kit'
 import AppNavbar from '@/layouts/components/app/AppNavbar.vue'
 import AppTopBar from '@/layouts/components/app/AppTopBar.vue'
 import { useOnline } from 'rei-kit'
@@ -75,10 +75,10 @@ function openCreate() {
     </main>
 
     <div class="fab-slot">
-      <button type="button" class="fab" @click="openCreate">
+      <BaseButton variant="unstyled" class="fab" @click="openCreate">
         <Plus class="fab-icon" aria-hidden="true" />
         <span class="fab-label">{{ $t('habit.new') }}</span>
-      </button>
+      </BaseButton>
     </div>
 
     <OnboardingTour v-if="tourMounted" />

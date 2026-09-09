@@ -70,16 +70,17 @@ const onSubmit = handleSubmit(async (formValues) => {
     <fieldset v-if="values.kind === 'build'" class="flex w-full flex-col gap-1.5">
       <legend class="text-ink text-sm font-medium">{{ $t('habit.weeklyTarget') }}</legend>
       <div class="bg-mist rounded-card flex gap-1 p-1">
-        <button
+        <BaseButton
           v-for="day in 7"
           :key="day"
-          type="button"
+          variant="unstyled"
+          :pressed="targetPerWeek === day"
           class="flex h-11 flex-1 items-center justify-center rounded-xl text-sm font-medium transition-colors select-none"
           :class="targetPerWeek === day ? 'bg-sea text-white' : 'text-ink-soft'"
           @click="targetPerWeek = day"
         >
           {{ day }}
-        </button>
+        </BaseButton>
       </div>
       <p class="text-ink-soft text-xs leading-snug">{{ $t('habit.weeklyTargetHint') }}</p>
     </fieldset>

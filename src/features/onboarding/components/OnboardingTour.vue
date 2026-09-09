@@ -172,10 +172,10 @@ function onKeydown(event: KeyboardEvent) {
               role="tablist"
               :aria-label="$t('onboarding.progress', { current: tour.index.value + 1, total })"
             >
-              <button
+              <BaseButton
                 v-for="(item, position) in ONBOARDING_STEPS"
                 :key="item.key"
-                type="button"
+                variant="unstyled"
                 role="tab"
                 :aria-selected="position === tour.index.value"
                 :aria-label="$t('onboarding.progress', { current: position + 1, total })"
@@ -188,7 +188,7 @@ function onKeydown(event: KeyboardEvent) {
                     position <= tour.index.value ? 'bg-sea' : 'bg-hair group-hover:bg-ink-soft/40'
                   "
                 />
-              </button>
+              </BaseButton>
             </div>
 
             <div class="flex gap-2">

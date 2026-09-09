@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { BaseButton } from 'rei-kit'
 import { ref } from 'vue'
 import { Hand } from 'lucide-vue-next'
 
@@ -31,10 +32,10 @@ function choose(kind: HabitKind) {
 <template>
   <div class="flex w-full flex-col gap-3">
     <div class="grid grid-cols-3 gap-2">
-      <button
+      <BaseButton
         v-for="kind in KIND_ORDER"
         :key="kind"
-        type="button"
+        variant="unstyled"
         class="rounded-card flex cursor-pointer flex-col items-center gap-2 border px-2 py-3 transition-all duration-200"
         :class="[
           selected === kind
@@ -42,14 +43,14 @@ function choose(kind: HabitKind) {
             : 'border-hair bg-surface opacity-70 hover:opacity-100',
           !touched && selected !== kind ? 'invite' : '',
         ]"
-        :aria-pressed="selected === kind"
+        :pressed="selected === kind"
         @click="choose(kind)"
       >
         <span class="size-6 rounded-md transition-transform" :class="KIND_META[kind].fill" />
         <span class="text-xs font-semibold" :class="KIND_META[kind].text">
           {{ $t(`kind.${kind}.label`) }}
         </span>
-      </button>
+      </BaseButton>
     </div>
 
     <Transition name="hint">

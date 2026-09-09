@@ -10,6 +10,7 @@ import { useHabits } from '@/features/habits/habits.queries'
 import DayNoteField from '@/features/notes/components/DayNoteField.vue'
 import { useNotesInRange } from '@/features/notes/notes.queries'
 import {
+  BaseButton,
   BaseSheet,
   PageHeader,
   SectionHeading,
@@ -255,36 +256,36 @@ function score(habitId: string, target: number): string {
   <div class="flex w-full flex-col gap-4">
     <PageHeader :title="title">
       <template #title>
-        <button
-          type="button"
+        <BaseButton
+          variant="unstyled"
           class="header-action"
           :aria-label="$t('common.openItem', { name: title })"
           @click="openDay(today)"
         >
           <span class="truncate">{{ title }}</span>
           <ChevronDown class="text-ink-soft size-4 shrink-0" aria-hidden="true" />
-        </button>
+        </BaseButton>
       </template>
       <template #left>
-        <button
-          type="button"
+        <BaseButton
+          variant="unstyled"
           class="text-ink-soft hover:text-ink p-2"
           :aria-label="$t('week.previous')"
           @click="weekStart = addDays(weekStart, -7)"
         >
           ‹
-        </button>
+        </BaseButton>
       </template>
       <template #right>
-        <button
-          type="button"
+        <BaseButton
+          variant="unstyled"
           class="text-ink-soft hover:text-ink p-2 disabled:opacity-30"
           :aria-label="$t('week.next')"
           :disabled="weekEnd >= today"
           @click="weekStart = addDays(weekStart, 7)"
         >
           ›
-        </button>
+        </BaseButton>
       </template>
     </PageHeader>
 
@@ -295,10 +296,10 @@ function score(habitId: string, target: number): string {
            fixed column template, so columns line up across cards. -->
       <div class="week-grid items-center px-3">
         <span />
-        <button
+        <BaseButton
           v-for="day in days"
           :key="`head-${day}`"
-          type="button"
+          variant="unstyled"
           class="text-ink-soft rounded-cell flex h-10 items-center justify-center text-center text-[10px] disabled:opacity-40"
           :class="day === today ? 'text-sea font-bold' : ''"
           :disabled="day > today"
@@ -306,7 +307,7 @@ function score(habitId: string, target: number): string {
           @click="openDay(day)"
         >
           {{ weekdayLabel(day) }}
-        </button>
+        </BaseButton>
       </div>
 
       <section v-for="group in habitGroups" :key="group.kind" class="flex flex-col gap-2">
@@ -328,13 +329,13 @@ function score(habitId: string, target: number): string {
                 </span>
               </span>
 
-              <button
+              <BaseButton
                 v-for="day in days"
                 :key="`${habit.id}-${day}`"
-                type="button"
+                variant="unstyled"
                 :disabled="day > today"
                 class="flex h-10 w-full items-center justify-center transition-transform duration-100 active:scale-90"
-                :aria-pressed="markedByHabit.get(habit.id)?.has(day) ?? false"
+                :pressed="markedByHabit.get(habit.id)?.has(day) ?? false"
                 :aria-label="`${habit.name}, ${day}`"
                 @click="onCellTap(habit, day)"
               >
@@ -351,7 +352,7 @@ function score(habitId: string, target: number): string {
                     })
                   "
                 />
-              </button>
+              </BaseButton>
             </template>
           </div>
 

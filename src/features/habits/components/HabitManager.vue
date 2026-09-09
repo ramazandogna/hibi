@@ -114,40 +114,48 @@ async function confirmDelete() {
           <ToneDot :fill="KIND_META[habit.kind].fill" />
           <span class="text-ink flex-1 truncate text-sm font-medium">{{ habit.name }}</span>
 
-          <button
-            type="button"
-            class="text-ink-soft hover:text-ink hover:bg-mist flex size-11 items-center justify-center rounded-full transition-colors active:scale-90 disabled:opacity-30"
+          <BaseButton
+            variant="quiet"
+            icon
+            pill
+            class="hover:bg-mist"
             :disabled="index === 0"
             :aria-label="$t('common.moveUp', { name: habit.name })"
             @click="move(group.items, index, -1)"
           >
             <ArrowUp class="size-4" />
-          </button>
-          <button
-            type="button"
-            class="text-ink-soft hover:text-ink hover:bg-mist flex size-11 items-center justify-center rounded-full transition-colors active:scale-90 disabled:opacity-30"
+          </BaseButton>
+          <BaseButton
+            variant="quiet"
+            icon
+            pill
+            class="hover:bg-mist"
             :disabled="index === group.items.length - 1"
             :aria-label="$t('common.moveDown', { name: habit.name })"
             @click="move(group.items, index, 1)"
           >
             <ArrowDown class="size-4" />
-          </button>
-          <button
-            type="button"
-            class="text-ink-soft hover:text-ink hover:bg-mist flex size-11 items-center justify-center rounded-full transition-colors active:scale-90"
+          </BaseButton>
+          <BaseButton
+            variant="quiet"
+            icon
+            pill
+            class="hover:bg-mist"
             :aria-label="$t('common.openItem', { name: habit.name })"
             @click="emit('edit', habit)"
           >
             <Pencil class="size-4" />
-          </button>
-          <button
-            type="button"
-            class="text-ink-soft hover:text-ink hover:bg-mist flex size-11 items-center justify-center rounded-full transition-colors active:scale-90"
+          </BaseButton>
+          <BaseButton
+            variant="quiet"
+            icon
+            pill
+            class="hover:bg-mist"
             :aria-label="$t('common.archive')"
             @click="archive.mutate(habit.id)"
           >
             <Archive class="size-4" />
-          </button>
+          </BaseButton>
         </li>
       </ul>
     </section>
@@ -166,22 +174,24 @@ async function confirmDelete() {
           <ToneDot :fill="KIND_META[habit.kind].fill" />
           <span class="text-ink-soft flex-1 truncate text-sm">{{ habit.name }}</span>
 
-          <button
-            type="button"
-            class="text-ink-soft hover:text-ink hover:bg-mist flex size-11 items-center justify-center rounded-full transition-colors active:scale-90"
+          <BaseButton
+            variant="quiet"
+            icon
+            pill
+            class="hover:bg-mist"
             :aria-label="$t('common.restore')"
             @click="unarchive.mutate(habit.id)"
           >
             <RotateCcw class="size-4" />
-          </button>
-          <button
-            type="button"
+          </BaseButton>
+          <BaseButton
+            variant="unstyled"
             class="text-alert hover:bg-alert/10 flex size-11 items-center justify-center rounded-full transition-colors active:scale-90"
             :aria-label="$t('common.delete')"
             @click="askDelete(habit)"
           >
             <Trash2 class="size-4" />
-          </button>
+          </BaseButton>
         </li>
       </ul>
     </section>

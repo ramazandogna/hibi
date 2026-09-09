@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { BaseButton } from 'rei-kit'
 import { LEVELS } from '../levels'
 
 const { habitName } = defineProps<{ habitName: string }>()
@@ -16,10 +17,10 @@ const emit = defineEmits<{ select: [value: number] }>()
     </div>
 
     <div class="flex justify-between gap-1">
-      <button
+      <BaseButton
         v-for="level in LEVELS"
         :key="level.value"
-        type="button"
+        variant="unstyled"
         class="flex flex-1 flex-col items-center gap-1.5 py-1"
         :aria-label="
           $t('entry.levelLabel', { value: level.value, label: $t(`level.${level.value}`) })
@@ -33,7 +34,7 @@ const emit = defineEmits<{ select: [value: number] }>()
           {{ level.value }}
         </span>
         <span class="text-ink-soft text-[10px] leading-none">{{ $t(`level.${level.value}`) }}</span>
-      </button>
+      </BaseButton>
     </div>
   </section>
 </template>

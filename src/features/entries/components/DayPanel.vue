@@ -3,7 +3,7 @@ import { computed } from 'vue'
 import { Check } from 'lucide-vue-next'
 
 import type { Habit } from '@/features/habits/habit.types'
-import { ToneDot, formatDate, fromDateKey } from 'rei-kit'
+import { BaseButton, ToneDot, formatDate, fromDateKey } from 'rei-kit'
 import { KIND_META } from '@/shared/lib/kind'
 
 const { dateKey, habits, markedByHabit, valuesByHabit } = defineProps<{
@@ -44,15 +44,15 @@ const doneCount = computed(() => rows.value.filter((row) => row.isMarked).length
         <ToneDot :fill="KIND_META[row.habit.kind].fill" />
         <span class="text-ink flex-1 truncate text-sm">{{ row.habit.name }}</span>
 
-        <button
-          type="button"
+        <BaseButton
+          variant="unstyled"
           class="flex size-11 items-center justify-center rounded-xl transition-transform duration-100 active:scale-95"
           :class="
             row.isMarked
               ? [KIND_META[row.habit.kind].fill, 'text-white']
               : [KIND_META[row.habit.kind].empty, 'text-ink-soft']
           "
-          :aria-pressed="row.isMarked"
+          :pressed="row.isMarked"
           :aria-label="`${row.habit.name}, ${title}`"
           @click="
             KIND_META[row.habit.kind].isBinary
@@ -62,7 +62,7 @@ const doneCount = computed(() => rows.value.filter((row) => row.isMarked).length
         >
           <Check v-if="KIND_META[row.habit.kind].isBinary" class="size-4" />
           <span v-else class="text-sm font-semibold">{{ row.value ?? '–' }}</span>
-        </button>
+        </BaseButton>
       </li>
     </ul>
 

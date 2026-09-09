@@ -27,12 +27,12 @@ function submit() {
 <template>
   <div class="flex flex-col gap-5">
     <div class="flex justify-between gap-1">
-      <button
+      <BaseButton
         v-for="level in LEVELS"
         :key="level.value"
-        type="button"
+        variant="unstyled"
         class="flex flex-1 flex-col items-center gap-2 py-1"
-        :aria-pressed="selected === level.value"
+        :pressed="selected === level.value"
         :aria-label="
           $t('entry.levelLabel', { value: level.value, label: $t(`level.${level.value}`) })
         "
@@ -53,7 +53,7 @@ function submit() {
         >
           {{ $t(`level.${level.value}`) }}
         </span>
-      </button>
+      </BaseButton>
     </div>
 
     <textarea
@@ -67,10 +67,10 @@ function submit() {
     <BaseButton :disabled="selected === null" @click="submit">{{ $t('common.save') }}</BaseButton>
 
     <BaseButton
+      v-if="initialValue !== null"
       variant="link"
       size="xs"
       class="text-ink-soft hover:text-alert self-center"
-      v-if="initialValue !== null"
       @click="emit('remove')"
     >
       {{ $t('entry.removeEntry') }}

@@ -13,6 +13,7 @@ import { useWeekStart } from '@/features/profile/profile.queries'
 import YearHabitHeader from '@/features/stats/components/YearHabitHeader.vue'
 import YearHeatmap from '@/features/stats/components/YearHeatmap.vue'
 import {
+  BaseButton,
   BaseSheet,
   PageHeader,
   SectionHeading,
@@ -212,36 +213,36 @@ function onSelectDay(habitId: string, dateKey: string) {
   <div class="flex w-full flex-col gap-4">
     <PageHeader :title="String(year)">
       <template #title>
-        <button
-          type="button"
+        <BaseButton
+          variant="unstyled"
           class="header-action"
           :aria-label="$t('common.openItem', { name: $t('today.todayLabel') })"
           @click="dayPanelDate = todayKey()"
         >
           <span class="truncate">{{ year }}</span>
           <ChevronDown class="text-ink-soft size-4 shrink-0" aria-hidden="true" />
-        </button>
+        </BaseButton>
       </template>
       <template #left>
-        <button
-          type="button"
+        <BaseButton
+          variant="unstyled"
           class="text-ink-soft hover:text-ink p-2"
           :aria-label="$t('year.previous')"
           @click="year -= 1"
         >
           ‹
-        </button>
+        </BaseButton>
       </template>
       <template #right>
-        <button
-          type="button"
+        <BaseButton
+          variant="unstyled"
           class="text-ink-soft hover:text-ink p-2 disabled:opacity-30"
           :aria-label="$t('year.next')"
           :disabled="year >= currentYear"
           @click="year += 1"
         >
           ›
-        </button>
+        </BaseButton>
       </template>
     </PageHeader>
 
