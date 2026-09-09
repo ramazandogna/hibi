@@ -2,6 +2,8 @@ import type en from './en'
 
 const zh: typeof en = {
   common: {
+    deleted: '已删除',
+    failed: '出错了',
     close: '关闭',
     cancel: '取消',
     save: '保存',

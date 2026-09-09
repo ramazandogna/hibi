@@ -2,6 +2,8 @@ import type en from './en'
 
 const ja: typeof en = {
   common: {
+    deleted: '削除しました',
+    failed: 'エラーが発生しました',
     close: '閉じる',
     cancel: 'キャンセル',
     save: '保存',

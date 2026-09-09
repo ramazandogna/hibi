@@ -2,6 +2,8 @@ import type en from './en'
 
 const tr: typeof en = {
   common: {
+    deleted: 'Silindi',
+    failed: 'Bir şeyler ters gitti',
     close: 'Kapat',
     cancel: 'Vazgeç',
     save: 'Kaydet',

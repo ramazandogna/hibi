@@ -1,5 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/vue-query'
 
+import { reportDeleted, reportFailed, reportSaved } from '@/shared/lib/report'
+
 import {
   archiveHabit,
   createHabit,
@@ -36,7 +38,11 @@ export function useCreateHabit() {
 
   return useMutation({
     mutationFn: createHabit,
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: habitKeys.lists() }),
+    onSuccess: () => {
+      reportSaved()
+      return queryClient.invalidateQueries({ queryKey: habitKeys.lists() })
+    },
+    onError: reportFailed,
   })
 }
 
@@ -48,8 +54,10 @@ export function useUpdateHabit() {
     mutationFn: ({ id, patch }: { id: string; patch: HabitPatch }) => updateHabit(id, patch),
     onSuccess: (habit) => {
       queryClient.setQueryData(habitKeys.detail(habit.id), habit)
+      reportSaved()
       return queryClient.invalidateQueries({ queryKey: habitKeys.lists() })
     },
+    onError: reportFailed,
   })
 }
 
@@ -59,7 +67,11 @@ export function useArchiveHabit() {
 
   return useMutation({
     mutationFn: archiveHabit,
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: habitKeys.lists() }),
+    onSuccess: () => {
+      reportSaved()
+      return queryClient.invalidateQueries({ queryKey: habitKeys.lists() })
+    },
+    onError: reportFailed,
   })
 }
 
@@ -69,7 +81,11 @@ export function useDeleteHabit() {
 
   return useMutation({
     mutationFn: deleteHabit,
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: habitKeys.all }),
+    onSuccess: () => {
+      reportDeleted()
+      return queryClient.invalidateQueries({ queryKey: habitKeys.all })
+    },
+    onError: reportFailed,
   })
 }
 
@@ -87,7 +103,11 @@ export function useUnarchiveHabit() {
 
   return useMutation({
     mutationFn: unarchiveHabit,
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: habitKeys.lists() }),
+    onSuccess: () => {
+      reportSaved()
+      return queryClient.invalidateQueries({ queryKey: habitKeys.lists() })
+    },
+    onError: reportFailed,
   })
 }
 
