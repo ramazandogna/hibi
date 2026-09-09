@@ -27,12 +27,13 @@ const note = ref(initialNote)
 
     <BaseButton @click="emit('save', note.trim() || null)">{{ $t('entry.saveNote') }}</BaseButton>
 
-    <button
-      type="button"
-      class="text-ink-soft hover:text-alert self-center text-xs underline underline-offset-2 transition-colors"
+    <BaseButton
+      variant="link"
+      size="xs"
+      class="text-ink-soft hover:text-alert self-center"
       @click="emit('remove')"
     >
       {{ $t('entry.removeMark') }}
-    </button>
+    </BaseButton>
   </div>
 </template>

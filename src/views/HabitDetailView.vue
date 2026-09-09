@@ -12,6 +12,7 @@ import StreakBadge from '@/features/stats/components/StreakBadge.vue'
 import YearHeatmap from '@/features/stats/components/YearHeatmap.vue'
 import { useHabitStats } from '@/features/stats/use-habit-stats'
 import {
+  BaseButton,
   BaseSheet,
   SkeletonList,
   StatCard,
@@ -269,14 +270,15 @@ async function archiveAndLeave() {
         <HabitNoteTimeline v-else :notes="notes" :kind="habit.kind" />
       </section>
 
-      <button
-        type="button"
-        class="text-ink-soft hover:text-alert self-center text-xs underline underline-offset-2 transition-colors disabled:opacity-50"
+      <BaseButton
+        variant="link"
+        size="xs"
+        class="text-ink-soft hover:text-alert self-center"
         :disabled="archive.isPending.value"
         @click="archiveAndLeave"
       >
         {{ $t('habit.archiveHabit') }}
-      </button>
+      </BaseButton>
 
       <BaseSheet v-model="editOpen" :title="$t('habit.edit')">
         <HabitForm :key="habit.id" :habit="habit" @saved="editOpen = false" />

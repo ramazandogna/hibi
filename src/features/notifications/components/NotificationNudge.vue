@@ -3,7 +3,7 @@ import { computed, ref } from 'vue'
 import { BellRing, Share } from 'lucide-vue-next'
 
 import { useNotifications } from '../notifications'
-import { addDays, needsIosInstall, todayKey } from 'rei-kit'
+import { BaseButton, addDays, needsIosInstall, todayKey } from 'rei-kit'
 import { useInstall } from '@/features/pwa/install'
 
 /**
@@ -89,22 +89,13 @@ async function allow() {
         </div>
 
         <div class="flex items-center gap-2">
-          <button
-            v-if="!iosInstallNeeded"
-            type="button"
-            class="bg-sea rounded-full px-3.5 py-2 text-xs font-semibold text-white transition-transform duration-100 active:scale-95"
-            @click="allow"
-          >
+          <BaseButton v-if="!iosInstallNeeded" pill size="xs" @click="allow">
             {{ $t('notify.nudgeAction') }}
-          </button>
+          </BaseButton>
 
-          <button
-            type="button"
-            class="text-ink-soft hover:text-ink rounded-full px-3 py-2 text-xs font-medium transition-colors"
-            @click="snooze"
-          >
+          <BaseButton pill size="xs" variant="quiet" @click="snooze">
             {{ $t('notify.nudgeLater') }}
-          </button>
+          </BaseButton>
         </div>
       </div>
     </section>

@@ -3,7 +3,7 @@ import { computed, ref } from 'vue'
 import { Download, Share } from 'lucide-vue-next'
 
 import { useInstall } from '../install'
-import { addDays, todayKey } from 'rei-kit'
+import { BaseButton, addDays, todayKey } from 'rei-kit'
 
 const { canPrompt, needsManualSteps, prompt } = useInstall()
 
@@ -76,13 +76,9 @@ async function install() {
             {{ $t('install.action') }}
           </button>
 
-          <button
-            type="button"
-            class="text-ink-soft hover:text-ink rounded-full px-3 py-2 text-xs font-medium transition-colors"
-            @click="snooze"
-          >
+          <BaseButton pill size="xs" variant="quiet" @click="snooze">
             {{ $t('install.later') }}
-          </button>
+          </BaseButton>
         </div>
       </div>
     </section>

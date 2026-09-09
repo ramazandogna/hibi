@@ -66,13 +66,14 @@ function submit() {
 
     <BaseButton :disabled="selected === null" @click="submit">{{ $t('common.save') }}</BaseButton>
 
-    <button
+    <BaseButton
+      variant="link"
+      size="xs"
+      class="text-ink-soft hover:text-alert self-center"
       v-if="initialValue !== null"
-      type="button"
-      class="text-ink-soft hover:text-alert self-center text-xs underline underline-offset-2 transition-colors"
       @click="emit('remove')"
     >
       {{ $t('entry.removeEntry') }}
-    </button>
+    </BaseButton>
   </div>
 </template>
