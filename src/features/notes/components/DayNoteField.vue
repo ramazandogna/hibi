@@ -2,7 +2,7 @@
 import { ref, watch } from 'vue'
 
 import { useSaveNote } from '../notes.queries'
-import { useDebouncedCallback } from 'rei-kit'
+import { BaseTextarea, useDebouncedCallback } from 'rei-kit'
 
 const { dateKey, initialBody = '' } = defineProps<{
   dateKey: string
@@ -27,15 +27,15 @@ watch(body, (next) => debounced.run(next))
 
 <template>
   <div class="flex flex-col gap-1">
-    <label :for="`note-${dateKey}`" class="text-ink-soft text-xs">{{ $t('note.label') }}</label>
-
-    <textarea
-      :id="`note-${dateKey}`"
+    <BaseTextarea
       v-model="body"
+      variant="unstyled"
+      size="sm"
+      :label="$t('note.label')"
+      :rows="3"
       maxlength="500"
-      rows="3"
       :placeholder="$t('note.placeholder')"
-      class="border-hair bg-surface text-ink rounded-card focus-visible:outline-sea border p-2 text-sm focus-visible:outline-2 focus-visible:outline-offset-1"
+      class="border-hair bg-surface text-ink rounded-card focus-visible:outline-sea border p-2 focus-visible:outline-2 focus-visible:outline-offset-1"
     />
 
     <p class="text-ink-soft h-3 text-right text-[10px]" aria-live="polite">
