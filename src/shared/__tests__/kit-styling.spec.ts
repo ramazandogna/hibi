@@ -36,6 +36,14 @@ describe('rei-kit styling contract', () => {
     ).toEqual([])
   })
 
+  it("imports the kit's tokens rather than restating them", () => {
+    // Hibi kept its own copy of the roles, the dark variant and the whole
+    // phone shell -- byte-for-byte the kit's, because the kit was extracted
+    // from here. Two copies of one decision means a change to the shell in the
+    // kit cannot reach the app it came from.
+    expect(appCss).toMatch(/@import\s+['"]rei-kit\/tokens\.css['"]/)
+  })
+
   it("loads the kit's scoped component styles", () => {
     // BaseSheet's transitions and TabBar's layout live here. Without it the tab
     // bar keeps its markup and loses its position entirely.

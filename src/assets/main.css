@@ -1,5 +1,16 @@
 @import 'tailwindcss';
 
+/* Colour roles, the dark variant, the measures, the phone shell and the page
+   transitions.
+
+   Hibi carried its own copy of every one of these -- the shell geometry, the
+   slide curves, the reduced-motion block -- and they were byte-for-byte the
+   kit's, because the kit was extracted from this app. Two copies of the same
+   decision is one copy too many: a change to the shell in the kit could not
+   reach the app it came from. Everything below only redefines values; nothing
+   is renamed. */
+@import 'rei-kit/tokens.css';
+
 /* Scoped styles of the kit's components (BaseSheet, TabBar, ...). They ship as
    plain [data-v-*] rules, so nothing here can collide with Hibi's own CSS. */
 @import 'rei-kit/styles.css';
@@ -41,19 +52,15 @@
   --color-warning: var(--color-amber);
   --color-muted: var(--color-mist); /* sakin yüzey */
 
-  /* Ölçek */
-  --radius-cell: 3px;
-  --radius-card: 16px;
-  --radius-shell: 30px;
-  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  /* Ölçek. The radii and the font come from the kit; only this one is Hibi's,
+     because nothing in the kit knows about a phone shell's height. */
   --mobile-height: 100dvh;
 }
 
-/* ---- Gece modu: class tabanlı, sistem tabanlı değil ----
-   Kullanıcı Profil'den seçebilsin diye .dark class'ına bağlıyoruz.
-   İlk yüklemede tercihi okuyup <html> üzerine ekleyeceğiz (Adım 52). */
-@custom-variant dark (&:where(.dark, .dark *));
-
+/* ---- Gece modu ----
+   `@custom-variant dark` gelir kitten. Buradaki iş yalnızca değerler: kullanıcı
+   Profil'den seçebilsin diye tema .dark class'ına bağlı, sistem tercihine
+   değil. */
 .dark {
   --color-canvas: #07141a;
   --color-surface: #102630;
@@ -99,23 +106,11 @@
   }
 }
 
-/* Declared with @utility (not @layer utilities) so it can also be used from
-   @apply inside component styles. */
 /* The wordmark's gradient, reused as the app's primary surface so the logo and
-   the main actions read as the same brand. Declared with @utility so component
-   styles can @apply it. */
+   the main actions read as the same brand. Declared with @utility (not
+   @layer utilities) so component styles can @apply it. */
 @utility brand-gradient {
   @apply from-leaf via-sea to-deep bg-gradient-to-r;
-}
-
-/* Scrolling stays, the bar goes. A visible track cuts across the year grid and
-   reads as a stray line among the cells. */
-@utility no-scrollbar {
-  scrollbar-width: none;
-
-  &::-webkit-scrollbar {
-    display: none;
-  }
 }
 
 @layer components {
@@ -129,81 +124,5 @@
   :focus-visible {
     outline: 2px solid var(--color-sea);
     outline-offset: 2px;
-  }
-
-  /* Geometry of the phone shell. Shared by the shell itself and by overlays
-     that must line up with it (BaseSheet teleports outside the app tree). */
-  .shell-frame {
-    height: 100dvh;
-    @apply w-full max-w-[430px] md:h-[880px] md:max-h-[92vh];
-  }
-
-  /* ---- Screen wrapper ----
-     Lands on every view's root element (see App.vue), so this is the one place
-     that owns the scroll box, the side gutter and the room the floating tab bar
-     needs at the bottom. Views only decide their own inner layout. */
-  /* Auth screens have no tab bar and no action button, so they get none of the
-     bottom clearance the app screens need. */
-  .page-auth {
-    @apply no-scrollbar h-full w-full overflow-y-auto px-4;
-  }
-
-  .page-slide {
-    /* pb clears the floating tab bar and the action button above it, so the
-       last row of any list stays reachable. */
-    @apply no-scrollbar h-full w-full overflow-y-auto px-4 pb-44;
-  }
-
-  .slide-forward-enter-active,
-  .slide-forward-leave-active,
-  .slide-backward-enter-active,
-  .slide-backward-leave-active {
-    position: absolute;
-    inset: 0;
-    will-change: transform, opacity;
-    /* iOS sheet curve: quick take-off, long soft landing. */
-    transition:
-      transform 340ms cubic-bezier(0.32, 0.72, 0, 1),
-      opacity 340ms cubic-bezier(0.32, 0.72, 0, 1),
-      filter 340ms cubic-bezier(0.32, 0.72, 0, 1);
-  }
-
-  /* The incoming screen travels the full width; the outgoing one moves a
-     quarter of it and dims. The speed difference reads as depth. */
-  .slide-forward-enter-from {
-    transform: translate3d(100%, 0, 0);
-  }
-  .slide-forward-leave-to {
-    transform: translate3d(-25%, 0, 0) scale(0.96);
-    opacity: 0;
-    filter: brightness(0.92);
-  }
-
-  .slide-backward-enter-from {
-    transform: translate3d(-100%, 0, 0);
-  }
-  .slide-backward-leave-to {
-    transform: translate3d(25%, 0, 0) scale(0.96);
-    opacity: 0;
-    filter: brightness(0.92);
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .slide-forward-enter-active,
-  .slide-forward-leave-active,
-  .slide-backward-enter-active,
-  .slide-backward-leave-active {
-    /* Not 0ms: some browsers never fire transitionend at zero, which would
-       leave Vue waiting before removing the element. */
-    transition-duration: 1ms;
-  }
-
-  .slide-forward-enter-from,
-  .slide-backward-enter-from,
-  .slide-forward-leave-to,
-  .slide-backward-leave-to {
-    transform: none;
-    filter: none;
   }
 }
