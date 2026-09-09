@@ -4,7 +4,7 @@ import { BellRing, Clock, Share, Wifi } from 'lucide-vue-next'
 
 import { showNotification, useNotifications } from '../notifications'
 import { hasPushSubscription } from '../push'
-import { BaseButton, SettingsGroup, SettingsRow, needsIosInstall } from 'rei-kit'
+import { BaseButton, BaseCheckbox, SettingsGroup, SettingsRow, needsIosInstall } from 'rei-kit'
 import { pushConfigured, subscribeToPush, unsubscribeFromPush } from '../push'
 import { t } from '@/shared/i18n'
 
@@ -91,10 +91,7 @@ async function sendTest() {
       <div v-else class="flex flex-col gap-3">
         <!-- Permission and the switch are separate: someone can want reminders
              off for a week without revoking a browser permission to get it. -->
-        <label class="flex cursor-pointer items-center gap-3">
-          <input v-model="isEnabled" type="checkbox" class="accent-sea size-4" />
-          <span class="text-ink text-sm">{{ $t('notify.enabled') }}</span>
-        </label>
+        <BaseCheckbox v-model="isEnabled" :label="$t('notify.enabled')" />
 
         <p class="text-ink-soft flex items-center gap-1.5 text-xs">
           <Clock class="size-3.5 shrink-0" aria-hidden="true" />
