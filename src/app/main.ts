@@ -3,14 +3,15 @@ import { createApp } from 'vue'
 import { createPinia } from 'pinia'
 import { VueQueryPlugin } from '@tanstack/vue-query'
 import { queryClient } from '@/app/providers/query.ts'
+import { watchInstallability } from 'rei-kit/pwa'
 
 import App from './App.vue'
 import router from './router/router.ts'
 import { useAuthStore } from '@/features/auth/auth.store'
 import { i18n, loadActiveLocale } from '@/shared/i18n'
-// Side-effect import: registers the beforeinstallprompt listener before Vue
-// mounts, because the event fires once and early.
-import '@/features/pwa/install'
+/* Before Vue mounts: `beforeinstallprompt` fires once and early, so a listener
+   attached when a component mounts has usually already missed it. */
+watchInstallability()
 
 async function bootstrap() {
   const app = createApp(App)

@@ -1,3 +1,5 @@
+import { createTabTransition } from 'rei-kit/app'
+
 import type { AppTab } from '@/shared/types/navigation.types'
 
 /**
@@ -15,3 +17,11 @@ export const TAB_PATH: Record<AppTab, string> = {
   year: '/year',
   profile: '/profile',
 }
+
+/**
+ * Which way the screens slide, derived from the order above.
+ *
+ * The thirty-four lines that did this used to live in `tab-transition.ts`,
+ * character for character the same as Kakei's. rei-kit 0.13.0 has them.
+ */
+export const tabTransition = createTabTransition(TAB_ORDER)

@@ -4,7 +4,7 @@ import { BellRing, Share } from 'lucide-vue-next'
 
 import { useNotifications } from '../notifications'
 import { BaseButton, addDays, needsIosInstall, todayKey } from 'rei-kit'
-import { useInstall } from '@/features/pwa/install'
+import { useInstall } from 'rei-kit/pwa'
 
 /**
  * The occasional ask for notification permission.
