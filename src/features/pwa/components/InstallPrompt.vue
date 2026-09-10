@@ -69,8 +69,10 @@ async function install() {
                from script, so a button here could only fail. -->
           <BaseButton
             v-if="canPrompt"
-            variant="unstyled"
-            class="bg-leaf rounded-full px-3.5 py-2 text-xs font-semibold text-white transition-transform duration-100 active:scale-95"
+            variant="positive"
+            pill
+            size="xs"
+            class="font-semibold"
             @click="install"
           >
             {{ $t('install.action') }}

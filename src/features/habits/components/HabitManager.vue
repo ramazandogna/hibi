@@ -185,8 +185,11 @@ async function confirmDelete() {
             <RotateCcw class="size-4" />
           </BaseButton>
           <BaseButton
-            variant="unstyled"
-            class="text-alert hover:bg-alert/10 flex size-11 items-center justify-center rounded-full transition-colors active:scale-90"
+            variant="destructive"
+            icon
+            pill
+            size="md"
+            class="text-alert"
             :aria-label="$t('common.delete')"
             @click="askDelete(habit)"
           >

@@ -283,8 +283,10 @@ function openHabit(habitId: string) {
     <PageHeader :title="todayTitle">
       <template #title>
         <BaseButton
-          variant="unstyled"
-          class="header-action"
+          variant="row"
+          pill
+          size="sm"
+          class="w-auto min-w-0 gap-1"
           :aria-label="$t('common.openItem', { name: todayTitle })"
           @click="dayPanelOpen = true"
         >

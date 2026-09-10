@@ -152,8 +152,11 @@ async function archiveAndLeave() {
   <div class="flex w-full flex-col gap-5">
     <header class="flex items-center justify-between">
       <BaseButton
-        variant="unstyled"
-        class="text-ink-soft hover:text-ink hover:bg-mist flex size-11 shrink-0 items-center justify-center rounded-full transition-colors active:scale-90"
+        variant="quiet"
+        icon
+        pill
+        size="md"
+        class="shrink-0"
         :aria-label="$t('common.back')"
         @click="router.back()"
       >
@@ -162,8 +165,11 @@ async function archiveAndLeave() {
 
       <BaseButton
         v-if="habit"
-        variant="unstyled"
-        class="text-ink-soft hover:text-ink hover:bg-mist flex size-11 shrink-0 items-center justify-center rounded-full transition-colors active:scale-90"
+        variant="quiet"
+        icon
+        pill
+        size="md"
+        class="shrink-0"
         :aria-label="$t('habit.edit')"
         @click="editOpen = true"
       >

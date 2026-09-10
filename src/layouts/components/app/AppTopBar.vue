@@ -38,8 +38,10 @@ const PERKS = [
       </RouterLink>
 
       <BaseButton
-        variant="unstyled"
-        class="text-amber/70 hover:bg-amber/10 hover:text-amber rounded-card flex size-9 items-center justify-center transition-colors active:scale-90"
+        variant="quiet"
+        icon
+        size="sm"
+        class="text-amber/70 hover:bg-amber/10 hover:text-amber"
         :aria-label="$t('topbar.premium')"
         @click="premiumOpen = true"
       >

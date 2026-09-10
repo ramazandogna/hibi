@@ -214,8 +214,10 @@ function onSelectDay(habitId: string, dateKey: string) {
     <PageHeader :title="String(year)">
       <template #title>
         <BaseButton
-          variant="unstyled"
-          class="header-action"
+          variant="row"
+          pill
+          size="sm"
+          class="w-auto min-w-0 gap-1"
           :aria-label="$t('common.openItem', { name: $t('today.todayLabel') })"
           @click="dayPanelDate = todayKey()"
         >
@@ -225,8 +227,9 @@ function onSelectDay(habitId: string, dateKey: string) {
       </template>
       <template #left>
         <BaseButton
-          variant="unstyled"
-          class="text-ink-soft hover:text-ink p-2"
+          variant="quiet"
+          icon
+          size="sm"
           :aria-label="$t('year.previous')"
           @click="year -= 1"
         >
@@ -235,8 +238,10 @@ function onSelectDay(habitId: string, dateKey: string) {
       </template>
       <template #right>
         <BaseButton
-          variant="unstyled"
-          class="text-ink-soft hover:text-ink p-2 disabled:opacity-30"
+          variant="quiet"
+          icon
+          size="sm"
+          class="disabled:opacity-30"
           :aria-label="$t('year.next')"
           :disabled="year >= currentYear"
           @click="year += 1"

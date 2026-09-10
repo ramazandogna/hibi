@@ -16,8 +16,11 @@ const router = useRouter()
     <PageHeader :title="$t('settings.title')">
       <template #left>
         <BaseButton
-          variant="unstyled"
-          class="text-ink-soft hover:text-ink hover:bg-mist flex size-10 items-center justify-center rounded-full transition-colors active:scale-90"
+          variant="quiet"
+          icon
+          pill
+          size="sm"
+          class="size-10"
           :aria-label="$t('common.back')"
           @click="router.back()"
         >
