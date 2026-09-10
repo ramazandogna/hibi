@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { BaseCard } from 'rei-kit'
 import { KIND_META } from '@/shared/lib/kind'
 import type { HabitKind } from '@/shared/lib/kind'
 
@@ -28,11 +29,13 @@ defineProps<{ notes: readonly TimelineNote[]; kind: HabitKind }>()
 
       <p class="text-ink-soft mb-1.5 text-xs font-medium tabular-nums">{{ note.date }}</p>
 
-      <blockquote
-        class="border-hair bg-surface rounded-card text-ink border p-3 text-sm leading-relaxed whitespace-pre-wrap shadow-sm"
+      <BaseCard
+        as="blockquote"
+        padding="sm"
+        class="text-ink text-sm leading-relaxed whitespace-pre-wrap shadow-sm"
       >
         {{ note.body }}
-      </blockquote>
+      </BaseCard>
     </li>
   </ol>
 </template>

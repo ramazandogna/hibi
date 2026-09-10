@@ -11,6 +11,7 @@ import type { Habit } from '@/features/habits/habit.types'
 import { useProfile, useUpdateProfile } from '@/features/profile/profile.queries'
 import {
   BaseButton,
+  BaseCard,
   BaseInput,
   BaseSheet,
   PageHeader,
@@ -105,7 +106,7 @@ async function logout() {
 
     <!-- The identity block carries the brand gradient because it is the one
          place in the app that is about the person rather than the data. -->
-    <section class="border-hair bg-surface rounded-card flex items-center gap-4 border p-4">
+    <BaseCard as="section" padding="md" class="flex items-center gap-4">
       <span
         class="brand-gradient flex size-14 shrink-0 items-center justify-center rounded-full text-xl font-semibold text-white"
         aria-hidden="true"
@@ -125,7 +126,7 @@ async function logout() {
           {{ $t('profile.trackingSince', { date: memberSince }) }}
         </p>
       </div>
-    </section>
+    </BaseCard>
 
     <div class="flex gap-2">
       <StatCard :value="String(habits?.length ?? 0)" :label="$t('profile.activeHabits')" />
