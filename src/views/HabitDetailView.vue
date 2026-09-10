@@ -13,6 +13,7 @@ import YearHeatmap from '@/features/stats/components/YearHeatmap.vue'
 import { useHabitStats } from '@/features/stats/use-habit-stats'
 import {
   BaseButton,
+  BaseCard,
   BaseSheet,
   SkeletonList,
   StatCard,
@@ -238,7 +239,7 @@ async function archiveAndLeave() {
           {{ $t('habit.activity') }}
         </h2>
 
-        <div class="border-hair bg-surface rounded-card border p-3">
+        <BaseCard padding="sm">
           <YearHeatmap
             :days="window365"
             :kind="habit.kind"
@@ -246,7 +247,7 @@ async function archiveAndLeave() {
             :values="values"
             :week-starts-on="weekStartsOn"
           />
-        </div>
+        </BaseCard>
       </section>
 
       <section class="flex flex-col gap-3">
