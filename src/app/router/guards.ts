@@ -1,27 +1,19 @@
-import type { NavigationGuard, NavigationHookAfter } from 'vue-router'
+import { createAuthGuard, createTitleGuard } from 'rei-kit/app'
+
 import { useAuthStore } from '@/features/auth/auth.store'
-import { safeRedirect } from 'rei-kit'
 
-export const authGuard: NavigationGuard = (to) => {
-  const auth = useAuthStore()
+/**
+ * Who may see what, and where the rest go.
+ *
+ * The kit's guard: the login route is this app's, the rest is the same two
+ * questions every app asks. The return path goes through `toRedirectPath`
+ * inside it — this app used to pass `fullPath` straight into the query string,
+ * which put an OAuth fragment, and the tokens in it, one request away from the
+ * server's access log.
+ */
+export const authGuard = createAuthGuard({
+  isAuthenticated: () => useAuthStore().isAuthenticated,
+  signIn: { name: 'LoginView' },
+})
 
-  if (to.meta.requiresAuth && !auth.isAuthenticated) {
-    return { name: 'LoginView', query: { redirect: to.fullPath } }
-  }
-
-  return true
-}
-
-export const guestGuard: NavigationGuard = (to) => {
-  const auth = useAuthStore()
-
-  if (to.meta.guestOnly && auth.isAuthenticated) {
-    return safeRedirect(to.query.redirect)
-  }
-
-  return true
-}
-
-export const titleGuard: NavigationHookAfter = (to) => {
-  document.title = `${to.meta.title} · Hibi`
-}
+export const titleGuard = createTitleGuard('Hibi')

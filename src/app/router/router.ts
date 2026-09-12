@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import { authGuard, guestGuard, titleGuard } from './guards'
+import { authGuard, titleGuard } from './guards'
 import { tabTransition } from '@/shared/lib/tabs'
 
 const router = createRouter({
@@ -123,7 +123,6 @@ const router = createRouter({
 })
 
 router.beforeEach(authGuard)
-router.beforeEach(guestGuard)
 router.afterEach(titleGuard)
 router.afterEach((to, from) => {
   tabTransition.resolve(to.meta.tab, from.meta.tab)
