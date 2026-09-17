@@ -36,27 +36,6 @@ const tr: typeof en = {
 
   topbar: {
     settings: 'Ayarlar',
-    premium: 'Plus',
-  },
-
-  premium: {
-    title: 'Hibi Plus',
-    subtitle: 'Alışkanlık kurmak için gereken her şey ücretsiz ve öyle kalacak.',
-    name: 'Plus',
-    lead: 'Geçmişin konuşmaya başladığında',
-    price: 'Yakında',
-    note: 'Burada henüz satılan bir şey yok.',
-    featureInsights: 'Puanların ile alışkanlıkların arasındaki tüm örüntüler',
-    featureRecap: 'Tekrar okumaya değer bir yıllık özet',
-    featureSearch: 'Yazdığın tüm notlarda arama',
-    featureReminders: 'Her alışkanlık için kendi hatırlatma saatin',
-    cta: 'Yakında',
-    freeTitle: 'Her zaman ücretsiz',
-    freeHabits: 'Sınırsız alışkanlık ve günlük işaretleme',
-    freeNotes: 'Her güne not',
-    freeViews: 'Bugün, Hafta ve Yıl',
-    freeReminders: 'Sabah ve akşam hatırlatmaları',
-    freeExport: 'Verilerinin tamamını dışa aktarma',
   },
 
   kind: {
@@ -137,7 +116,6 @@ const tr: typeof en = {
     needsRating:
       'Her gün puanladığın bir alışkanlık ekle — ruh hâli, enerji, uyku — Hibi onunla birlikte neyin değiştiğini göstersin.',
     needsTime: 'Birkaç hafta daha puanlamaya devam et, örüntüler burada görünmeye başlayacak.',
-    locked: 'Plus ile {count} tane daha',
   },
 
   habit: {

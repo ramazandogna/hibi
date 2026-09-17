@@ -4,7 +4,6 @@ import { defineAsyncComponent, onMounted, ref, watch } from 'vue'
 import { Plus } from 'lucide-vue-next'
 
 import { useOnboarding } from '@/features/onboarding/onboarding'
-import { usePlusSheet } from '@/features/premium/plus-sheet'
 import { useReminders } from '@/features/notifications/use-reminders'
 import { BaseSheet } from 'rei-kit'
 import { FabButton, OfflineBanner } from 'rei-kit/app'
@@ -26,8 +25,6 @@ const OnboardingTour = defineAsyncComponent(
   () => import('@/features/onboarding/components/OnboardingTour.vue'),
 )
 
-const PlusSheet = defineAsyncComponent(() => import('@/features/premium/components/PlusSheet.vue'))
-
 useReminders()
 
 // First run only. Mounted here rather than in a view so it survives tab
@@ -45,13 +42,6 @@ onMounted(tour.openIfFirstRun)
 const tourMounted = ref(false)
 watch(tour.isOpen, (open) => {
   if (open) tourMounted.value = true
-})
-
-/** Same latch as the guide: most sessions never open Plus, so its chunk waits. */
-const plus = usePlusSheet()
-const plusMounted = ref(false)
-watch(plus.isOpen, (open) => {
-  if (open) plusMounted.value = true
 })
 
 /** Creating a habit is reachable from every screen, not just Profile. */
@@ -78,8 +68,6 @@ const createOpen = ref(false)
     </FabButton>
 
     <OnboardingTour v-if="tourMounted" />
-
-    <PlusSheet v-if="plusMounted" />
 
     <BaseSheet v-model="createOpen" :title="$t('habit.new')" :subtitle="$t('habit.newSubtitle')">
       <HabitForm @saved="createOpen = false" />

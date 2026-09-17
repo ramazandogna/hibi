@@ -40,27 +40,6 @@ const en = {
 
   topbar: {
     settings: 'Settings',
-    premium: 'Plus',
-  },
-
-  premium: {
-    title: 'Hibi Plus',
-    subtitle: 'Everything you need to build a habit is free, and stays free.',
-    name: 'Plus',
-    lead: 'For when your history starts to talk',
-    price: 'Soon',
-    note: 'Nothing here is for sale yet.',
-    featureInsights: 'Every pattern between your ratings and your habits',
-    featureRecap: 'A Year in Review worth reading back',
-    featureSearch: 'Search every note you have written',
-    featureReminders: 'A reminder time of your own for each habit',
-    cta: 'Coming soon',
-    freeTitle: 'Always free',
-    freeHabits: 'Unlimited habits and daily check-ins',
-    freeNotes: 'Notes on any day',
-    freeViews: 'Today, Week and Year',
-    freeReminders: 'Morning and evening reminders',
-    freeExport: 'A full export of your data',
   },
 
   kind: {
@@ -141,7 +120,6 @@ const en = {
     needsRating:
       'Add a habit you rate each day — mood, energy, sleep — and Hibi will show what moves with it.',
     needsTime: 'Keep rating for a few more weeks and patterns will start to show here.',
-    locked: '{count} more with Plus',
   },
 
   habit: {

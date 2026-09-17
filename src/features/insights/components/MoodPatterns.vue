@@ -1,12 +1,10 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import { Lock, Sparkles } from 'lucide-vue-next'
-import { BaseButton, BaseCard, toDateKey } from 'rei-kit'
+import { Sparkles } from 'lucide-vue-next'
+import { BaseCard, toDateKey } from 'rei-kit'
 
 import type { Entry } from '@/features/entries/entry.types'
 import type { Habit } from '@/features/habits/habit.types'
-import { usePlusSheet } from '@/features/premium/plus-sheet'
-import { usePlus } from '@/features/premium/premium.queries'
 import { intlLocale, t } from '@/shared/i18n'
 import { findMoodPatterns } from '../mood-patterns'
 
@@ -16,9 +14,6 @@ const { habits, entries, from, to } = defineProps<{
   from: string
   to: string
 }>()
-
-const { hasPlus } = usePlus()
-const { openPlus } = usePlusSheet()
 
 const hasRating = computed(() => habits.some((habit) => habit.kind === 'scale'))
 const hasBinary = computed(() => habits.some((habit) => habit.kind !== 'scale'))
@@ -36,13 +31,13 @@ const patterns = computed(() =>
 )
 
 /**
- * The strongest pattern is free.
+ * The strongest few, not all of them.
  *
- * Seeing one real sentence about your own life is what makes the rest worth
- * wanting; a blurred placeholder would ask people to pay for a promise.
+ * With several rating habits the pairs multiply quickly, and past three the
+ * card stops reading as a finding and starts reading as a table.
  */
-const shown = computed(() => (hasPlus.value ? patterns.value : patterns.value.slice(0, 1)))
-const lockedCount = computed(() => patterns.value.length - shown.value.length)
+const MAX_SHOWN = 3
+const shown = computed(() => patterns.value.slice(0, MAX_SHOWN))
 
 const nameById = computed(() => new Map(habits.map((habit) => [habit.id, habit.name])))
 
@@ -98,17 +93,6 @@ const lines = computed(() =>
           <p class="text-ink-soft text-xs">{{ line.contrast }} {{ line.basis }}</p>
         </li>
       </ul>
-
-      <BaseButton
-        v-if="lockedCount > 0"
-        variant="ghost"
-        size="sm"
-        class="self-start"
-        @click="openPlus('insights')"
-      >
-        <Lock class="size-4" aria-hidden="true" />
-        {{ $t('insights.locked', { count: lockedCount }) }}
-      </BaseButton>
 
       <p class="text-ink-soft text-xs">{{ $t('insights.caveat') }}</p>
     </template>

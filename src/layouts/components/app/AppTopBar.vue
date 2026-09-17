@@ -1,12 +1,8 @@
 <script lang="ts" setup>
-import { Crown, Settings } from 'lucide-vue-next'
+import { Settings } from 'lucide-vue-next'
 import { RouterLink } from 'vue-router'
 
-import { BaseButton } from 'rei-kit'
-import { usePlusSheet } from '@/features/premium/plus-sheet'
 import BrandMark from '@/shared/ui/BrandMark.vue'
-
-const { openPlus } = usePlusSheet()
 </script>
 
 <template>
@@ -26,17 +22,6 @@ const { openPlus } = usePlusSheet()
       >
         <Settings class="size-[18px]" />
       </RouterLink>
-
-      <BaseButton
-        variant="quiet"
-        icon
-        size="sm"
-        class="text-amber/70 hover:bg-amber/10 hover:text-amber"
-        :aria-label="$t('topbar.premium')"
-        @click="openPlus('topbar')"
-      >
-        <Crown class="size-[18px]" />
-      </BaseButton>
     </div>
   </header>
 </template>

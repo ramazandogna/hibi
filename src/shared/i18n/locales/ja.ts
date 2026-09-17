@@ -36,27 +36,6 @@ const ja: typeof en = {
 
   topbar: {
     settings: '設定',
-    premium: 'Plus',
-  },
-
-  premium: {
-    title: 'Hibi Plus',
-    subtitle: '習慣づくりに必要なものはすべて無料で、これからも無料です。',
-    name: 'Plus',
-    lead: '記録が語り始めたときに',
-    price: '近日公開',
-    note: '現在販売しているものはありません。',
-    featureInsights: '評価と習慣のあいだのすべてのパターン',
-    featureRecap: '読み返したくなる年間まとめ',
-    featureSearch: 'これまでのメモをすべて検索',
-    featureReminders: '習慣ごとに好きなリマインド時間',
-    cta: '近日公開',
-    freeTitle: 'ずっと無料',
-    freeHabits: '習慣の数も毎日の記録も無制限',
-    freeNotes: 'どの日にもメモ',
-    freeViews: '今日・週・年',
-    freeReminders: '朝と夜のリマインダー',
-    freeExport: 'データのすべてをエクスポート',
   },
 
   kind: {
@@ -137,7 +116,6 @@ const ja: typeof en = {
     needsRating:
       '気分・体力・睡眠など、毎日評価する習慣を追加すると、それと一緒に動くものが表示されます。',
     needsTime: 'あと数週間評価を続けると、ここにパターンが表示され始めます。',
-    locked: 'Plusであと{count}件',
   },
 
   habit: {

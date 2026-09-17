@@ -11,12 +11,7 @@
  */
 
 export type EventName =
-  | 'view_opened'
-  | 'habit_created'
-  | 'entry_marked'
-  | 'note_written'
-  | 'push_subscribed'
-  | 'plus_opened'
+  'view_opened' | 'habit_created' | 'entry_marked' | 'note_written' | 'push_subscribed'
 
 export type EventProps = Record<string, string | number | boolean>
 

@@ -36,27 +36,6 @@ const zh: typeof en = {
 
   topbar: {
     settings: '设置',
-    premium: 'Plus',
-  },
-
-  premium: {
-    title: 'Hibi Plus',
-    subtitle: '养成习惯所需的一切都免费，并将一直免费。',
-    name: 'Plus',
-    lead: '当你的记录开始说话时',
-    price: '即将推出',
-    note: '目前没有任何付费内容。',
-    featureInsights: '评分与习惯之间的全部规律',
-    featureRecap: '值得回看的年度回顾',
-    featureSearch: '搜索你写过的所有笔记',
-    featureReminders: '为每个习惯单独设置提醒时间',
-    cta: '即将推出',
-    freeTitle: '永久免费',
-    freeHabits: '不限数量的习惯与每日打卡',
-    freeNotes: '每天都能写笔记',
-    freeViews: '今天、本周与全年',
-    freeReminders: '早晚提醒',
-    freeExport: '完整导出你的数据',
   },
 
   kind: {
@@ -136,7 +115,6 @@ const zh: typeof en = {
     caveat: '二者一同变化，并不代表其中一个导致了另一个。',
     needsRating: '添加一个每天评分的习惯（心情、精力、睡眠），Hibi 会显示和它一起变化的事情。',
     needsTime: '再坚持评分几周，这里就会开始出现规律。',
-    locked: 'Plus 可再看 {count} 条',
   },
 
   habit: {
