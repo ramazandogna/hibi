@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/vue-query'
 
 import { reportDeleted, reportFailed, reportSaved } from '@/shared/lib/report'
+import { track } from '@/shared/lib/track'
 
 import {
   archiveHabit,
@@ -38,8 +39,9 @@ export function useCreateHabit() {
 
   return useMutation({
     mutationFn: createHabit,
-    onSuccess: () => {
+    onSuccess: (habit) => {
       reportSaved()
+      track('habit_created', { kind: habit.kind })
       return queryClient.invalidateQueries({ queryKey: habitKeys.lists() })
     },
     onError: reportFailed,

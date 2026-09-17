@@ -76,6 +76,30 @@ export type Database = {
           },
         ]
       }
+      events: {
+        Row: {
+          created_at: string
+          id: number
+          name: string
+          props: Json
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: never
+          name: string
+          props?: Json
+          user_id?: string
+        }
+        Update: {
+          created_at?: string
+          id?: never
+          name?: string
+          props?: Json
+          user_id?: string
+        }
+        Relationships: []
+      }
       habits: {
         Row: {
           archived_at: string | null

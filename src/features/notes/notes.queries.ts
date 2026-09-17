@@ -2,6 +2,8 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/vue-query'
 import { computed, toValue } from 'vue'
 import type { MaybeRefOrGetter } from 'vue'
 
+import { track } from '@/shared/lib/track'
+
 import { deleteNote, listNotesInRange, upsertNote } from './notes.api'
 import { noteKeys } from './notes.keys'
 
@@ -35,6 +37,9 @@ export function useSaveNote() {
 
       return trimmed ? upsertNote(dateKey, trimmed).then(() => undefined) : deleteNote(dateKey)
     },
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: noteKeys.all }),
+    onSuccess: (_result, { body }) => {
+      if (body.trim()) track('note_written', { on: 'day' })
+      return queryClient.invalidateQueries({ queryKey: noteKeys.all })
+    },
   })
 }

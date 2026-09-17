@@ -1,6 +1,7 @@
 import { activeLocale } from '@/shared/i18n'
 import { toAppError } from 'rei-kit'
 import { supabase } from '@/shared/lib/supabase'
+import { track } from '@/shared/lib/track'
 
 /**
  * The VAPID public key.
@@ -83,6 +84,7 @@ export async function subscribeToPush(): Promise<boolean> {
 
     if (error) throw toAppError(error)
 
+    track('push_subscribed')
     return true
   } catch {
     // A failed subscription is not worth an error screen: local reminders still

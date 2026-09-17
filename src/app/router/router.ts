@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import { authGuard, titleGuard } from './guards'
 import { tabTransition } from '@/shared/lib/tabs'
+import { track } from '@/shared/lib/track'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -127,5 +128,6 @@ router.afterEach(titleGuard)
 router.afterEach((to, from) => {
   tabTransition.resolve(to.meta.tab, from.meta.tab)
 })
+router.afterEach((to) => track('view_opened', { screen: String(to.name ?? 'unknown') }))
 
 export default router

@@ -4,6 +4,8 @@ import { keepPreviousData } from '@tanstack/vue-query'
 import { computed, toValue } from 'vue'
 import type { MaybeRefOrGetter } from 'vue'
 
+import { track } from '@/shared/lib/track'
+
 import { clearEntry, listEntriesInRange, setEntry } from './entries.api'
 import { entryKeys } from './entries.keys'
 import type { Entry } from './entry.types'
@@ -112,6 +114,11 @@ export function useSetEntry() {
       for (const snapshot of context?.snapshots ?? []) {
         queryClient.setQueryData(snapshot.queryKey, snapshot.data)
       }
+    },
+
+    onSuccess: (_entry, vars) => {
+      track('entry_marked')
+      if (vars.note?.trim()) track('note_written', { on: 'entry' })
     },
 
     onSettled: () => queryClient.invalidateQueries({ queryKey: entryKeys.all }),
