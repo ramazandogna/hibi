@@ -36,16 +36,27 @@ const zh: typeof en = {
 
   topbar: {
     settings: '设置',
-    premium: '会员',
+    premium: 'Plus',
   },
 
   premium: {
-    title: 'Hibi 会员',
-    subtitle: '这些功能需要服务器支持，暂未开放。',
-    reminders: '在合适时间送达的提醒',
-    recaps: '真正值得一读的年度回顾',
-    insights: '覆盖全部习惯的数据洞察',
-    soon: '敬请期待',
+    title: 'Hibi Plus',
+    subtitle: '养成习惯所需的一切都免费，并将一直免费。',
+    name: 'Plus',
+    lead: '当你的记录开始说话时',
+    price: '即将推出',
+    note: '目前没有任何付费内容。',
+    featureInsights: '评分与习惯之间的全部规律',
+    featureRecap: '值得回看的年度回顾',
+    featureSearch: '搜索你写过的所有笔记',
+    featureReminders: '为每个习惯单独设置提醒时间',
+    cta: '即将推出',
+    freeTitle: '永久免费',
+    freeHabits: '不限数量的习惯与每日打卡',
+    freeNotes: '每天都能写笔记',
+    freeViews: '今天、本周与全年',
+    freeReminders: '早晚提醒',
+    freeExport: '完整导出你的数据',
   },
 
   kind: {
@@ -113,6 +124,19 @@ const zh: typeof en = {
     noteLegend: '有笔记的日子 — 点按查看',
     less: '少',
     more: '多',
+  },
+
+  insights: {
+    title: '规律',
+    buildMarked: '完成“{habit}”的日子里，“{rating}”平均为 {marked}。',
+    buildUnmarked: '没完成的日子为 {unmarked}。',
+    quitMarked: '在“{habit}”上破戒的日子里，“{rating}”平均为 {marked}。',
+    quitUnmarked: '坚持住的日子为 {unmarked}。',
+    basis: '基于 {days} 天的评分。',
+    caveat: '二者一同变化，并不代表其中一个导致了另一个。',
+    needsRating: '添加一个每天评分的习惯（心情、精力、睡眠），Hibi 会显示和它一起变化的事情。',
+    needsTime: '再坚持评分几周，这里就会开始出现规律。',
+    locked: 'Plus 可再看 {count} 条',
   },
 
   habit: {

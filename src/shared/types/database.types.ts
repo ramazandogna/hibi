@@ -76,6 +76,39 @@ export type Database = {
           },
         ]
       }
+      entitlements: {
+        Row: {
+          current_period_end: string | null
+          plan: string
+          provider: string
+          provider_customer_id: string | null
+          provider_sub_id: string | null
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          current_period_end?: string | null
+          plan: string
+          provider: string
+          provider_customer_id?: string | null
+          provider_sub_id?: string | null
+          status: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          current_period_end?: string | null
+          plan?: string
+          provider?: string
+          provider_customer_id?: string | null
+          provider_sub_id?: string | null
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       events: {
         Row: {
           created_at: string
@@ -204,6 +237,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      has_plus: { Args: never; Returns: boolean }
       reorder_habits: { Args: { ids: string[] }; Returns: undefined }
     }
     Enums: {

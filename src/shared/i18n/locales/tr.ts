@@ -36,16 +36,27 @@ const tr: typeof en = {
 
   topbar: {
     settings: 'Ayarlar',
-    premium: 'Premium',
+    premium: 'Plus',
   },
 
   premium: {
-    title: 'Hibi Premium',
-    subtitle: 'Arkasında sunucu isteyen birkaç özellik. Henüz hazır değil.',
-    reminders: 'Doğru saatte gelen hatırlatmalar',
-    recaps: 'Gerçekten okunabilen yıllık özetler',
-    insights: 'Tüm alışkanlıklarını kapsayan analizler',
-    soon: 'Yakında',
+    title: 'Hibi Plus',
+    subtitle: 'Alışkanlık kurmak için gereken her şey ücretsiz ve öyle kalacak.',
+    name: 'Plus',
+    lead: 'Geçmişin konuşmaya başladığında',
+    price: 'Yakında',
+    note: 'Burada henüz satılan bir şey yok.',
+    featureInsights: 'Puanların ile alışkanlıkların arasındaki tüm örüntüler',
+    featureRecap: 'Tekrar okumaya değer bir yıllık özet',
+    featureSearch: 'Yazdığın tüm notlarda arama',
+    featureReminders: 'Her alışkanlık için kendi hatırlatma saatin',
+    cta: 'Yakında',
+    freeTitle: 'Her zaman ücretsiz',
+    freeHabits: 'Sınırsız alışkanlık ve günlük işaretleme',
+    freeNotes: 'Her güne not',
+    freeViews: 'Bugün, Hafta ve Yıl',
+    freeReminders: 'Sabah ve akşam hatırlatmaları',
+    freeExport: 'Verilerinin tamamını dışa aktarma',
   },
 
   kind: {
@@ -113,6 +124,20 @@ const tr: typeof en = {
     noteLegend: 'Not bırakılan günler — okumak için dokun',
     less: 'Az',
     more: 'Çok',
+  },
+
+  insights: {
+    title: 'Örüntüler',
+    buildMarked: '“{habit}” yaptığın günlerde “{rating}” ortalaması {marked}.',
+    buildUnmarked: 'Yapmadığın günlerde {unmarked}.',
+    quitMarked: '“{habit}” konusunda kaydığın günlerde “{rating}” ortalaması {marked}.',
+    quitUnmarked: 'Temiz günlerde {unmarked}.',
+    basis: 'Puan verilen {days} güne göre.',
+    caveat: 'Bunlar birlikte değişiyor; biri diğerine sebep oluyor demek değil.',
+    needsRating:
+      'Her gün puanladığın bir alışkanlık ekle — ruh hâli, enerji, uyku — Hibi onunla birlikte neyin değiştiğini göstersin.',
+    needsTime: 'Birkaç hafta daha puanlamaya devam et, örüntüler burada görünmeye başlayacak.',
+    locked: 'Plus ile {count} tane daha',
   },
 
   habit: {

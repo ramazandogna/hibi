@@ -1,22 +1,12 @@
 <script lang="ts" setup>
-import { ref } from 'vue'
-import { BellRing, Crown, Settings, Sparkles, TrendingUp } from 'lucide-vue-next'
+import { Crown, Settings } from 'lucide-vue-next'
 import { RouterLink } from 'vue-router'
 
-import { BaseButton, BaseSheet } from 'rei-kit'
+import { BaseButton } from 'rei-kit'
+import { usePlusSheet } from '@/features/premium/plus-sheet'
 import BrandMark from '@/shared/ui/BrandMark.vue'
 
-/**
- * A sheet, not a tooltip: a floating card anchored to a 36px icon has nowhere
- * to go on a narrow screen, and there is no hover on touch to dismiss it.
- */
-const premiumOpen = ref(false)
-
-const PERKS = [
-  { icon: BellRing, key: 'premium.reminders' },
-  { icon: TrendingUp, key: 'premium.recaps' },
-  { icon: Sparkles, key: 'premium.insights' },
-] as const
+const { openPlus } = usePlusSheet()
 </script>
 
 <template>
@@ -43,31 +33,10 @@ const PERKS = [
         size="sm"
         class="text-amber/70 hover:bg-amber/10 hover:text-amber"
         :aria-label="$t('topbar.premium')"
-        @click="premiumOpen = true"
+        @click="openPlus('topbar')"
       >
         <Crown class="size-[18px]" />
       </BaseButton>
     </div>
   </header>
-
-  <BaseSheet v-model="premiumOpen" :title="$t('premium.title')" :subtitle="$t('premium.subtitle')">
-    <ul class="flex flex-col gap-3">
-      <li v-for="perk in PERKS" :key="perk.key" class="flex items-center gap-3">
-        <span
-          class="bg-amber/15 text-amber flex size-10 shrink-0 items-center justify-center rounded-xl"
-          aria-hidden="true"
-        >
-          <component :is="perk.icon" class="size-5" />
-        </span>
-        <span class="text-ink text-sm">{{ $t(perk.key) }}</span>
-      </li>
-    </ul>
-
-    <p
-      class="bg-mist text-ink-soft rounded-card mt-6 px-3 py-2 text-center text-xs font-medium"
-      role="status"
-    >
-      {{ $t('premium.soon') }}
-    </p>
-  </BaseSheet>
 </template>
