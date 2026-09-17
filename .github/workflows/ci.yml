@@ -2,7 +2,9 @@ name: CI
 
 on:
   push:
-    branches: [main]
+    # beta is where changes are tried before main; it has to be held to the
+    # same checks, or a red build only shows up after the merge.
+    branches: [main, beta]
   pull_request:
 
 # A new push supersedes the run it interrupted; there is no point paying for a
