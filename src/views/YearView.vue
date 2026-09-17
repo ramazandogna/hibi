@@ -12,6 +12,7 @@ import { useNotesInRange } from '@/features/notes/notes.queries'
 import { useWeekStart } from '@/features/profile/profile.queries'
 import YearHabitHeader from '@/features/stats/components/YearHabitHeader.vue'
 import YearHeatmap from '@/features/stats/components/YearHeatmap.vue'
+import MoodPatterns from '@/features/insights/components/MoodPatterns.vue'
 import {
   BaseButton,
   BaseSheet,
@@ -252,6 +253,16 @@ function onSelectDay(habitId: string, dateKey: string) {
     </PageHeader>
 
     <SkeletonList v-if="isPending" row-height="h-28" :label="$t('today.loadingHabits')" />
+
+    <!-- The reflective screen is where a pattern reads as insight rather than
+         interruption; Today stays for doing. -->
+    <MoodPatterns
+      v-else-if="habits?.length"
+      :habits="habits"
+      :entries="entries ?? []"
+      :from="rangeFrom"
+      :to="days.at(-1) ?? rangeTo"
+    />
 
     <section
       v-for="group in isPending ? [] : habitGroups"
