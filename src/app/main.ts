@@ -4,6 +4,7 @@ import { createPinia } from 'pinia'
 import { VueQueryPlugin } from '@tanstack/vue-query'
 import { queryClient } from '@/app/providers/query.ts'
 import { watchInstallability } from 'rei-kit/pwa'
+import { setMaterialStorageKey, useMaterial } from 'rei-kit'
 
 import App from './App.vue'
 import router from './router/router.ts'
@@ -12,6 +13,11 @@ import { i18n, loadActiveLocale } from '@/shared/i18n'
 /* Before Vue mounts: `beforeinstallprompt` fires once and early, so a listener
    attached when a component mounts has usually already missed it. */
 watchInstallability()
+
+/* The material chosen in Settings, applied before the first paint so it holds
+   on every screen, not only once Settings has been opened. */
+setMaterialStorageKey('hibi-material')
+useMaterial()
 
 async function bootstrap() {
   const app = createApp(App)

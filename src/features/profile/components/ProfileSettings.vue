@@ -1,12 +1,20 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import { CalendarDays, GraduationCap, Palette } from 'lucide-vue-next'
+import { CalendarDays, GraduationCap, Palette, Layers } from 'lucide-vue-next'
 
 import LanguagePicker from './LanguagePicker.vue'
 import { useProfile, useUpdateProfile } from '../profile.queries'
 import { useOnboarding } from '@/features/onboarding/onboarding'
-import { BaseButton, SegmentedControl, SettingsGroup, SettingsRow, useTheme } from 'rei-kit'
-import type { ThemePreference } from 'rei-kit'
+import {
+  BaseButton,
+  SegmentedControl,
+  SettingsGroup,
+  SettingsRow,
+  MATERIALS,
+  useMaterial,
+  useTheme,
+} from 'rei-kit'
+import type { Material, ThemePreference } from 'rei-kit'
 import { useI18n } from 'vue-i18n'
 
 const { t } = useI18n()
@@ -14,6 +22,7 @@ const { t } = useI18n()
 const { data: profile } = useProfile()
 const update = useUpdateProfile()
 const theme = useTheme()
+const material = useMaterial()
 const tour = useOnboarding()
 
 const THEME_OPTIONS = computed(() => [
@@ -21,6 +30,18 @@ const THEME_OPTIONS = computed(() => [
   { value: 'light' as ThemePreference, label: t('settings.themeLight') },
   { value: 'dark' as ThemePreference, label: t('settings.themeDark') },
 ])
+
+/* rei-kit's materials. Stored on the device rather than the profile: how the
+   app looks on this phone is not a fact about the account. */
+const MATERIAL_LABEL: Record<Material, string> = {
+  quiet: 'settings.materialQuiet',
+  glass: 'settings.materialGlass',
+  brutal: 'settings.materialBrutal',
+  soft: 'settings.materialSoft',
+}
+const MATERIAL_OPTIONS = computed(() =>
+  MATERIALS.map((value) => ({ value, label: t(MATERIAL_LABEL[value]) })),
+)
 
 const WEEK_OPTIONS = computed(() => [
   { value: 1, label: t('settings.monday') },
@@ -52,6 +73,9 @@ const weekModel = computed<number>({
     <SettingsGroup :title="$t('settings.appearance')">
       <SettingsRow :label="$t('settings.theme')" :icon="Palette" stacked>
         <SegmentedControl v-model="themeModel" :options="THEME_OPTIONS" />
+      </SettingsRow>
+      <SettingsRow :label="$t('settings.material')" :icon="Layers" stacked>
+        <SegmentedControl v-model="material" :options="MATERIAL_OPTIONS" />
       </SettingsRow>
     </SettingsGroup>
 
