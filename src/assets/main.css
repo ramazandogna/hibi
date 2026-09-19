@@ -55,6 +55,16 @@
   --color-positive: var(--color-leaf);
   --color-negative: var(--color-alert);
   --color-warning: var(--color-amber);
+
+  /* Metin, dolu bir rolün üstünde. Beyaz, yaprak yeşili ve kehribar üstünde
+     2.2:1 okunuyordu; rei-kit 2 bu rolleri ekledi ve bunlar Hibi'nin kendi
+     renklerinde WCAG AA'yı geçen değerler. Hibi koyu modda da aynı dolguları
+     kullandığı için .dark bloğunda tekrar edilmeleri gerekmiyor. */
+  --color-on-primary: #ffffff;
+  --color-on-accent: #ffffff;
+  --color-on-positive: #07141a;
+  --color-on-negative: #ffffff;
+  --color-on-warning: #07141a;
   --color-muted: var(--color-mist); /* sakin yüzey */
 
   /* Ölçek. The radii and the font come from the kit; only this one is Hibi's,
