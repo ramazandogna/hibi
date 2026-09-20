@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { BaseCard } from 'rei-kit'
+import { BaseCard, BaseTimeline } from 'rei-kit'
+import { computed } from 'vue'
 import { KIND_META } from '@/shared/lib/kind'
 import type { HabitKind } from '@/shared/lib/kind'
 
@@ -10,32 +11,37 @@ export interface TimelineNote {
   body: string
 }
 
-defineProps<{ notes: readonly TimelineNote[]; kind: HabitKind }>()
+const { notes, kind } = defineProps<{ notes: readonly TimelineNote[]; kind: HabitKind }>()
+
+/*
+ * The rail is the kit's now. What stays here is the part that is Hibi's:
+ * which colour a kind is, and that a note reads as a quote.
+ *
+ * `fill` takes a class rather than a kind, so `KIND_META` goes straight
+ * across without the kit learning what a habit is.
+ */
+const events = computed(() =>
+  notes.map((note) => ({
+    key: note.id,
+    time: note.date,
+    fill: KIND_META[kind].fill,
+    body: note.body,
+  })),
+)
 </script>
 
 <template>
-  <!-- A rail rather than a stack of identical cards: these entries are a
-       sequence in time, and the line is what says so. Newest first, because
-       that is the one you came back to read. -->
-  <ol class="relative flex flex-col gap-4 pl-6">
-    <span class="bg-hair absolute top-2 bottom-3 left-[4px] w-px" aria-hidden="true" />
-
-    <li v-for="note in notes" :key="note.id" class="relative">
-      <span
-        class="border-canvas absolute top-1 -left-6 size-2.5 rounded-full border-2"
-        :class="KIND_META[kind].fill"
-        aria-hidden="true"
-      />
-
-      <p class="text-ink-soft mb-1.5 text-xs font-medium tabular-nums">{{ note.date }}</p>
-
+  <!-- Newest first, because that is the one you came back to read. The kit
+       sorts nothing, so the order stays ours. -->
+  <BaseTimeline :events="events" :label="$t('habit.notes')">
+    <template #default="{ event }">
       <BaseCard
         as="blockquote"
         padding="sm"
         class="text-ink text-sm leading-relaxed whitespace-pre-wrap shadow-sm"
       >
-        {{ note.body }}
+        {{ event.body }}
       </BaseCard>
-    </li>
-  </ol>
+    </template>
+  </BaseTimeline>
 </template>
