@@ -36,11 +36,11 @@ function choose(kind: HabitKind) {
         v-for="kind in KIND_ORDER"
         :key="kind"
         variant="unstyled"
-        class="rounded-card flex cursor-pointer flex-col items-center gap-2 border px-2 py-3 transition-all duration-200"
+        class="rounded-card flex cursor-pointer flex-col items-center gap-2 px-2 py-3 transition-all duration-200"
         :class="[
           selected === kind
             ? [KIND_META[kind].card, 'scale-[1.03]']
-            : 'border-hair bg-surface opacity-70 hover:opacity-100',
+            : 'control opacity-70 hover:opacity-100',
           !touched && selected !== kind ? 'invite' : '',
         ]"
         :pressed="selected === kind"
