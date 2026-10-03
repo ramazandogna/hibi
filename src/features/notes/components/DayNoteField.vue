@@ -35,7 +35,7 @@ watch(body, (next) => debounced.run(next))
       :rows="3"
       maxlength="500"
       :placeholder="$t('note.placeholder')"
-      class="border-hair bg-surface text-ink rounded-card focus-visible:outline-sea border p-2 focus-visible:outline-2 focus-visible:outline-offset-1"
+      control-class="control text-ink rounded-card focus-ring p-2"
     />
 
     <p class="text-ink-soft h-3 text-right text-[10px]" aria-live="polite">

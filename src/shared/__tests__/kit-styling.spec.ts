@@ -1,6 +1,7 @@
 import { readFileSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 import { describe, expect, it } from 'vitest'
+import { checkStyling } from 'rei-kit/check'
 
 /**
  * The seam that type-checking cannot see.
@@ -11,48 +12,31 @@ import { describe, expect, it } from 'vitest'
  * still valid, still renders, and is simply unstyled. That is exactly how a
  * release once reached production with the tab bar invisible.
  *
- * So these tests assert the wiring itself, in the stylesheet, at unit-test
- * speed -- no build required.
+ * This file used to assert all of that by hand. Kakei had written the same
+ * checks, independently, three of them under the same names — so the kit took
+ * them over in 3.5.0 and the list is the kit's to keep in step now. Its
+ * version also knows two things this one did not: that the preset answers
+ * several of these at once, and that `@theme` lands in `:root` while the
+ * kit's `.dark` comes after it, which is how a rebranded role quietly
+ * reverts after dark.
  */
-
 const read = (path: string) => readFileSync(fileURLToPath(new URL(path, import.meta.url)), 'utf8')
 
-const appCss = read('../../assets/main.css')
-const kitTokens = read('../../../node_modules/rei-kit/dist/tokens.css')
-
-/** Every `--color-<name>` a stylesheet declares. */
-const colourRoles = (css: string) =>
-  new Set([...css.matchAll(/--color-([a-z0-9-]+)\s*:/g)].map(([, name]) => name!))
-
 describe('rei-kit styling contract', () => {
-  it('defines every colour role the kit expects', () => {
-    const missing = [...colourRoles(kitTokens)].filter((role) => !colourRoles(appCss).has(role))
+  it('is wired to the kit', () => {
+    const problems = checkStyling({
+      css: read('../../assets/main.css'),
+      tokens: read('../../../node_modules/rei-kit/dist/tokens.css'),
+    })
 
-    // A role the kit names but the app never defines compiles to nothing:
-    // `bg-primary` silently emits no declaration at all.
-    expect(
-      missing,
-      `main.css is missing colour roles used by rei-kit: ${missing.join(', ')}`,
-    ).toEqual([])
+    expect(problems.map((problem) => `${problem.message} — ${problem.fix ?? ''}`)).toEqual([])
   })
 
   it("imports the kit's tokens rather than restating them", () => {
-    // Hibi kept its own copy of the roles, the dark variant and the whole
-    // phone shell -- byte-for-byte the kit's, because the kit was extracted
-    // from here. Two copies of one decision means a change to the shell in the
-    // kit cannot reach the app it came from.
-    expect(appCss).toMatch(/@import\s+['"]rei-kit\/tokens\.css['"]/)
-  })
-
-  it("loads the kit's scoped component styles", () => {
-    // BaseSheet's transitions and TabBar's layout live here. Without it the tab
-    // bar keeps its markup and loses its position entirely.
-    expect(appCss).toMatch(/@import\s+['"]rei-kit\/styles\.css['"]/)
-  })
-
-  it('tells Tailwind to scan the kit for utility classes', () => {
-    // Tailwind generates a utility only where it has seen the class, and it
-    // does not walk node_modules unless pointed at it.
-    expect(appCss).toMatch(/@source\s+['"][^'"]*node_modules\/rei-kit[^'"]*['"]/)
+    /* Not the kit's to check: Hibi kept its own copy of the roles, the dark
+       variant and the whole phone shell -- byte-for-byte the kit's, because
+       the kit was extracted from here. Two copies of one decision means a
+       change to the shell in the kit cannot reach the app it came from. */
+    expect(read('../../assets/main.css')).toMatch(/@import\s+['"]rei-kit\/tokens\.css['"]/)
   })
 })

@@ -86,6 +86,13 @@
   --color-ink-soft: #8fa8b2;
   --color-hair: #1c3945;
   --color-mist: #12303a; /* boş hücre karanlıkta da "boş" görünmeli */
+
+  /* `muted` is aliased to `mist` in @theme, and @theme compiles to `:root`
+     while the kit's own `.dark` arrives after it — so without this line the
+     empty cell takes the kit's colour at night rather than Hibi's. The two
+     values happen to match today, which is why nothing looked wrong and why
+     `checkStyling` is the thing that found it. */
+  --color-muted: var(--color-mist);
 }
 
 /* ---- Uygulama kabuğu için temel davranışlar ---- */

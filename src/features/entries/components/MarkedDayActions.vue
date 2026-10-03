@@ -33,7 +33,7 @@ const note = ref(initialNote)
       :rows="3"
       maxlength="280"
       :placeholder="$t('entry.standOut')"
-      class="border-hair bg-surface text-ink rounded-card focus-visible:outline-sea border p-3 focus-visible:outline-2 focus-visible:outline-offset-1"
+      control-class="control text-ink rounded-card focus-ring p-3"
     />
 
     <BaseButton @click="emit('save', note.trim() || null)">{{ $t('entry.saveNote') }}</BaseButton>

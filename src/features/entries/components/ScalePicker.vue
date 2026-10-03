@@ -72,7 +72,7 @@ function submit() {
       :rows="4"
       maxlength="280"
       :placeholder="$t('entry.feelToday')"
-      class="border-hair bg-surface text-ink rounded-card focus-visible:outline-sea border p-3 focus-visible:outline-2 focus-visible:outline-offset-1"
+      control-class="control text-ink rounded-card focus-ring p-3"
     />
 
     <BaseButton :disabled="selected === null" @click="submit">{{ $t('common.save') }}</BaseButton>
