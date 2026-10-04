@@ -16,6 +16,14 @@ export interface KindMeta {
   soft: string
   /** Foreground colour that pairs with `soft`. */
   text: string
+  /**
+   * Text colour on top of `fill`.
+   *
+   * Not always white: leaf is a light green and white on it measures 2.2:1,
+   * which is why `--color-on-positive` is dark. Every site that paints `fill`
+   * paints this with it.
+   */
+  onFill: string
   /** Tinted card surface: background, border and shadow in the kind's colour. */
   card: string
   /** Unmarked cell: the fill at low opacity, so a card reads as one colour. */
@@ -42,6 +50,7 @@ export const KIND_META: Record<HabitKind, KindMeta> = {
     fill: 'bg-leaf',
     soft: 'bg-leaf/15',
     text: 'text-leaf',
+    onFill: 'text-on-positive',
     card: 'bg-leaf/5 border-leaf/25 shadow-sm shadow-leaf/20',
     empty: 'bg-leaf/15',
     isBinary: true,
@@ -50,6 +59,7 @@ export const KIND_META: Record<HabitKind, KindMeta> = {
     fill: 'bg-ember',
     soft: 'bg-ember/15',
     text: 'text-ember',
+    onFill: 'text-on-ember',
     card: 'bg-ember/5 border-ember/25 shadow-sm shadow-ember/20',
     empty: 'bg-ember/15',
     isBinary: true,
@@ -58,6 +68,7 @@ export const KIND_META: Record<HabitKind, KindMeta> = {
     fill: 'bg-sea',
     soft: 'bg-sea/15',
     text: 'text-sea',
+    onFill: 'text-on-primary',
     card: 'bg-sea/5 border-sea/25 shadow-sm shadow-sea/20',
     empty: 'bg-sea/15',
     isBinary: false,

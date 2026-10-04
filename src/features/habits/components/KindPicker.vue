@@ -25,7 +25,7 @@ const name = useId()
         <input v-model="model" type="radio" :value="kind" :name="name" class="sr-only" />
         <span
           class="flex h-11 items-center justify-center rounded-xl text-sm font-medium transition-colors select-none"
-          :class="model === kind ? [KIND_META[kind].fill, 'text-white'] : 'text-ink-soft'"
+          :class="model === kind ? [KIND_META[kind].fill, KIND_META[kind].onFill] : 'text-ink-soft'"
         >
           {{ $t(`kind.${kind}.label`) }}
         </span>

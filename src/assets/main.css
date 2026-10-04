@@ -68,6 +68,10 @@
   --color-on-positive: #07141a;
   --color-on-negative: #ffffff;
   --color-on-warning: #07141a;
+
+  /* Ember is Hibi's own red and has no role alias, so it needs its own text
+     colour: white on it is 3.6:1, under AA for anything but large text. */
+  --color-on-ember: #07141a;
   --color-muted: var(--color-mist); /* sakin yüzey */
 
   /* Ölçek. The radii and the font come from the kit; only this one is Hibi's,
